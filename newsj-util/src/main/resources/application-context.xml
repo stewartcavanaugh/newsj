@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <context:property-placeholder/>
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+
+    <!--TODO move to properties config-->
+    <bean id="dataSource" class="com.mysql.jdbc.jdbc2.optional.MysqlConnectionPoolDataSource">
+        <property name="url" value="jdbc:mysql://localhost:3306/newznab"/>
+        <property name="user" value="newznab"/>
+        <property name="password" value="password"/>
+    </bean>
+
+    <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="mappingLocations" value="classpath:hibernate-mapping.xml"/>
+        <property name="hibernateProperties">
+            <props>
+                <prop key="dialect">org.hibernate.dialect.MySQLInnoDBDialect</prop>
+                <prop key="show_sql">true</prop>
+                <prop key="format_sql">true</prop>
+                <prop key="hibernate.jdbc.batch_size">50</prop>
+                <prop key="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.EhCacheRegionFactory</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="transactionManager"
+          class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+
+    <bean id="restTemplate" class="org.springframework.web.client.RestTemplate">
+        <property name="messageConverters">
+            <util:list>
+                <bean class="org.springframework.http.converter.ByteArrayHttpMessageConverter"/>
+                <bean class="org.springframework.http.converter.StringHttpMessageConverter"/>
+                <bean class="org.springframework.http.converter.ResourceHttpMessageConverter"/>
+                <bean class="org.springframework.http.converter.xml.SourceHttpMessageConverter"/>
+                <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+                    <property name="supportedMediaTypes">
+                        <list>
+                            <bean class="org.springframework.http.MediaType">
+                                <constructor-arg name="type" value="application"/>
+                                <constructor-arg name="subtype" value="json"/>
+                            </bean>
+                            <bean class="org.springframework.http.MediaType">
+                                <constructor-arg name="type" value="application"/>
+                                <constructor-arg name="subtype" value="*+json"/>
+                            </bean>
+                            <bean class="org.springframework.http.MediaType">
+                                <constructor-arg name="type" value="text"/>
+                                <constructor-arg name="subtype" value="javascript"/>
+                            </bean>
+                        </list>
+                    </property>
+                </bean>
+            </util:list>
+        </property>
+    </bean>
+
+    <!-- DAOs -->
+    <bean id="groupDAO" class="net.longfalcon.newsj.persistence.hibernate.GroupDAOImpl">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+
+    <bean id="siteDAO" class="net.longfalcon.newsj.persistence.hibernate.SiteDAOImpl">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+
+    <bean id="binaryDAO" class="net.longfalcon.newsj.persistence.hibernate.BinaryDAOImpl">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+
+    <bean id="partDAO" class="net.longfalcon.newsj.persistence.hibernate.PartDAOImpl">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+
+    <bean id="partRepairDAO" class="net.longfalcon.newsj.persistence.hibernate.PartRepairDAOImpl">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+
+    <bean id="releaseRegexDAO" class="net.longfalcon.newsj.persistence.hibernate.ReleaseRegexDAOImpl">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+
+    <bean id="releaseDAO" class="net.longfalcon.newsj.persistence.hibernate.ReleaseDAOImpl">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+
+    <bean id="binaryBlacklistDAO" class="net.longfalcon.newsj.persistence.hibernate.BinaryBlacklistDAOImpl" >
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+
+    <bean id="releaseNfoDAO" class="net.longfalcon.newsj.persistence.hibernate.ReleaseNfoDAOImpl">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+
+    <bean id="categoryDAO" class="net.longfalcon.newsj.persistence.hibernate.CategoryDAOImpl">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+
+    <!-- Services -->
+
+    <bean id="config" class="net.longfalcon.newsj.Config" init-method="init">
+        <property name="propertyLocations" value="classpath:config.properties"/>
+    </bean>
+
+    <bean id="fileSystemService" class="net.longfalcon.newsj.fs.DefaultFileSystemServiceImpl" init-method="init">
+    </bean>
+
+    <bean id="nntpConnectionFactory" class="net.longfalcon.newsj.nntp.NntpConnectionFactory">
+        <property name="config" ref="config"/>
+    </bean>
+
+    <bean id="binaries" class="net.longfalcon.newsj.Binaries">
+        <property name="groupDAO" ref="groupDAO"/>
+        <property name="siteDAO" ref="siteDAO"/>
+        <property name="binaryDAO" ref="binaryDAO"/>
+        <property name="partDAO" ref="partDAO"/>
+        <property name="partRepairDAO" ref="partRepairDAO"/>
+        <property name="nntpConnectionFactory" ref="nntpConnectionFactory"/>
+        <property name="backfill" ref="backfill"/>
+        <property name="blacklist" ref="blacklist"/>
+        <property name="transactionManager" ref="transactionManager"/>
+    </bean>
+
+    <bean id="releases" class="net.longfalcon.newsj.Releases">
+        <property name="fileSystemService" ref="fileSystemService"/>
+        <property name="binaries" ref="binaries"/>
+        <property name="categories" ref="category"/>
+        <property name="nfo" ref="nfo"/>
+        <property name="nzb" ref="nzb"/>
+        <property name="tvRage" ref="tvRage"/>
+        <property name="music" ref="music"/>
+        <property name="games" ref="games"/>
+        <property name="movieService" ref="movie"/>
+        <property name="groupDAO" ref="groupDAO"/>
+        <property name="siteDAO" ref="siteDAO"/>
+        <property name="binaryDAO" ref="binaryDAO"/>
+        <property name="partDAO" ref="partDAO"/>
+        <property name="releaseDAO" ref="releaseDAO"/>
+        <property name="releaseRegexDAO" ref="releaseRegexDAO"/>
+        <property name="transactionManager" ref="transactionManager"/>
+    </bean>
+
+    <bean id="backfill" class="net.longfalcon.newsj.Backfill">
+
+    </bean>
+
+    <bean id="blacklist" class="net.longfalcon.newsj.Blacklist">
+        <property name="binaryBlacklistDAO" ref="binaryBlacklistDAO"/>
+    </bean>
+
+    <bean id="nfo" class="net.longfalcon.newsj.Nfo">
+        <property name="groupDAO" ref="groupDAO"/>
+        <property name="binaryDAO" ref="binaryDAO"/>
+        <property name="partDAO" ref="partDAO"/>
+        <property name="releaseNfoDAO" ref="releaseNfoDAO"/>
+        <property name="fileSystemService" ref="fileSystemService"/>
+        <property name="nntpConnectionFactory" ref="nntpConnectionFactory"/>
+    </bean>
+    <bean id="category" class="net.longfalcon.newsj.Categories">
+        <property name="groupDAO" ref="groupDAO"/>
+    </bean>
+    <bean id="nzb" class="net.longfalcon.newsj.Nzb"></bean>
+    <bean id="movie" class="net.longfalcon.newsj.service.MovieService">
+        <property name="googleSearchService" ref="googleSearchService"/>
+        <property name="categoryDAO" ref="categoryDAO"/>
+        <property name="releaseDAO" ref="releaseDAO"/>
+    </bean>
+    <bean id="games" class="net.longfalcon.newsj.Games"></bean>
+    <bean id="music" class="net.longfalcon.newsj.Music"></bean>
+    <bean id="tvRage" class="net.longfalcon.newsj.TVRage"></bean>
+    <bean id="regexService" class="net.longfalcon.newsj.service.RegexService"/>
+    <bean id="googleSearchService" class="net.longfalcon.newsj.service.GoogleSearchService">
+        <property name="restTemplate" ref="restTemplate"/>
+    </bean>
+</beans>
