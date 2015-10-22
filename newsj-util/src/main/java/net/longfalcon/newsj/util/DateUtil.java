@@ -16,6 +16,7 @@ public class DateUtil {
 
     public static final DateTimeFormatter RFC_dateFormatter = DateTimeFormat.forPattern("dd MMM yyyy HH:mm:ss z");
     public static final DateTimeFormatter displayDateFormatter = DateTimeFormat.forPattern("Y-M-d H:m:s");
+    public static final DateTimeFormatter airDateFormatter = DateTimeFormat.forPattern("Y-M-d");
 
     private static final Log _log = LogFactory.getLog(DateUtil.class);
 
@@ -49,6 +50,18 @@ public class DateUtil {
         if (dateTime == null ) {
             _log.error(String.format("Unable to parse date string \'%s\'", dateString));
         }
+        return dateTime;
+    }
+
+    public static DateTime parseAirDate(String airDateString) {
+        DateTime dateTime = null;
+
+        try {
+            dateTime = airDateFormatter.parseDateTime(airDateString);
+        } catch (Exception e) {
+            _log.error(e.toString());
+        }
+
         return dateTime;
     }
 }

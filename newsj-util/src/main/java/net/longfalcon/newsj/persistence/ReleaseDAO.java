@@ -21,4 +21,6 @@ public interface ReleaseDAO {
     List<Release> findReleasesByNameAndDateRange(String relName, Date startDate, Date endDate);
 
     List<Release> findReleasesByNoImdbIdAndCategoryId(Collection<Integer> categoryIds);
+
+    List<Release> findReleasesByRageIdAndCategoryId(int rageId, Collection<Integer> categoryIds);
 }
