@@ -184,7 +184,10 @@
     </bean>
     <bean id="games" class="net.longfalcon.newsj.Games"></bean>
     <bean id="music" class="net.longfalcon.newsj.Music"></bean>
-    <bean id="tvRage" class="net.longfalcon.newsj.TVRage"></bean>
+    <bean id="tvRage" class="net.longfalcon.newsj.TVRage">
+        <property name="categoryDAO" ref="categoryDAO"/>
+        <property name="releaseDAO" ref="releaseDAO"/>
+    </bean>
     <bean id="regexService" class="net.longfalcon.newsj.service.RegexService"/>
     <bean id="googleSearchService" class="net.longfalcon.newsj.service.GoogleSearchService">
         <property name="restTemplate" ref="restTemplate"/>
