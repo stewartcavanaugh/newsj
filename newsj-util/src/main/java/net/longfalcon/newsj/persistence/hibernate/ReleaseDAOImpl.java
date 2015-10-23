@@ -34,6 +34,15 @@ public class ReleaseDAOImpl extends HibernateDAOImpl implements net.longfalcon.n
 
     @Override
     @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
+    public Release findByReleaseId(long releaseId) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Release.class);
+        criteria.add(Restrictions.eq("id", releaseId));
+
+        return (Release) criteria.uniqueResult();
+    }
+
+    @Override
+    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
     public List<Release> findReleasesBeforeDate(Date before) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Release.class);
         criteria.add(Restrictions.lt("postDate", before));

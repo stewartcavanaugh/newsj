@@ -13,6 +13,7 @@ import java.util.Properties;
  * Time: 8:23 AM
  */
 public class Config {
+    private static final String _RELEASE_VERSION = "0.1";
     private static final Log _log = LogFactory.getLog(Config.class);
 
 /*    private String nntpServer;
@@ -32,6 +33,10 @@ public class Config {
                 _log.error("Unable to read from resource " + resource.getFilename());
             }
         }
+    }
+
+    public static String getReleaseVersion() {
+        return _RELEASE_VERSION;
     }
 
     public void setPropertyLocations(Resource... propertyLocations) {

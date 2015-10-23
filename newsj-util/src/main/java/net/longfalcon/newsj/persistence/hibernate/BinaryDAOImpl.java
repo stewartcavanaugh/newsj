@@ -176,6 +176,7 @@ public class BinaryDAOImpl extends HibernateDAOImpl implements net.longfalcon.ne
     public List<Binary> findBinariesByReleaseId(long releaseId) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Binary.class);
         criteria.add(Restrictions.eq("releaseId", releaseId));
+        criteria.addOrder(Order.asc("name"));
         criteria.addOrder(Order.asc("relPart"));
 
         return criteria.list();

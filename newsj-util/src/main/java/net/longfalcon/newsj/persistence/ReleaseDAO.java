@@ -16,6 +16,8 @@ public interface ReleaseDAO {
 
     void deleteRelease(Release release);
 
+    Release findByReleaseId(long releaseId);
+
     List<Release> findReleasesBeforeDate(Date before);
 
     List<Release> findReleasesByNameAndDateRange(String relName, Date startDate, Date endDate);

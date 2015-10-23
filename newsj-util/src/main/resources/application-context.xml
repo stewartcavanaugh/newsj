@@ -176,7 +176,13 @@
     <bean id="category" class="net.longfalcon.newsj.Categories">
         <property name="groupDAO" ref="groupDAO"/>
     </bean>
-    <bean id="nzb" class="net.longfalcon.newsj.Nzb"></bean>
+    <bean id="nzb" class="net.longfalcon.newsj.Nzb">
+        <property name="config" ref="config"/>
+        <property name="binaryDAO" ref="binaryDAO"/>
+        <property name="categoryDAO" ref="categoryDAO"/>
+        <property name="groupDAO" ref="groupDAO"/>
+        <property name="partDAO" ref="partDAO"/>
+    </bean>
     <bean id="movie" class="net.longfalcon.newsj.service.MovieService">
         <property name="googleSearchService" ref="googleSearchService"/>
         <property name="categoryDAO" ref="categoryDAO"/>
