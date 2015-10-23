@@ -5,7 +5,6 @@ import net.longfalcon.newsj.fs.model.Directory;
 import net.longfalcon.newsj.model.Binary;
 import net.longfalcon.newsj.model.Group;
 import net.longfalcon.newsj.model.MatchedReleaseQuery;
-import net.longfalcon.newsj.model.Part;
 import net.longfalcon.newsj.model.Release;
 import net.longfalcon.newsj.model.ReleaseNfo;
 import net.longfalcon.newsj.model.ReleaseRegex;
@@ -264,8 +263,7 @@ public class Releases {
 
                 boolean incomplete = false;
                 for (Binary binary : releaseBinaryList) {
-                    List<Part> partList = partDAO.findPartsByBinaryId(binary.getId()); // TODO: use count instead of the whole list.
-                    int partsCount = partList.size();
+                    long partsCount = partDAO.countPartsByBinaryId(binary.getId());
                     if (partsCount < binary.getTotalParts()) {
                         float percentComplete = ((float) partsCount / (float) binary.getTotalParts()) * 100;
                         _log.warn(String.format("binary %s from %s has missing parts = %s/%s (%s%% complete)", binary.getId(), releaseName, partsCount, binary.getTotalParts(), percentComplete));
@@ -398,7 +396,6 @@ public class Releases {
 
             long relParts = 0;
             for (Binary binary : binariesForSize) {
-                List<Part> partList = partDAO.findPartsByBinaryId(binary.getId());
                 if (ValidatorUtil.isNotNull(binary.getCategoryId()) && regexAppliedCategoryId == 0) {
                     regexAppliedCategoryId = binary.getCategoryId();
                 }
@@ -412,10 +409,8 @@ public class Releases {
                 }
 
                 relTotalParts += binary.getTotalParts();
-                relParts += partList.size();
-                for (Part p : partList) {
-                    totalSize += p.getSize();
-                }
+                relParts += partDAO.countPartsByBinaryId(binary.getId());
+                totalSize += partDAO.sumPartsSizeByBinaryId(binary.getId());
             }
             relCompletion = ((float) relParts / (float) relTotalParts) * 100f;
 

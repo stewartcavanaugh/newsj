@@ -123,6 +123,7 @@
         <property name="description" column="description"/>
     </class>
     <class name="Part" table="parts">
+        <cache usage="read-write"/>
         <id name="id" column="ID">
             <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
                 <param name="prefer_sequence_per_entity">true</param>
@@ -165,6 +166,7 @@
     </class>
 
     <class name="Release" table="releases">
+        <cache usage="read-write"/>
         <id name="id" column="ID">
             <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
                 <param name="prefer_sequence_per_entity">true</param>

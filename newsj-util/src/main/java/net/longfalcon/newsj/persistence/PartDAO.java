@@ -18,4 +18,8 @@ public interface PartDAO {
     void deletePartByDate(Date before);
 
     List<Part> findPartsByBinaryId(long binaryId);
+
+    Long countPartsByBinaryId(long binaryId);
+
+    Long sumPartsSizeByBinaryId(long binaryId);
 }

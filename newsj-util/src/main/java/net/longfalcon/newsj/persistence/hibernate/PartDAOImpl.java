@@ -4,6 +4,7 @@ import net.longfalcon.newsj.model.Part;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Isolation;
@@ -51,5 +52,25 @@ public class PartDAOImpl extends HibernateDAOImpl implements net.longfalcon.news
         criteria.add(Restrictions.eq("binaryId", binaryId));
 
         return criteria.list();
+    }
+
+    @Override
+    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
+    public Long countPartsByBinaryId(long binaryId) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Part.class);
+        criteria.add(Restrictions.eq("binaryId", binaryId));
+        criteria.setProjection(Projections.rowCount());
+
+        return (Long) criteria.uniqueResult();
+    }
+
+    @Override
+    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
+    public Long sumPartsSizeByBinaryId(long binaryId) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Part.class);
+        criteria.add(Restrictions.eq("binaryId", binaryId));
+        criteria.setProjection(Projections.sum("size"));
+
+        return (Long) criteria.uniqueResult();
     }
 }
