@@ -480,7 +480,7 @@ public class Releases {
             //
             // Write the nzb to disk
             //
-            nzb.writeNZBforReleaseId(releaseId, releaseGuid, cleanReleaseName, categoryId, nzbPath, true);
+            nzb.writeNZBforReleaseId(release, nzbBaseDir, true);
 
             if (retcount % 5 == 0) {
                 _log.info("-processed " + retcount + " releases stage three");

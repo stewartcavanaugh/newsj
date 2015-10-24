@@ -1,11 +1,15 @@
 package net.longfalcon.newsj.util;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * User: Sten Martinez
  * Date: 10/7/15
  * Time: 12:25 PM
  */
 public class ValidatorUtil {
+    private static Pattern numericPattern = Pattern.compile("^[-]?[0-9]+$");
     public static boolean isNull(String s) {
         return s == null || s.isEmpty() || s.equals("");
     }
@@ -15,14 +19,9 @@ public class ValidatorUtil {
     }
 
     public static boolean isNumeric(String s) {
-        try {
-            long n = Long.decode(s);
-        } catch (NumberFormatException e) {
-            // do nothing
-            return false;
-        }
+        Matcher matcher = numericPattern.matcher(s);
 
-        return true;
+        return matcher.matches();
     }
 
     public static boolean isNotNull(Integer integer) {
