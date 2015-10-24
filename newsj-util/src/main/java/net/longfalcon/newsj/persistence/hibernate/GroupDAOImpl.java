@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -22,7 +21,7 @@ import java.util.List;
 public class GroupDAOImpl extends HibernateDAOImpl implements net.longfalcon.newsj.persistence.GroupDAO {
 
     @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
-    public Collection<Group> getActiveGroups() {
+    public List<Group> getActiveGroups() {
         return this.sessionFactory.getCurrentSession()
                 .createQuery("from Group group where group.active = true")
                 .list();

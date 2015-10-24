@@ -13,7 +13,7 @@
 <hibernate-mapping package="net.longfalcon.newsj.model">
 
     <class name="Group" table="groups">
-        <cache usage="read-write"/>
+        <!--<cache usage="read-write"/>-->
         <id name="id" column="ID">
             <generator class="org.hibernate.id.IdentityGenerator" />
         </id>
@@ -30,7 +30,7 @@
     </class>
 
     <class name="Site" table="site">
-        <cache usage="read-write"/>
+        <!--<cache usage="read-write"/>-->
         <id name="id" column="id">
             <generator class="org.hibernate.id.IdentityGenerator"/>
         </id>
@@ -106,7 +106,7 @@
         <property name="dateAdded" column="dateadded" type="timestamp"/>
     </class>
     <class name="BinaryBlacklistEntry" table="binaryblacklist">
-        <cache usage="read-only"/>
+        <!--<cache usage="read-only"/>-->
         <id name="id" column="ID">
             <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
                 <param name="prefer_sequence_per_entity">true</param>
@@ -123,7 +123,7 @@
         <property name="description" column="description"/>
     </class>
     <class name="Part" table="parts">
-        <cache usage="read-write"/>
+        <!--<cache usage="read-write"/>-->
         <id name="id" column="ID">
             <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
                 <param name="prefer_sequence_per_entity">true</param>
@@ -153,7 +153,7 @@
     </class>
 
     <class name="ReleaseRegex" table="releaseregex">
-        <cache usage="read-only"/>
+        <!--<cache usage="read-only"/>-->
         <id name="id" column="ID">
             <generator class="org.hibernate.id.IdentityGenerator"/>
         </id>
@@ -166,7 +166,7 @@
     </class>
 
     <class name="Release" table="releases">
-        <cache usage="read-write"/>
+        <!--<cache usage="read-write"/>-->
         <id name="id" column="ID">
             <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
                 <param name="prefer_sequence_per_entity">true</param>
@@ -218,7 +218,7 @@
     </class>
 
     <class name="Category" table="category">
-        <cache usage="read-only"/>
+        <!--<cache usage="read-only"/>-->
         <id name="id" column="ID">
             <generator class="org.hibernate.id.IdentityGenerator"/>
         </id>

@@ -2,7 +2,6 @@ package net.longfalcon.newsj.persistence;
 
 import net.longfalcon.newsj.model.Group;
 
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -11,7 +10,7 @@ import java.util.List;
  * Time: 9:48 PM
  */
 public interface GroupDAO {
-    Collection<Group> getActiveGroups();
+    List<Group> getActiveGroups();
 
     void update(Group group);
 

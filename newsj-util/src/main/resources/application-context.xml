@@ -30,10 +30,10 @@
         <property name="hibernateProperties">
             <props>
                 <prop key="dialect">org.hibernate.dialect.MySQLInnoDBDialect</prop>
-                <prop key="show_sql">true</prop>
-                <prop key="format_sql">true</prop>
+                <!--<prop key="show_sql">true</prop>
+                <prop key="format_sql">true</prop>-->
                 <prop key="hibernate.jdbc.batch_size">50</prop>
-                <prop key="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.EhCacheRegionFactory</prop>
+                <!--<prop key="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.EhCacheRegionFactory</prop>-->
             </props>
         </property>
     </bean>
@@ -126,6 +126,15 @@
         <property name="config" ref="config"/>
     </bean>
 
+    <bean id="fetchBinaries" class="net.longfalcon.newsj.FetchBinaries">
+        <property name="partDAO" ref="partDAO"/>
+        <property name="binaryDAO" ref="binaryDAO"/>
+        <property name="blacklist" ref="blacklist"/>
+        <property name="nntpConnectionFactory" ref="nntpConnectionFactory"/>
+        <property name="partRepairDAO" ref="partRepairDAO"/>
+        <property name="transactionManager" ref="transactionManager"/>
+    </bean>
+
     <bean id="binaries" class="net.longfalcon.newsj.Binaries">
         <property name="groupDAO" ref="groupDAO"/>
         <property name="siteDAO" ref="siteDAO"/>
@@ -136,6 +145,7 @@
         <property name="backfill" ref="backfill"/>
         <property name="blacklist" ref="blacklist"/>
         <property name="transactionManager" ref="transactionManager"/>
+        <property name="fetchBinaries" ref="fetchBinaries"/>
     </bean>
 
     <bean id="releases" class="net.longfalcon.newsj.Releases">
@@ -158,7 +168,10 @@
     </bean>
 
     <bean id="backfill" class="net.longfalcon.newsj.Backfill">
-
+        <property name="fetchBinaries" ref="fetchBinaries"/>
+        <property name="groupDAO" ref="groupDAO"/>
+        <property name="nntpConnectionFactory" ref="nntpConnectionFactory"/>
+        <property name="transactionManager" ref="transactionManager"/>
     </bean>
 
     <bean id="blacklist" class="net.longfalcon.newsj.Blacklist">
