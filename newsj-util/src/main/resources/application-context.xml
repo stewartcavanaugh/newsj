@@ -18,9 +18,9 @@
     <tx:annotation-driven transaction-manager="transactionManager"/>
 
     <!--TODO move to properties config-->
-    <bean id="dataSource" class="com.mysql.jdbc.jdbc2.optional.MysqlConnectionPoolDataSource">
-        <property name="url" value="jdbc:mysql://localhost:3306/newznab"/>
-        <property name="user" value="newznab"/>
+    <bean id="dataSource" class="oracle.jdbc.pool.OracleDataSource">
+        <property name="URL" value="jdbc:oracle:thin:@//localhost:1521/xe"/>
+        <property name="user" value="newsj"/>
         <property name="password" value="password"/>
     </bean>
 
