@@ -60,7 +60,7 @@ public class FetchBinaries {
     private PlatformTransactionManager transactionManager;
 
     // This method should be an atomic transaction
-    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.REPEATABLE_READ)
+    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
     public long scan(NewsClient nntpClient, Group group, long firstArticle, long lastArticle, String type, boolean compressedHeaders) throws IOException {
         // this is a hack - tx is not working ATM
         TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition(TransactionDefinition.PROPAGATION_REQUIRED));
