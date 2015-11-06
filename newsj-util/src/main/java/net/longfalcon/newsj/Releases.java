@@ -451,7 +451,7 @@ public class Releases {
             release.setGuid(releaseGuid);
             release.setCategoryId(categoryId);
             release.setRegexId(regexId);
-            release.setRageId(-1);
+            release.setRageId((long) -1);
             release.setPostDate(addedDate.toDate());
             release.setFromName(fromName);
             release.setSize(totalSize);
