@@ -11,7 +11,70 @@
         "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping package="net.longfalcon.newsj.model">
-
+    <class name="Binary" table="binaries">
+        <id name="id" column="ID">
+            <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+                <param name="prefer_sequence_per_entity">true</param>
+                <param name="optimizer">pooled</param>
+                <param name="initial_value">1</param>
+                <param name="increment_size">100</param>
+            </generator>
+        </id>
+        <property name="name" column="name_"/>
+        <property name="fromName" column="fromname"/>
+        <property name="date" column="date_" type="timestamp"/>
+        <property name="xref" column="xref"/>
+        <property name="totalParts" column="totalParts"/>
+        <property name="groupId" column="groupID"/>
+        <property name="procStat" column="procstat"/>
+        <property name="procAttempts" column="procattempts"/>
+        <property name="categoryId" column="categoryID"/>
+        <property name="regexId" column="regexID"/>
+        <property name="reqId" column="reqID"/>
+        <property name="relPart" column="relpart"/>
+        <property name="relTotalPart" column="reltotalpart"/>
+        <property name="binaryHash" column="binaryhash" unique="true" not-null="true"/>
+        <property name="relName" column="relname"/>
+        <property name="importName" column="importname"/>
+        <property name="releaseId" column="releaseID"/>
+        <property name="dateAdded" column="dateadded" type="timestamp"/>
+    </class>
+    <class name="BinaryBlacklistEntry" table="binaryblacklist">
+        <!--<cache usage="read-only"/>-->
+        <id name="id" column="ID">
+            <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+                <param name="prefer_sequence_per_entity">true</param>
+                <param name="optimizer">pooled</param>
+                <param name="initial_value">1</param>
+                <param name="increment_size">10</param>
+            </generator>
+        </id>
+        <property name="groupName" column="groupname"/>
+        <property name="regex" column="regex"/>
+        <property name="msgCol" column="msgcol"/>
+        <property name="opType" column="optype"/>
+        <property name="status" column="status"/>
+        <property name="description" column="description"/>
+    </class>
+    <class name="Category" table="category">
+        <!--<cache usage="read-only"/>-->
+        <id name="id" column="ID">
+            <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+                <param name="prefer_sequence_per_entity">true</param>
+                <param name="optimizer">pooled</param>
+                <param name="initial_value">1</param>
+                <param name="increment_size">10</param>
+            </generator>
+        </id>
+        <property name="parentId" column="parentID" not-null="false"/>
+        <property name="status" column="status"/>
+        <property name="title" column="title"/>
+        <property name="description" column="description"/>
+    </class>
+    <!-- TODO: CONSOLE INFO -->
+    <!-- TODO: CONTENT -->
+    <!-- TODO: FORUM POST -->
+    <!-- TODO: GENRES -->
     <class name="Group" table="groups">
         <!--<cache usage="read-write"/>-->
         <id name="id" column="ID">
@@ -33,7 +96,110 @@
         <property name="active" column="active" type="java.lang.Boolean"/>
         <property name="description" column="description"/>
     </class>
-
+    <!--TODO: MENU -->
+    <!--TODO: MOVIEINFO-->
+    <!--TODO: MUSICINFO-->
+    <class name="PartRepair" table="partrepair">
+        <id name="id" column="ID">
+            <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+                <param name="prefer_sequence_per_entity">true</param>
+                <param name="optimizer">pooled</param>
+                <param name="initial_value">1</param>
+                <param name="increment_size">10</param>
+            </generator>
+        </id>
+        <natural-id>
+            <property name="numberId" column="numberID"/>
+            <property name="groupId" column="groupID"/>
+        </natural-id>
+        <property name="attempts" column="attempts"/>
+        <one-to-one name="part" property-ref="number" foreign-key="numberId" class="net.longfalcon.newsj.model.Part" fetch="join" constrained="false" outer-join="true" cascade="none"/>
+    </class>
+    <class name="Part" table="parts">
+        <!--<cache usage="read-write"/>-->
+        <id name="id" column="ID">
+            <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+                <param name="prefer_sequence_per_entity">true</param>
+                <param name="optimizer">pooled</param>
+                <param name="initial_value">1</param>
+                <param name="increment_size">1000</param>
+            </generator>
+        </id>
+        <property name="binaryId" column="binaryID"/>
+        <property name="messageId" column="messageID"/>
+        <property name="number" column="number_"/>
+        <property name="partNumber" column="partnumber"/>
+        <property name="size" column="size_"/>
+        <property name="dateAdded" column="dateadded" type="timestamp"/>
+    </class>
+    <!--TODO: RELEASECOMMENT-->
+    <class name="ReleaseNfo" table="releasenfo">
+        <id name="id" column="ID">
+            <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+                <param name="prefer_sequence_per_entity">true</param>
+                <param name="optimizer">pooled</param>
+                <param name="initial_value">1</param>
+                <param name="increment_size">100</param>
+            </generator>
+        </id>
+        <many-to-one name="release" class="Release" not-null="true" unique="true" column="releaseID" cascade="save-update"/>
+        <many-to-one name="binary" class="Binary" not-null="true" unique="true" column="binaryID" cascade="save-update"/>
+        <property name="attemtps" column="attempts"/>
+        <property name="nfo" column="nfo" lazy="true" not-null="false" type="materialized_blob"/>
+    </class>
+    <class name="ReleaseRegex" table="releaseregex">
+        <!--<cache usage="read-only"/>-->
+        <id name="id" column="ID">
+            <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+                <param name="prefer_sequence_per_entity">true</param>
+                <param name="optimizer">pooled</param>
+                <param name="initial_value">1</param>
+                <param name="increment_size">10</param>
+            </generator>
+        </id>
+        <property name="groupName" column="groupname" not-null="false"/>
+        <property name="regex" column="regex"/>
+        <property name="ordinal" column="ordinal"/>
+        <property name="status" column="status"/>
+        <property name="description" column="description"/>
+        <property name="categoryId" column="categoryID" not-null="false"/>
+    </class>
+    <class name="Release" table="releases">
+        <!--<cache usage="read-write"/>-->
+        <id name="id" column="ID">
+            <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+                <param name="prefer_sequence_per_entity">true</param>
+                <param name="optimizer">pooled</param>
+                <param name="initial_value">1</param>
+                <param name="increment_size">100</param>
+            </generator>
+        </id>
+        <property name="name" column="name_"/>
+        <property name="searchName" column="searchname"/>
+        <property name="totalpart" column="totalpart"/>
+        <property name="groupId" column="groupID"/>
+        <property name="size" column="size_"/>
+        <property name="postDate" column="postdate" type="timestamp"/>
+        <property name="addDate" column="adddate" type="timestamp"/>
+        <property name="guid" column="guid" not-null="true"/>
+        <property name="fromName" column="fromname"/>
+        <property name="completion" column="completion"/>
+        <property name="categoryId" column="categoryID"/>
+        <property name="regexId" column="regexID"/>
+        <property name="rageId" column="rageID"/>
+        <property name="seriesFull" column="seriesfull"/>
+        <property name="season" column="season"/>
+        <property name="episode" column="episode"/>
+        <property name="tvTitle" column="tvtitle"/>
+        <property name="tvAirDate" column="tvairdate"/>
+        <property name="imdbId" column="imdbID"/>
+        <property name="musicInfoId" column="musicinfoID"/>
+        <property name="consoleInfoId" column="consoleinfoID"/>
+        <property name="reqId" column="reqID"/>
+        <property name="grabs" column="grabs"/>
+        <property name="comments" column="comments"/>
+        <property name="passwordStatus" column="passwordstatus"/>
+    </class>
     <class name="Site" table="site">
         <!--<cache usage="read-write"/>-->
         <id name="id" column="id">
@@ -86,173 +252,6 @@
         <property name="releaseRetentionDays" column="releaseretentiondays"/>
         <property name="showPasswordedRelease" column="showpasswordedrelease"/>
     </class>
-
-    <class name="Binary" table="binaries">
-        <id name="id" column="ID">
-            <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
-                <param name="prefer_sequence_per_entity">true</param>
-                <param name="optimizer">pooled</param>
-                <param name="initial_value">1</param>
-                <param name="increment_size">100</param>
-            </generator>
-        </id>
-        <property name="name" column="name_"/>
-        <property name="fromName" column="fromname"/>
-        <property name="date" column="date_" type="timestamp"/>
-        <property name="xref" column="xref"/>
-        <property name="totalParts" column="totalParts"/>
-        <property name="groupId" column="groupID"/>
-        <property name="procStat" column="procstat"/>
-        <property name="procAttempts" column="procattempts"/>
-        <property name="categoryId" column="categoryID"/>
-        <property name="regexId" column="regexID"/>
-        <property name="reqId" column="reqID"/>
-        <property name="relPart" column="relpart"/>
-        <property name="relTotalPart" column="reltotalpart"/>
-        <property name="binaryHash" column="binaryhash" unique="true" not-null="true"/>
-        <property name="relName" column="relname"/>
-        <property name="importName" column="importname"/>
-        <property name="releaseId" column="releaseID"/>
-        <property name="dateAdded" column="dateadded" type="timestamp"/>
-    </class>
-    <class name="BinaryBlacklistEntry" table="binaryblacklist">
-        <!--<cache usage="read-only"/>-->
-        <id name="id" column="ID">
-            <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
-                <param name="prefer_sequence_per_entity">true</param>
-                <param name="optimizer">pooled</param>
-                <param name="initial_value">1</param>
-                <param name="increment_size">10</param>
-            </generator>
-        </id>
-        <property name="groupName" column="groupname"/>
-        <property name="regex" column="regex"/>
-        <property name="msgCol" column="msgcol"/>
-        <property name="opType" column="optype"/>
-        <property name="status" column="status"/>
-        <property name="description" column="description"/>
-    </class>
-    <class name="Part" table="parts">
-        <!--<cache usage="read-write"/>-->
-        <id name="id" column="ID">
-            <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
-                <param name="prefer_sequence_per_entity">true</param>
-                <param name="optimizer">pooled</param>
-                <param name="initial_value">1</param>
-                <param name="increment_size">1000</param>
-            </generator>
-        </id>
-        <property name="binaryId" column="binaryID"/>
-        <property name="messageId" column="messageID"/>
-        <property name="number" column="number_"/>
-        <property name="partNumber" column="partnumber"/>
-        <property name="size" column="size_"/>
-        <property name="dateAdded" column="dateadded" type="timestamp"/>
-    </class>
-
-    <class name="PartRepair" table="partrepair">
-        <id name="id" column="ID">
-            <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
-                <param name="prefer_sequence_per_entity">true</param>
-                <param name="optimizer">pooled</param>
-                <param name="initial_value">1</param>
-                <param name="increment_size">10</param>
-            </generator>
-        </id>
-        <natural-id>
-            <property name="numberId" column="numberID"/>
-            <property name="groupId" column="groupID"/>
-        </natural-id>
-        <property name="attempts" column="attempts"/>
-        <one-to-one name="part" property-ref="number" foreign-key="numberId" class="net.longfalcon.newsj.model.Part" fetch="join" constrained="false" outer-join="true" cascade="none"/>
-    </class>
-
-    <class name="ReleaseRegex" table="releaseregex">
-        <!--<cache usage="read-only"/>-->
-        <id name="id" column="ID">
-            <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
-                <param name="prefer_sequence_per_entity">true</param>
-                <param name="optimizer">pooled</param>
-                <param name="initial_value">1</param>
-                <param name="increment_size">10</param>
-            </generator>
-        </id>
-        <property name="groupName" column="groupname" not-null="false"/>
-        <property name="regex" column="regex"/>
-        <property name="ordinal" column="ordinal"/>
-        <property name="status" column="status"/>
-        <property name="description" column="description"/>
-        <property name="categoryId" column="categoryID" not-null="false"/>
-    </class>
-
-    <class name="Release" table="releases">
-        <!--<cache usage="read-write"/>-->
-        <id name="id" column="ID">
-            <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
-                <param name="prefer_sequence_per_entity">true</param>
-                <param name="optimizer">pooled</param>
-                <param name="initial_value">1</param>
-                <param name="increment_size">100</param>
-            </generator>
-        </id>
-        <property name="name" column="name_"/>
-        <property name="searchName" column="searchname"/>
-        <property name="totalpart" column="totalpart"/>
-        <property name="groupId" column="groupID"/>
-        <property name="size" column="size_"/>
-        <property name="postDate" column="postdate" type="timestamp"/>
-        <property name="addDate" column="adddate" type="timestamp"/>
-        <property name="guid" column="guid" not-null="true"/>
-        <property name="fromName" column="fromname"/>
-        <property name="completion" column="completion"/>
-        <property name="categoryId" column="categoryID"/>
-        <property name="regexId" column="regexID"/>
-        <property name="rageId" column="rageID"/>
-        <property name="seriesFull" column="seriesfull"/>
-        <property name="season" column="season"/>
-        <property name="episode" column="episode"/>
-        <property name="tvTitle" column="tvtitle"/>
-        <property name="tvAirDate" column="tvairdate"/>
-        <property name="imdbId" column="imdbID"/>
-        <property name="musicInfoId" column="musicinfoID"/>
-        <property name="consoleInfoId" column="consoleinfoID"/>
-        <property name="reqId" column="reqID"/>
-        <property name="grabs" column="grabs"/>
-        <property name="comments" column="comments"/>
-        <property name="passwordStatus" column="passwordstatus"/>
-    </class>
-
-    <class name="ReleaseNfo" table="releasenfo">
-        <id name="id" column="ID">
-            <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
-                <param name="prefer_sequence_per_entity">true</param>
-                <param name="optimizer">pooled</param>
-                <param name="initial_value">1</param>
-                <param name="increment_size">100</param>
-            </generator>
-        </id>
-        <many-to-one name="release" class="Release" not-null="true" unique="true" column="releaseID" cascade="save-update"/>
-        <many-to-one name="binary" class="Binary" not-null="true" unique="true" column="binaryID" cascade="save-update"/>
-        <property name="attemtps" column="attempts"/>
-        <property name="nfo" column="nfo" lazy="true" not-null="false" type="materialized_blob"/>
-    </class>
-
-    <class name="Category" table="category">
-        <!--<cache usage="read-only"/>-->
-        <id name="id" column="ID">
-            <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
-                <param name="prefer_sequence_per_entity">true</param>
-                <param name="optimizer">pooled</param>
-                <param name="initial_value">1</param>
-                <param name="increment_size">10</param>
-            </generator>
-        </id>
-        <property name="parentId" column="parentID" not-null="false"/>
-        <property name="status" column="status"/>
-        <property name="title" column="title"/>
-        <property name="description" column="description"/>
-    </class>
-
     <class name="TvRage" table="tvrage">
         <id name="id" column="ID">
             <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
@@ -270,4 +269,8 @@
         <property name="country" column="country"/>
         <property name="createDate" column="createddate" type="date"/>
     </class>
+    <!--TODO: USERCART-->
+    <!--TODO: USEREXCAT-->
+    <!--TODO: USERINVITE-->
+    <!--TODO: USERS-->
 </hibernate-mapping>
