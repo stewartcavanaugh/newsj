@@ -5,8 +5,10 @@ import org.apache.commons.lang3.ArrayUtils;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Wrap array tools here in case library methods suck
@@ -65,6 +67,18 @@ public class ArrayUtil {
         }
 
         return array;
+    }
+
+    public static Set<Long> rangeSet(long from, long to) {
+        if ( to < from ) {
+            throw new IllegalArgumentException(String.format("to argument %s is less than from argument %s", to, from));
+        }
+        Set<Long> hashSet = new HashSet<>((int) (to - from + 1));
+        for (long j = from; j <= to; j++) {
+            hashSet.add(j);
+        }
+
+        return hashSet;
     }
 
     public static long[] append(long[] array, long element) {

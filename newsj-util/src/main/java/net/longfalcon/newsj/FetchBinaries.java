@@ -90,13 +90,12 @@ public class FetchBinaries {
 
         Period headersTime = new Period(startHeadersTime, System.currentTimeMillis());
 
-        //TODO: ACK. this part needs to move to HashSets once the first pass is done.
-        long[] rangeRequested = ArrayUtil.range(firstArticle, lastArticle);
-        long[] messagesReceived = new long[]{};
-        long[] messagesBlacklisted = new long[]{};
-        long[] messagesIgnored = new long[]{};
-        long[] messagesInserted = new long[]{};
-        long[] messagesNotInserted = new long[]{};
+        Set<Long> rangeRequested = ArrayUtil.rangeSet(firstArticle, lastArticle);
+        Set<Long> messagesReceived = new HashSet<>();
+        Set<Long> messagesBlacklisted = new HashSet<>();
+        Set<Long> messagesIgnored = new HashSet<>();
+        Set<Long> messagesInserted = new HashSet<>();
+        Set<Long> messagesNotInserted = new HashSet<>();
 
         // check error codes?
 
@@ -110,14 +109,14 @@ public class FetchBinaries {
                     continue;
                 }
 
-                messagesReceived = ArrayUtil.append(messagesReceived, articleNumber);
+                messagesReceived.add(articleNumber);
 
                 Pattern pattern = Defaults.PARTS_SUBJECT_REGEX;
                 String subject = article.getSubject();
                 Matcher matcher = pattern.matcher(subject);
                 if (ValidatorUtil.isNull(subject) || !matcher.find()) {
                     // not a binary post most likely.. continue
-                    messagesIgnored = ArrayUtil.append(messagesIgnored, articleNumber);
+                    messagesIgnored.add(articleNumber);
                     if (_log.isDebugEnabled()) {
                         _log.debug(String.format("Skipping message no# %s : %s", articleNumber, subject));
                     }
@@ -126,7 +125,7 @@ public class FetchBinaries {
 
                 //Filter binaries based on black/white list
                 if (isBlacklisted(article, group)) {
-                    messagesBlacklisted = ArrayUtil.append(messagesBlacklisted, articleNumber);
+                    messagesBlacklisted.add(articleNumber);
                     continue;
                 }
                 String group1 = matcher.group(1);
@@ -154,14 +153,13 @@ public class FetchBinaries {
             long partCount = 0;
             maxNum = lastArticle;
 
-            // this sucks.
-            Set<Long> messagesReceivedSet = new HashSet<Long>(ArrayUtil.asList(ArrayUtils.toObject(messagesReceived)));
-
-            Set<Long> rangeNotRecieved = new HashSet<Long>(ArrayUtil.asList(ArrayUtils.toObject(rangeRequested)));
-            rangeNotRecieved.removeAll(messagesReceivedSet);
+            // add all the requested then remove the ones we did receive.
+            Set<Long> rangeNotRecieved = new HashSet<>();
+            rangeNotRecieved.addAll(rangeRequested);
+            rangeNotRecieved.removeAll(messagesReceived);
 
             if (!type.equals("partrepair")) {
-                _log.info(String.format("Received %d articles of %d requested, %d blacklisted, %d not binaries", messagesReceived.length, lastArticle - firstArticle + 1, messagesBlacklisted.length, messagesIgnored.length));
+                _log.info(String.format("Received %d articles of %d requested, %d blacklisted, %d not binaries", messagesReceived.size(), lastArticle - firstArticle + 1, messagesBlacklisted.size(), messagesIgnored.size()));
             }
 
             if ( rangeNotRecieved.size() > 0) {
@@ -236,17 +234,17 @@ public class FetchBinaries {
                                 long startDbUpdateTime = System.currentTimeMillis();
                                 partDAO.updatePart(part);
                                 dbUpdateTime += (System.currentTimeMillis() - startDbUpdateTime);
-                                messagesInserted = ArrayUtil.append(messagesInserted, messagePart.getArticleNumber());
+                                messagesInserted.add(messagePart.getArticleNumber());
                             } catch (Exception e) {
                                 _log.error(e.toString());
-                                messagesNotInserted = ArrayUtil.append(messagesNotInserted, messagePart.getArticleNumber());
+                                messagesNotInserted.add(messagePart.getArticleNumber());
                             }
 
                         }
                     }
                 }
                 //TODO: determine whether to add to missing articles if insert failed
-                if (messagesNotInserted.length > 0) {
+                if (messagesNotInserted.size() > 0) {
                     _log.warn("WARNING: Parts failed to insert");
                     addMissingParts(messagesNotInserted, group);
                 }
