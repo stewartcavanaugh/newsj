@@ -15,9 +15,14 @@
     <class name="Group" table="groups">
         <!--<cache usage="read-write"/>-->
         <id name="id" column="ID">
-            <generator class="org.hibernate.id.IdentityGenerator" />
+            <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+                <param name="prefer_sequence_per_entity">true</param>
+                <param name="optimizer">pooled</param>
+                <param name="initial_value">1</param>
+                <param name="increment_size">100</param>
+            </generator>
         </id>
-        <property name="name" column="name" unique="true"/>
+        <property name="name" column="name_" unique="true"/>
         <property name="backfillTarget" column="backfill_target"/>
         <property name="firstRecord" column="first_record"/>
         <property name="firstRecordPostdate" column="first_record_postdate" type="timestamp"/>
@@ -32,7 +37,12 @@
     <class name="Site" table="site">
         <!--<cache usage="read-write"/>-->
         <id name="id" column="id">
-            <generator class="org.hibernate.id.IdentityGenerator"/>
+            <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+                <param name="prefer_sequence_per_entity">true</param>
+                <param name="optimizer">pooled</param>
+                <param name="initial_value">2</param>
+                <param name="increment_size">1</param>
+            </generator>
         </id>
         <property name="code" column="code"/>
         <property name="title" column="title"/>
@@ -86,9 +96,9 @@
                 <param name="increment_size">100</param>
             </generator>
         </id>
-        <property name="name" column="name"/>
+        <property name="name" column="name_"/>
         <property name="fromName" column="fromname"/>
-        <property name="date" column="date" type="timestamp"/>
+        <property name="date" column="date_" type="timestamp"/>
         <property name="xref" column="xref"/>
         <property name="totalParts" column="totalParts"/>
         <property name="groupId" column="groupID"/>
@@ -134,15 +144,20 @@
         </id>
         <property name="binaryId" column="binaryID"/>
         <property name="messageId" column="messageID"/>
-        <property name="number" column="number"/>
+        <property name="number" column="number_"/>
         <property name="partNumber" column="partnumber"/>
-        <property name="size" column="size"/>
+        <property name="size" column="size_"/>
         <property name="dateAdded" column="dateadded" type="timestamp"/>
     </class>
 
     <class name="PartRepair" table="partrepair">
         <id name="id" column="ID">
-            <generator class="org.hibernate.id.IdentityGenerator"/>
+            <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+                <param name="prefer_sequence_per_entity">true</param>
+                <param name="optimizer">pooled</param>
+                <param name="initial_value">1</param>
+                <param name="increment_size">10</param>
+            </generator>
         </id>
         <natural-id>
             <property name="numberId" column="numberID"/>
@@ -155,7 +170,12 @@
     <class name="ReleaseRegex" table="releaseregex">
         <!--<cache usage="read-only"/>-->
         <id name="id" column="ID">
-            <generator class="org.hibernate.id.IdentityGenerator"/>
+            <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+                <param name="prefer_sequence_per_entity">true</param>
+                <param name="optimizer">pooled</param>
+                <param name="initial_value">1</param>
+                <param name="increment_size">10</param>
+            </generator>
         </id>
         <property name="groupName" column="groupname" not-null="false"/>
         <property name="regex" column="regex"/>
@@ -175,11 +195,11 @@
                 <param name="increment_size">100</param>
             </generator>
         </id>
-        <property name="name" column="name"/>
+        <property name="name" column="name_"/>
         <property name="searchName" column="searchname"/>
         <property name="totalpart" column="totalpart"/>
         <property name="groupId" column="groupID"/>
-        <property name="size" column="size"/>
+        <property name="size" column="size_"/>
         <property name="postDate" column="postdate" type="timestamp"/>
         <property name="addDate" column="adddate" type="timestamp"/>
         <property name="guid" column="guid" not-null="true"/>
@@ -220,7 +240,12 @@
     <class name="Category" table="category">
         <!--<cache usage="read-only"/>-->
         <id name="id" column="ID">
-            <generator class="org.hibernate.id.IdentityGenerator"/>
+            <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+                <param name="prefer_sequence_per_entity">true</param>
+                <param name="optimizer">pooled</param>
+                <param name="initial_value">1</param>
+                <param name="increment_size">10</param>
+            </generator>
         </id>
         <property name="parentId" column="parentID" not-null="false"/>
         <property name="status" column="status"/>

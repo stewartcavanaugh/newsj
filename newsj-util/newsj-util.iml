@@ -5,7 +5,7 @@
       <configuration>
         <datasource-map>
           <unit-entry name="hibernate.cfg.xml" />
-          <unit-entry name="sessionFactory" value="03c28a10-10a7-46b9-a094-5157ab8c3b68" />
+          <unit-entry name="sessionFactory" value="a91a1acd-fe9e-48c3-b744-969df93f3452" />
         </datasource-map>
         <naming-strategy-map />
         <deploymentDescriptor name="hibernate.cfg.xml" url="file://$MODULE_DIR$/src/main/resources/hibernate.cfg.xml" />
@@ -75,5 +75,6 @@
     <orderEntry type="library" name="Maven: com.sun.xml.fastinfoset:FastInfoset:1.2.12" level="project" />
     <orderEntry type="library" name="Maven: javax.xml.bind:jsr173_api:1.0" level="project" />
     <orderEntry type="library" name="Maven: com.sun.xml.bind:jaxb-xjc:2.2.7" level="project" />
+    <orderEntry type="library" name="Maven: oracle:ojdbc7:12.1.0.2.0" level="project" />
   </component>
 </module>

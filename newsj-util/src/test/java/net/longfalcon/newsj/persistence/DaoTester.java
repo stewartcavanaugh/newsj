@@ -1,5 +1,6 @@
 package net.longfalcon.newsj.persistence;
 
+import net.longfalcon.newsj.model.ReleaseRegex;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
@@ -17,10 +18,10 @@ public class DaoTester {
     public void testDAO(){
         ApplicationContext context =
                 new ClassPathXmlApplicationContext(new String[] {"application-context.xml"});
-        PartDAO partDAO = (PartDAO) context.getBean("partDAO");
-        Long size = partDAO.sumPartsSizeByBinaryId(29993);
+        ReleaseRegexDAO releaseRegexDAO = (ReleaseRegexDAO) context.getBean("releaseRegexDAO");
+        ReleaseRegex releaseRegex = releaseRegexDAO.findById(643);
 
 
-        System.out.println("count: " + size);
+        System.out.println("regex: " + releaseRegex.getRegex());
     }
 }
