@@ -64,7 +64,7 @@ public class Releases {
     private MovieService movieService;
     private Games games;
     private Music music;
-    private TVRage tvRage;
+    private TVRageService tvRageService;
 
     private SiteDAO siteDAO;
     private ReleaseRegexDAO releaseRegexDAO;
@@ -538,7 +538,7 @@ public class Releases {
         //
         // Process all TV related releases which will assign their series/episode/rage data
         //
-        tvRage.processTvReleases(site.getLookupTvRage() == 1);
+        tvRageService.processTvReleases(site.getLookupTvRage() == 1);
 
         //
         // Get the current datetime again, as using now() in the housekeeping queries prevents the index being used.
@@ -756,12 +756,12 @@ public class Releases {
         this.music = music;
     }
 
-    public TVRage getTvRage() {
-        return tvRage;
+    public TVRageService getTvRageService() {
+        return tvRageService;
     }
 
-    public void setTvRage(TVRage tvRage) {
-        this.tvRage = tvRage;
+    public void setTvRageService(TVRageService tvRageService) {
+        this.tvRageService = tvRageService;
     }
 
     public PlatformTransactionManager getTransactionManager() {

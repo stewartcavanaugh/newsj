@@ -21,7 +21,7 @@ public class Release {
     private float completion;
     private Integer categoryId;
     private Long regexId;
-    private Integer rageId;
+    private Long rageId;
     private String seriesFull;
     private String season;
     private String episode;
@@ -139,11 +139,11 @@ public class Release {
         this.regexId = regexId;
     }
 
-    public Integer getRageId() {
+    public Long getRageId() {
         return rageId;
     }
 
-    public void setRageId(Integer rageId) {
+    public void setRageId(Long rageId) {
         this.rageId = rageId;
     }
 

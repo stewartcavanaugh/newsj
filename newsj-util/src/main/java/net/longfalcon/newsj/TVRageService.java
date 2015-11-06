@@ -2,8 +2,10 @@ package net.longfalcon.newsj;
 
 import net.longfalcon.newsj.model.Category;
 import net.longfalcon.newsj.model.Release;
+import net.longfalcon.newsj.model.TvRage;
 import net.longfalcon.newsj.persistence.CategoryDAO;
 import net.longfalcon.newsj.persistence.ReleaseDAO;
+import net.longfalcon.newsj.persistence.TvRageDAO;
 import net.longfalcon.newsj.util.ArrayUtil;
 import net.longfalcon.newsj.util.DateUtil;
 import net.longfalcon.newsj.util.ValidatorUtil;
@@ -25,11 +27,12 @@ import java.util.regex.Pattern;
  * Time: 2:54 PM
  */
 @Service
-public class TVRage {
-    private static final Log _log = LogFactory.getLog(TVRage.class);
+public class TVRageService {
+    private static final Log _log = LogFactory.getLog(TVRageService.class);
 
     private ReleaseDAO releaseDAO;
     private CategoryDAO categoryDAO;
+    private TvRageDAO tvRageDAO;
 
     public void processTvReleases(boolean lookupTvRage) {
         List<Category> movieCats = categoryDAO.findByParentId(Categories.CAT_PARENT_TV);
@@ -53,7 +56,7 @@ public class TVRage {
                 updateEpInfo(showInfo, release);
 
                 // find the rageID
-                int rageId = getByTitle(showInfo.getCleanName());
+                long rageId = getByTitle(showInfo.getCleanName());
 
                 if (rageId == 0 && lookupTvRage) {
                     // if it doesnt exist locally and lookups are allowed lets try to get it
@@ -81,7 +84,7 @@ public class TVRage {
 
             } else {
                 // not a tv episode, so set rageid to n/a
-                release.setRageId(-2);
+                release.setRageId((long) -2);
             }
 
 
@@ -89,8 +92,20 @@ public class TVRage {
         }
     }
 
-    private int getByTitle(String cleanName) {
-        return -1;
+    private long getByTitle(String cleanName) {
+        long rageId = -1;
+        // check if we already have an entry for this show
+        TvRage tvRage = tvRageDAO.findByReleaseTitle(cleanName);
+        if (tvRage != null) {
+            rageId = tvRage.getRageId();
+        } else {
+            cleanName = cleanName.replace(" and ", " & ");
+            tvRage = tvRageDAO.findByReleaseTitle(cleanName);
+            if (tvRage != null) {
+                rageId = tvRage.getRageId();
+            }
+        }
+        return rageId;
     }
 
     private void updateEpInfo(ShowInfo showInfo, Release release) {
@@ -360,6 +375,14 @@ public class TVRage {
 
     public void setCategoryDAO(CategoryDAO categoryDAO) {
         this.categoryDAO = categoryDAO;
+    }
+
+    public TvRageDAO getTvRageDAO() {
+        return tvRageDAO;
+    }
+
+    public void setTvRageDAO(TvRageDAO tvRageDAO) {
+        this.tvRageDAO = tvRageDAO;
     }
 
     private class ShowInfo{

@@ -252,4 +252,22 @@
         <property name="title" column="title"/>
         <property name="description" column="description"/>
     </class>
+
+    <class name="TvRage" table="tvrage">
+        <id name="id" column="ID">
+            <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+                <param name="prefer_sequence_per_entity">true</param>
+                <param name="optimizer">pooled</param>
+                <param name="initial_value">1</param>
+                <param name="increment_size">10</param>
+            </generator>
+        </id>
+        <property name="rageId" column="rageID"/>
+        <property name="tvdbId" column="tvdbID"/>
+        <property name="releaseTitle" column="releasetitle"/>
+        <property name="description" column="description"/>
+        <property name="genre" column="genre"/>
+        <property name="country" column="country"/>
+        <property name="createDate" column="createddate" type="date"/>
+    </class>
 </hibernate-mapping>

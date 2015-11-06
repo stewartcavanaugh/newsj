@@ -34,6 +34,7 @@ DROP SEQUENCE "RELEASENFO_SEQ";
 DROP SEQUENCE "RELEASEREGEX_SEQ";
 DROP SEQUENCE "RELEASE_SEQ";
 DROP SEQUENCE "SITE_SEQ";
+DROP SEQUENCE "TVRAGE_SEQ";
 --------------------------------------------------------
 --  DDL for Sequence BINARYBLACKLISTENTRY_SEQ
 --------------------------------------------------------
@@ -84,6 +85,11 @@ CREATE SEQUENCE  "RELEASE_SEQ"  MINVALUE 1 MAXVALUE 9999999999999999999999999999
 --------------------------------------------------------
 
 CREATE SEQUENCE  "SITE_SEQ"  MINVALUE 1 MAXVALUE 9999999999999999999999999999 INCREMENT BY 1 START WITH 2 CACHE 20 NOORDER  NOCYCLE ;
+
+CREATE SEQUENCE "TVRAGE_SEQ"
+MINVALUE 1
+INCREMENT BY 10
+START WITH 10101 CACHE 20;
 --------------------------------------------------------
 --  DDL for Table BINARIES
 --------------------------------------------------------

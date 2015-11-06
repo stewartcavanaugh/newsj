@@ -14,14 +14,21 @@
         http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
-    <context:property-placeholder/>
     <tx:annotation-driven transaction-manager="transactionManager"/>
 
-    <!--TODO move to properties config-->
-    <bean id="dataSource" class="oracle.jdbc.pool.OracleDataSource">
-        <property name="URL" value="jdbc:oracle:thin:@//localhost:1521/xe"/>
-        <property name="user" value="newsj"/>
-        <property name="password" value="password"/>
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="locations" value="classpath:db.properties"/>
+    </bean>
+
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+        <property name="driverClass" value="${newsj.db.driverClass}"/>
+        <property name="jdbcUrl" value="${newsj.db.jdbcUrl}"/>
+        <property name="user" value="${newsj.db.user}"/>
+        <property name="password" value="${newsj.db.password}"/>
+        <property name="initialPoolSize" value="2"/>
+        <property name="maxPoolSize" value="10"/>
+        <property name="minPoolSize" value="1"/>
+        <property name="acquireIncrement" value="1"/>
     </bean>
 
     <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
@@ -29,7 +36,6 @@
         <property name="mappingLocations" value="classpath:hibernate-mapping.xml"/>
         <property name="hibernateProperties">
             <props>
-                <prop key="dialect">org.hibernate.dialect.MySQLInnoDBDialect</prop>
                 <!--<prop key="show_sql">true</prop>
                 <prop key="format_sql">true</prop>-->
                 <prop key="hibernate.jdbc.batch_size">50</prop>
@@ -113,6 +119,10 @@
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
 
+    <bean id="tvRageDAO" class="net.longfalcon.newsj.persistence.hibernate.TvRageDAOImpl">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+
     <!-- Services -->
 
     <bean id="config" class="net.longfalcon.newsj.Config" init-method="init">
@@ -154,7 +164,7 @@
         <property name="categories" ref="category"/>
         <property name="nfo" ref="nfo"/>
         <property name="nzb" ref="nzb"/>
-        <property name="tvRage" ref="tvRage"/>
+        <property name="tvRageService" ref="tvRage"/>
         <property name="music" ref="music"/>
         <property name="games" ref="games"/>
         <property name="movieService" ref="movie"/>
@@ -203,9 +213,10 @@
     </bean>
     <bean id="games" class="net.longfalcon.newsj.Games"></bean>
     <bean id="music" class="net.longfalcon.newsj.Music"></bean>
-    <bean id="tvRage" class="net.longfalcon.newsj.TVRage">
+    <bean id="tvRage" class="net.longfalcon.newsj.TVRageService">
         <property name="categoryDAO" ref="categoryDAO"/>
         <property name="releaseDAO" ref="releaseDAO"/>
+        <property name="tvRageDAO" ref="tvRageDAO"/>
     </bean>
     <bean id="regexService" class="net.longfalcon.newsj.service.RegexService"/>
     <bean id="googleSearchService" class="net.longfalcon.newsj.service.GoogleSearchService">
