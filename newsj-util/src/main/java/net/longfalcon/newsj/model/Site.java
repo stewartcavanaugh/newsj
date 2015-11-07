@@ -18,12 +18,10 @@ public class Site {
     private String footer;
     private String email;
     private Date lastUpdate;
-    /*...google fields omitted...
-    * `google_adsense_search` VARCHAR(255) NULL,
-    * `google_adsense_sidepanel` VARCHAR(255) NULL,
-    * `google_analytics_acc` VARCHAR(255) NULL,
-    * `google_adsense_acc` VARCHAR(255) NULL,
-    */
+    private String googleAdSenseSearch;
+    private String googleAdSenseSidePanel;
+    private String googleAnalyticsAcc;
+    private String googleAdSenseAcc;
     private String siteSeed;
     private String tandc;
     private int registerStatus;
@@ -373,5 +371,37 @@ public class Site {
 
     public void setTmdbKey(String tmdbKey) {
         this.tmdbKey = tmdbKey;
+    }
+
+    public String getGoogleAdSenseSearch() {
+        return googleAdSenseSearch;
+    }
+
+    public void setGoogleAdSenseSearch(String googleAdSenseSearch) {
+        this.googleAdSenseSearch = googleAdSenseSearch;
+    }
+
+    public String getGoogleAdSenseSidePanel() {
+        return googleAdSenseSidePanel;
+    }
+
+    public void setGoogleAdSenseSidePanel(String googleAdSenseSidePanel) {
+        this.googleAdSenseSidePanel = googleAdSenseSidePanel;
+    }
+
+    public String getGoogleAnalyticsAcc() {
+        return googleAnalyticsAcc;
+    }
+
+    public void setGoogleAnalyticsAcc(String googleAnalyticsAcc) {
+        this.googleAnalyticsAcc = googleAnalyticsAcc;
+    }
+
+    public String getGoogleAdSenseAcc() {
+        return googleAdSenseAcc;
+    }
+
+    public void setGoogleAdSenseAcc(String googleAdSenseAcc) {
+        this.googleAdSenseAcc = googleAdSenseAcc;
     }
 }

@@ -60,10 +60,10 @@
         <!--<cache usage="read-only"/>-->
         <id name="id" column="ID">
             <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
-                <param name="prefer_sequence_per_entity">true</param>
+                <param name="hibernate_sequence">Newsj_SEQ</param>
                 <param name="optimizer">pooled</param>
                 <param name="initial_value">1</param>
-                <param name="increment_size">10</param>
+                <param name="increment_size">100</param>
             </generator>
         </id>
         <property name="parentId" column="parentID" not-null="false"/>
@@ -71,10 +71,81 @@
         <property name="title" column="title"/>
         <property name="description" column="description"/>
     </class>
-    <!-- TODO: CONSOLE INFO -->
-    <!-- TODO: CONTENT -->
-    <!-- TODO: FORUM POST -->
-    <!-- TODO: GENRES -->
+    <class name="ConsoleInfo" table="consoleinfo">
+        <id name="id" column="ID">
+            <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+                <param name="hibernate_sequence">Newsj_SEQ</param>
+                <param name="optimizer">pooled</param>
+                <param name="initial_value">1</param>
+                <param name="increment_size">100</param>
+            </generator>
+        </id>
+        <property name="title" column="title"/>
+        <property name="asin" column="asin"/>
+        <property name="url" column="url"/>
+        <property name="salesRank" column="salesrank"/>
+        <property name="platform" column="platform"/>
+        <property name="publisher" column="publisher"/>
+        <property name="genreId" column="genreID"/>
+        <property name="esrb" column="esrb"/>
+        <property name="releaseDate" column="releasedate"/>
+        <property name="review" column="review"/>
+        <property name="cover" column="cover"/>
+        <property name="createDate" column="createddate"/>
+        <property name="updateDate" column="updateddate"/>
+    </class>
+    <class name="Content" table="content">
+        <id name="id" column="ID">
+            <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+                <param name="hibernate_sequence">Newsj_SEQ</param>
+                <param name="optimizer">pooled</param>
+                <param name="initial_value">1</param>
+                <param name="increment_size">100</param>
+            </generator>
+        </id>
+        <property name="title" column="title"/>
+        <property name="url" column="url"/>
+        <property name="body" column="body"/>
+        <property name="metaDescription" column="metadescription"/>
+        <property name="metaKeywords" column="metakeywords"/>
+        <property name="contentType" column="contenttype"/>
+        <property name="showInMenu" column="showinmenu"/>
+        <property name="status" column="status"/>
+        <property name="ordinal" column="ordinal"/>
+        <property name="role" column="role"/>
+    </class>
+    <class name="ForumPost" table="forumpost">
+        <id name="id" column="ID">
+            <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+                <param name="hibernate_sequence">FORUMPOST_SEQ</param>
+                <param name="optimizer">pooled</param>
+                <param name="initial_value">1</param>
+                <param name="increment_size">100</param>
+            </generator>
+        </id>
+        <property name="forumId" column="forumID"/>
+        <property name="parentId" column="parentID"/>
+        <property name="userId" column="userID"/>
+        <property name="subject" column="subject"/>
+        <property name="message" column="message"/>
+        <property name="locked" column="locked"/>
+        <property name="sticky" column="sticky"/>
+        <property name="replies" column="replies"/>
+        <property name="createDate" column="createddate"/>
+        <property name="updateDate" column="updateddate"/>
+    </class>
+    <class name="Genre" table="genres">
+        <id name="id" column="ID">
+            <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+                <param name="hibernate_sequence">Newsj_SEQ</param>
+                <param name="optimizer">pooled</param>
+                <param name="initial_value">1</param>
+                <param name="increment_size">100</param>
+            </generator>
+        </id>
+        <property name="title" column="title"/>
+        <property name="type" column="type"/>
+    </class>
     <class name="Group" table="groups">
         <!--<cache usage="read-write"/>-->
         <id name="id" column="ID">
@@ -96,9 +167,71 @@
         <property name="active" column="active" type="java.lang.Boolean"/>
         <property name="description" column="description"/>
     </class>
-    <!--TODO: MENU -->
-    <!--TODO: MOVIEINFO-->
-    <!--TODO: MUSICINFO-->
+    <class name="MenuItem" table="menu">
+        <id name="id" column="ID">
+            <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+                <param name="hibernate_sequence">Newsj_SEQ</param>
+                <param name="optimizer">pooled</param>
+                <param name="initial_value">1</param>
+                <param name="increment_size">100</param>
+            </generator>
+        </id>
+        <property name="href" column="href"/>
+        <property name="title" column="title"/>
+        <property name="tooltip" column="tooltip"/>
+        <property name="role" column="role"/>
+        <property name="ordinal" column="ordinal"/>
+        <property name="menuEval" column="menueval"/>
+    </class>
+    <class name="MovieInfo" table="movieinfo">
+        <id name="id" column="ID">
+            <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+                <param name="hibernate_sequence">Newsj_SEQ</param>
+                <param name="optimizer">pooled</param>
+                <param name="initial_value">1</param>
+                <param name="increment_size">100</param>
+            </generator>
+        </id>
+        <property name="imdbId" column="imdbID"/>
+        <property name="tmdbId" column="tmdbID"/>
+        <property name="title" column="title"/>
+        <property name="tagline" column="tagline"/>
+        <property name="rating" column="rating"/>
+        <property name="plot" column="plot"/>
+        <property name="year" column="year"/>
+        <property name="genre" column="genre"/>
+        <property name="director" column="director"/>
+        <property name="actors" column="actors"/>
+        <property name="language" column="language"/>
+        <property name="cover" column="cover"/>
+        <property name="backdrop" column="backdrop"/>
+        <property name="createDate" column="createddate"/>
+        <property name="updateDate" column="updateddate"/>
+    </class>
+    <class name="MusicInfo" table="musicinfo">
+        <id name="id" column="ID">
+            <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+                <param name="hibernate_sequence">Newsj_SEQ</param>
+                <param name="optimizer">pooled</param>
+                <param name="initial_value">1</param>
+                <param name="increment_size">100</param>
+            </generator>
+        </id>
+        <property name="title" column="title"/>
+        <property name="asin" column="asin"/>
+        <property name="url" column="url"/>
+        <property name="salesRank" column="salesrank"/>
+        <property name="artist" column="artist"/>
+        <property name="publisher" column="publisher"/>
+        <property name="releaseDate" column="releasedate"/>
+        <property name="review" column="review"/>
+        <property name="year" column="year"/>
+        <property name="genreId" column="genreID"/>
+        <property name="tracks" column="tracks"/>
+        <property name="cover" column="cover"/>
+        <property name="createDate" column="createddate"/>
+        <property name="updateDate" column="updateddate"/>
+    </class>
     <class name="PartRepair" table="partrepair">
         <id name="id" column="ID">
             <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
@@ -132,7 +265,21 @@
         <property name="size" column="size_"/>
         <property name="dateAdded" column="dateadded" type="timestamp"/>
     </class>
-    <!--TODO: RELEASECOMMENT-->
+    <class name="ReleaseComment" table="releasecomment">
+        <id name="id" column="ID">
+            <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+                <param name="hibernate_sequence">RELEASECOMMENT_SEQ</param>
+                <param name="optimizer">pooled</param>
+                <param name="initial_value">1</param>
+                <param name="increment_size">100</param>
+            </generator>
+        </id>
+        <property name="releaseId" column="releaseID"/>
+        <property name="text" column="text"/>
+        <property name="userId" column="userID"/>
+        <property name="createDate" column="createddate"/>
+        <property name="host" column="host"/>
+    </class>
     <class name="ReleaseNfo" table="releasenfo">
         <id name="id" column="ID">
             <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
@@ -204,10 +351,10 @@
         <!--<cache usage="read-write"/>-->
         <id name="id" column="id">
             <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
-                <param name="prefer_sequence_per_entity">true</param>
+                <param name="hibernate_sequence">Newsj_SEQ</param>
                 <param name="optimizer">pooled</param>
-                <param name="initial_value">2</param>
-                <param name="increment_size">1</param>
+                <param name="initial_value">1</param>
+                <param name="increment_size">100</param>
             </generator>
         </id>
         <property name="code" column="code"/>
@@ -223,9 +370,11 @@
         <property name="registerStatus" column="registerstatus"/>
         <property name="style" column="style"/>
         <property name="menuPosition" column="menuposition"/>
-        <!-- TODO: FILL IN WITH REST OF COLUMNS -->
+        <property name="googleAdSenseAcc" column="google_adsense_acc"/>
+        <property name="googleAdSenseSearch" column="google_adsense_search"/>
+        <property name="googleAdSenseSidePanel" column="google_adsense_sidepanel"/>
+        <property name="googleAnalyticsAcc" column="google_analytics_acc"/>
         <property name="nzbPath" column="nzbpath"/>
-        <!---->
         <property name="compressedHeaders" column="compressedheaders" type="java.lang.Boolean"/>
         <property name="maxMessages" column="maxmssgs"/>
         <property name="newGroupsScanMethod" column="newgroupscanmethod"/>
@@ -255,10 +404,10 @@
     <class name="TvRage" table="tvrage">
         <id name="id" column="ID">
             <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
-                <param name="prefer_sequence_per_entity">true</param>
+                <param name="hibernate_sequence">Newsj_SEQ</param>
                 <param name="optimizer">pooled</param>
                 <param name="initial_value">1</param>
-                <param name="increment_size">10</param>
+                <param name="increment_size">100</param>
             </generator>
         </id>
         <property name="rageId" column="rageID"/>
@@ -269,8 +418,70 @@
         <property name="country" column="country"/>
         <property name="createDate" column="createddate" type="date"/>
     </class>
-    <!--TODO: USERCART-->
-    <!--TODO: USEREXCAT-->
-    <!--TODO: USERINVITE-->
-    <!--TODO: USERS-->
+    <class name="UserCart" table="usercart">
+        <id name="id" column="ID">
+            <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+                <param name="hibernate_sequence">Newsj_SEQ</param>
+                <param name="optimizer">pooled</param>
+                <param name="initial_value">1</param>
+                <param name="increment_size">100</param>
+            </generator>
+        </id>
+        <property name="userId" column="userID"/>
+        <property name="releaseId" column="releaseID"/>
+        <property name="createDate" column="createddate"/>
+    </class>
+    <class name="UserExCat" table="userexcat">
+        <id name="id" column="ID">
+            <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+                <param name="hibernate_sequence">Newsj_SEQ</param>
+                <param name="optimizer">pooled</param>
+                <param name="initial_value">1</param>
+                <param name="increment_size">100</param>
+            </generator>
+        </id>
+        <property name="userId" column="userID"/>
+        <property name="categoryId" column="categoryID"/>
+        <property name="createDate" column="createddate"/>
+    </class>
+    <class name="UserInvite" table="userinvite">
+        <id name="id" column="ID">
+            <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+                <param name="hibernate_sequence">Newsj_SEQ</param>
+                <param name="optimizer">pooled</param>
+                <param name="initial_value">1</param>
+                <param name="increment_size">100</param>
+            </generator>
+        </id>
+        <property name="userId" column="userID"/>
+        <property name="guid" column="guid"/>
+        <property name="createDate" column="createddate"/>
+    </class>
+    <class name="User" table="users">
+        <id name="id" column="ID">
+            <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+                <param name="hibernate_sequence">USER_SEQ</param>
+                <param name="optimizer">pooled</param>
+                <param name="initial_value">1</param>
+                <param name="increment_size">100</param>
+            </generator>
+        </id>
+        <property name="username" column="username"/>
+        <property name="email"column="email"/>
+        <property name="password" column="password"/>
+        <property name="role" column="role"/>
+        <property name="host" column="host"/>
+        <property name="grabs" column="grabs"/>
+        <property name="rssToken" column="rsstoken"/>
+        <property name="createDate" column="createddate"/>
+        <property name="resetGuid" column="resetguid"/>
+        <property name="lastLogin" column="lastlogin"/>
+        <property name="apiAccess" column="apiaccess"/>
+        <property name="invites" column="invites"/>
+        <property name="invitedBy" column="invitedby"/>
+        <property name="movieView" column="movieview"/>
+        <property name="musicView" column="musicview"/>
+        <property name="consoleView" column="consoleview"/>
+        <property name="userseed" column="userseed"/>
+    </class>
 </hibernate-mapping>

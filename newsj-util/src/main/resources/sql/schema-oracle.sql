@@ -26,15 +26,16 @@ DROP TABLE "USERINVITE" cascade constraints;
 DROP TABLE "USERS" cascade constraints;
 DROP SEQUENCE "BINARYBLACKLISTENTRY_SEQ";
 DROP SEQUENCE "BINARY_SEQ";
-DROP SEQUENCE "CATEGORY_SEQ";
+DROP SEQUENCE "FORUMPOST_SEQ";
 DROP SEQUENCE "GROUP_SEQ";
+DROP SEQUENCE "NEWSJ_SEQ";
 DROP SEQUENCE "PARTREPAIR_SEQ";
 DROP SEQUENCE "PART_SEQ";
+DROP SEQUENCE "RELEASECOMMENT_SEQ";
 DROP SEQUENCE "RELEASENFO_SEQ";
 DROP SEQUENCE "RELEASEREGEX_SEQ";
 DROP SEQUENCE "RELEASE_SEQ";
-DROP SEQUENCE "SITE_SEQ";
-DROP SEQUENCE "TVRAGE_SEQ";
+DROP SEQUENCE "USER_SEQ";
 --------------------------------------------------------
 --  DDL for Sequence BINARYBLACKLISTENTRY_SEQ
 --------------------------------------------------------
@@ -50,12 +51,12 @@ CREATE SEQUENCE  "BINARY_SEQ"
 MINVALUE 1 MAXVALUE 9999999999999999999999999999
 INCREMENT BY 100 START WITH 1 CACHE 20 NOORDER  NOCYCLE ;
 --------------------------------------------------------
---  DDL for Sequence CATEGORY_SEQ
+--  DDL for Sequence FORUMPOST_SEQ
 --------------------------------------------------------
 
-CREATE SEQUENCE  "CATEGORY_SEQ"
+CREATE SEQUENCE  "FORUMPOST_SEQ"
 MINVALUE 1 MAXVALUE 9999999999999999999999999999
-INCREMENT BY 10 START WITH 101 CACHE 20 NOORDER  NOCYCLE ;
+INCREMENT BY 100 START WITH 101 CACHE 20 NOORDER  NOCYCLE ;
 --------------------------------------------------------
 --  DDL for Sequence GROUP_SEQ
 --------------------------------------------------------
@@ -63,6 +64,14 @@ INCREMENT BY 10 START WITH 101 CACHE 20 NOORDER  NOCYCLE ;
 CREATE SEQUENCE  "GROUP_SEQ"
 MINVALUE 1 MAXVALUE 9999999999999999999999999999
 INCREMENT BY 100 START WITH 101 CACHE 20 NOORDER  NOCYCLE ;
+--------------------------------------------------------
+--  DDL for Sequence NEWSJ_SEQ
+--------------------------------------------------------
+
+CREATE SEQUENCE "NEWSJ_SEQ"
+MINVALUE 1
+INCREMENT BY 100
+START WITH 10301 CACHE 20;
 --------------------------------------------------------
 --  DDL for Sequence PARTREPAIR_SEQ
 --------------------------------------------------------
@@ -77,6 +86,13 @@ INCREMENT BY 100 START WITH 1 CACHE 20 NOORDER  NOCYCLE ;
 CREATE SEQUENCE  "PART_SEQ"
 MINVALUE 1 MAXVALUE 9999999999999999999999999999
 INCREMENT BY 1000 START WITH 1 CACHE 20 NOORDER  NOCYCLE ;
+--------------------------------------------------------
+--  DDL for Sequence RELEASECOMMENT_SEQ
+--------------------------------------------------------
+
+CREATE SEQUENCE  "RELEASECOMMENT_SEQ"
+MINVALUE 1 MAXVALUE 9999999999999999999999999999
+INCREMENT BY 100 START WITH 1 CACHE 20 NOORDER  NOCYCLE ;
 --------------------------------------------------------
 --  DDL for Sequence RELEASENFO_SEQ
 --------------------------------------------------------
@@ -99,17 +115,13 @@ CREATE SEQUENCE  "RELEASE_SEQ"
 MINVALUE 1 MAXVALUE 9999999999999999999999999999
 INCREMENT BY 100 START WITH 1 CACHE 20 NOORDER  NOCYCLE ;
 --------------------------------------------------------
---  DDL for Sequence SITE_SEQ
+--  DDL for Sequence USER_SEQ
 --------------------------------------------------------
 
-CREATE SEQUENCE  "SITE_SEQ"
-MINVALUE 1 MAXVALUE 9999999999999999999999999999
-INCREMENT BY 1 START WITH 2 CACHE 20 NOORDER  NOCYCLE ;
-
-CREATE SEQUENCE "TVRAGE_SEQ"
+CREATE SEQUENCE "USER_SEQ"
 MINVALUE 1
-INCREMENT BY 10
-START WITH 10101 CACHE 20;
+INCREMENT BY 100
+START WITH 1 CACHE 20;
 --------------------------------------------------------
 --  DDL for Table BINARIES
 --------------------------------------------------------
