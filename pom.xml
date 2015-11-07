@@ -4,13 +4,42 @@
   <groupId>net.longfalcon</groupId>
   <artifactId>newsj</artifactId>
   <version>0.1</version>
+  <packaging>pom</packaging>
+
+  <name>newsj</name>
+    <url>https://github.com/stewartcavanaugh/newsj</url>
+  <description>Java Newznab server</description>
+
+  <licenses>
+    <license>
+      <name>GNU General Public License, Version 3</name>
+      <url>http://www.gnu.org/licenses/gpl.html</url>
+      <distribution>manual</distribution>
+    </license>
+  </licenses>
+
+  <developers>
+    <developer>
+      <id>longfalcon</id>
+      <email>longfalcon@gmail.com</email>
+      <name>Sten Martinez</name>
+      <roles>
+        <role>architect</role>
+        <role>developer</role>
+      </roles>
+      <timezone>America/Los_Angeles</timezone>
+    </developer>
+  </developers>
+
+  <scm>
+    <url>scm:git:git@github.com:stewartcavanaugh/newsj.git</url>
+    <connection>scm:git:git@github.com:stewartcavanaugh/newsj.git</connection>
+  </scm>
+
   <properties>
     <spring-framework.version>4.1.1.RELEASE</spring-framework.version>
     <jackson.version>2.6.0</jackson.version>
   </properties>
-
-  <packaging>pom</packaging>
-  <name>newsj</name>
 
   <modules>
     <module>newsj-util</module>
