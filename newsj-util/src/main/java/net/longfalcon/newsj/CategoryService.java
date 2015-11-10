@@ -18,14 +18,20 @@
 
 package net.longfalcon.newsj;
 
+import net.longfalcon.newsj.model.Category;
 import net.longfalcon.newsj.model.Group;
+import net.longfalcon.newsj.persistence.CategoryDAO;
 import net.longfalcon.newsj.persistence.GroupDAO;
+import net.longfalcon.newsj.persistence.UserExCatDAO;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.joda.time.Period;
 import org.joda.time.format.PeriodFormat;
 import org.joda.time.format.PeriodFormatter;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -34,7 +40,7 @@ import java.util.regex.Pattern;
  * Date: 10/14/15
  * Time: 9:15 AM
  */
-public class Categories {
+public class CategoryService {
 
     public static final int CAT_GAME_NDS = 1010;
     public static final int CAT_GAME_PSP = 1020;
@@ -83,11 +89,33 @@ public class Categories {
     public static final int STATUS_ACTIVE = 1;
 
     private static PeriodFormatter _periodFormatter = PeriodFormat.getDefault();
-    private static final Log _log = LogFactory.getLog(Categories.class);
+    private static final Log _log = LogFactory.getLog(CategoryService.class);
 
     private static int tmpCat = 0;
 
     private GroupDAO groupDAO;
+    private CategoryDAO categoryDAO;
+    private UserExCatDAO userExCatDAO;
+
+    public List<Category> getCategoriesForMenu(long userId) {
+        List<Integer> userExCatIdsList = userExCatDAO.getUserExCatIds(userId);
+        Set<Integer> userExcludedCategoryIds = new HashSet<>(userExCatIdsList);
+
+        List<Category> categoryList = categoryDAO.getForMenu(userExcludedCategoryIds);
+        for (Category category : categoryList) {
+            category.setSubCategories(getSubCategories(userExcludedCategoryIds, category.getId()));
+        }
+
+        return categoryList;
+    }
+
+    private List<Category> getSubCategories(Set<Integer> userExcludedCategoryIds, int parentId) {
+        List<Category> categoryList = categoryDAO.getForMenu(userExcludedCategoryIds, parentId);
+        for (Category category : categoryList) {
+            category.setSubCategories(getSubCategories(userExcludedCategoryIds, category.getId()));
+        }
+        return categoryList;
+    }
 
     //
     // Work out which category is applicable for either a group or a binary.
@@ -587,5 +615,21 @@ public class Categories {
 
     public void setGroupDAO(GroupDAO groupDAO) {
         this.groupDAO = groupDAO;
+    }
+
+    public CategoryDAO getCategoryDAO() {
+        return categoryDAO;
+    }
+
+    public void setCategoryDAO(CategoryDAO categoryDAO) {
+        this.categoryDAO = categoryDAO;
+    }
+
+    public UserExCatDAO getUserExCatDAO() {
+        return userExCatDAO;
+    }
+
+    public void setUserExCatDAO(UserExCatDAO userExCatDAO) {
+        this.userExCatDAO = userExCatDAO;
     }
 }

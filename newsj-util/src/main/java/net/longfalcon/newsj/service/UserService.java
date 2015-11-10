@@ -16,36 +16,30 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package net.longfalcon.newsj.persistence.hibernate;
-
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;
+package net.longfalcon.newsj.service;
 
 /**
  * User: Sten Martinez
- * Date: 10/5/15
- * Time: 5:16 PM
+ * Date: 11/9/15
+ * Time: 2:38 PM
  */
-public class DB {
-    private SessionFactory sessionFactory;
+public class UserService {
+    public static int ERR_SIGNUP_BADUNAME = -1;
+    public static int ERR_SIGNUP_BADPASS = -2;
+    public static int ERR_SIGNUP_BADEMAIL = -3;
+    public static int ERR_SIGNUP_UNAMEINUSE = -4;
+    public static int ERR_SIGNUP_EMAILINUSE = -5;
+    public static int ERR_SIGNUP_BADINVITECODE = -6;
+    public static int SUCCESS = 1;
 
-    public void init() {
+    public static int ROLE_GUEST = 0;
+    public static int ROLE_USER = 1;
+    public static int ROLE_ADMIN = 2;
+    public static int ROLE_DISABLED = 3;
 
-        // A SessionFactory is set up once for an application
-        sessionFactory = new Configuration()
-                .configure() // configures settings from hibernate.cfg.xml
-                .buildSessionFactory();
+    public static int DEFAULT_INVITES = 1;
+    public static int DEFAULT_INVITE_EXPIRY_DAYS = 7;
 
-    }
-
-    public void destroy() {
-        if ( sessionFactory != null ) {
-            sessionFactory.close();
-        }
-    }
-
-    public Session getSession() {
-         return sessionFactory.openSession();
-    }
+    public static int SALTLEN = 4;
+    public static int SHA1LEN = 40;
 }

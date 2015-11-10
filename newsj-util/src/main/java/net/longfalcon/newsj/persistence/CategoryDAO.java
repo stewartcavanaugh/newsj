@@ -19,8 +19,12 @@
 package net.longfalcon.newsj.persistence;
 
 import net.longfalcon.newsj.model.Category;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * User: Sten Martinez
@@ -31,4 +35,9 @@ public interface CategoryDAO {
     Category findByCategoryId(int categoryId);
 
     List<Category> findByParentId(int parentId);
+
+    List<Category> getForMenu(Set<Integer> userExcludedCategoryIds);
+
+    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
+    List<Category> getForMenu(Set<Integer> userExcludedCategoryIds, Integer parentId);
 }

@@ -27,6 +27,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * User: Sten Martinez
@@ -52,5 +53,23 @@ public class CategoryDAOImpl extends HibernateDAOImpl implements net.longfalcon.
         criteria.add(Restrictions.eq("parentId", parentId));
 
         return criteria.list();
+    }
+
+    @Override
+    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
+    public List<Category> getForMenu(Set<Integer> userExcludedCategoryIds, Integer parentId) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Category.class);
+        if (!userExcludedCategoryIds.isEmpty()) {
+            criteria.add(Restrictions.not(Restrictions.in("id", userExcludedCategoryIds)));
+        }
+        criteria.add(parentId == null ? Restrictions.isNull("parentId") : Restrictions.eq("parentId", parentId));
+
+        return criteria.list();
+    }
+
+    @Override
+    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
+    public List<Category> getForMenu(Set<Integer> userExcludedCategoryIds) {
+        return getForMenu(userExcludedCategoryIds, null);
     }
 }

@@ -18,11 +18,15 @@
 
 package net.longfalcon.newsj.persistence;
 
-import net.longfalcon.newsj.model.ReleaseRegex;
+import net.longfalcon.newsj.CategoryService;
+import net.longfalcon.newsj.model.Category;
+import net.longfalcon.newsj.util.ArrayUtil;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import java.util.List;
 
 /**
  * User: Sten Martinez
@@ -30,16 +34,17 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * Time: 3:15 PM
  */
 public class DaoTester {
+    private long userId = -1L;
 
     @Test
     @Ignore
     public void testDAO(){
         ApplicationContext context =
                 new ClassPathXmlApplicationContext(new String[] {"application-context.xml"});
-        ReleaseRegexDAO releaseRegexDAO = (ReleaseRegexDAO) context.getBean("releaseRegexDAO");
-        ReleaseRegex releaseRegex = releaseRegexDAO.findById(643);
+        CategoryService categoryService = (CategoryService) context.getBean("categoryService");
+        List<Category> categoriesList = categoryService.getCategoriesForMenu(0);
 
 
-        System.out.println("regex: " + releaseRegex.getRegex());
+        System.out.println("cats: " + ArrayUtil.stringify(categoriesList, "\n"));
     }
 }

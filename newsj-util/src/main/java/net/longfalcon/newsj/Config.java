@@ -18,8 +18,11 @@
 
 package net.longfalcon.newsj;
 
+import net.longfalcon.newsj.model.Site;
+import net.longfalcon.newsj.persistence.SiteDAO;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.joda.time.DateTime;
 import org.springframework.core.io.Resource;
 
 import java.io.IOException;
@@ -34,13 +37,11 @@ public class Config {
     private static final String _RELEASE_VERSION = "0.1";
     private static final Log _log = LogFactory.getLog(Config.class);
 
-/*    private String nntpServer;
-    private String nntpUserName;
-    private String nntpPassword;
-    private String nntpPort;
-    private Boolean nntpSslEnabled;*/
+    private SiteDAO siteDAO;
+
     private Resource[] propertyLocations;
     Properties properties;
+    private Site defaultSite;
 
     public void init() {
         properties = new Properties();
@@ -51,6 +52,7 @@ public class Config {
                 _log.error("Unable to read from resource " + resource.getFilename());
             }
         }
+        defaultSite = siteDAO.getDefaultSite();
     }
 
     public static String getReleaseVersion() {
@@ -79,5 +81,25 @@ public class Config {
 
     public Boolean getNntpSslEnabled() {
         return "true".equals(properties.getProperty(PropsKeys.NNTP_SSLENABLED));
+    }
+
+    public int getYear() {
+        DateTime dateTime = DateTime.now();
+        return dateTime.getYear();
+    }
+
+    public Site getDefaultSite() {
+        if (defaultSite == null) {
+            defaultSite = siteDAO.getDefaultSite();
+        }
+        return defaultSite;
+    }
+
+    public SiteDAO getSiteDAO() {
+        return siteDAO;
+    }
+
+    public void setSiteDAO(SiteDAO siteDAO) {
+        this.siteDAO = siteDAO;
     }
 }

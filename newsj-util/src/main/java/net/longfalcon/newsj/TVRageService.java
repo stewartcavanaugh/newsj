@@ -53,7 +53,7 @@ public class TVRageService {
     private TvRageDAO tvRageDAO;
 
     public void processTvReleases(boolean lookupTvRage) {
-        List<Category> movieCats = categoryDAO.findByParentId(Categories.CAT_PARENT_TV);
+        List<Category> movieCats = categoryDAO.findByParentId(CategoryService.CAT_PARENT_TV);
         List<Integer> ids = new ArrayList<>();
         for (Category category : movieCats) {
             ids.add(category.getId());
