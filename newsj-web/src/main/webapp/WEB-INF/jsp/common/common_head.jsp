@@ -22,7 +22,6 @@
   Date: 11/7/15
   Time: 6:42 AM
 --%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 <meta name="keywords" content="${pageMetaKeywords},${site.metaKeywords}" />
