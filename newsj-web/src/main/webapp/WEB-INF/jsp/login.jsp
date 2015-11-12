@@ -24,6 +24,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <%@ include file="common/common_head.jsp"%>
@@ -59,7 +60,7 @@
                 <div class="error">${error}</div>
             </c:if>
 
-            <form:form action="login" method="post">
+            <form:form modelAttribute="loginForm"  action="login" method="post">
                 <form:input type="hidden" name="redirect" value="${redirect}" path="redirect"/>
                 <table class="data">
                     <tr>
@@ -76,7 +77,7 @@
                     </tr>
                     <tr>
                         <th><label for="rememberme">Remember Me</label>:</th>
-                        <td><form:input id="rememberme" path="rememberMe" name="rememberme" type="checkbox" <c:if test="${rememberMe}">checked="checked"</c:if>/></td>
+                        <td><form:checkbox id="rememberme" path="rememberMe" name="rememberme" /></td>
                     <tr>
                         <th></th>
                         <td><input type="submit" value="Login"/></td>

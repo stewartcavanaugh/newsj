@@ -53,6 +53,8 @@ public class LoginController extends BaseController {
         String password = loginVO.getPassword();
         String host = httpServletRequest.getRemoteHost();
         boolean rememberMe = loginVO.isRememberMe();
+        loginVO.setPassword("");
+        model.addAttribute("loginForm", loginVO);
 
         if (ValidatorUtil.isNull(username) || ValidatorUtil.isNull(password)) {
             model.addAttribute("error", "Please enter your username and password.");
@@ -80,6 +82,8 @@ public class LoginController extends BaseController {
                     _log.error("I dont know if redirects work yet, redirect: " + redirect);
                     // return "redirect:"+redirect;
                 }
+                model.asMap().clear();
+                return "redirect:/";
             } else {
                 model.addAttribute("error", "Incorrect username or password.");
             }

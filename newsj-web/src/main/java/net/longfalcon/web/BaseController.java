@@ -68,6 +68,7 @@ public class BaseController {
     private long userId;
     private int roleId;
     private boolean isLoggedIn;
+    private boolean isAdmin;
 
     @ModelAttribute
     public void populateModel(Model model, HttpSession httpSession, NativeWebRequest nativeWebRequest,
@@ -82,6 +83,7 @@ public class BaseController {
 
         boolean sabEnabled = false;
         isLoggedIn = false;
+        isAdmin = false;
         userId = 0;
         roleId = UserService.ROLE_GUEST;
         String userIdString = null;
@@ -96,6 +98,9 @@ public class BaseController {
                     rssToken = user.getRssToken();
                     roleId = user.getRole();
                     isLoggedIn = true;
+                    if (roleId == UserService.ROLE_ADMIN) {
+                        isAdmin = true;
+                    }
                     model.addAttribute("userData", _getUserData(user));
                     String sabCookieName = "sabnzbd_" + String.valueOf(userId) + "__apikey";
                     sabEnabled = isCookieSet(sabCookieName, nativeWebRequest);
@@ -111,6 +116,7 @@ public class BaseController {
         model.addAttribute("rssToken", rssToken);
         model.addAttribute("userId", userIdString);
         model.addAttribute("loggedIn", isLoggedIn);
+        model.addAttribute("isAdmin", isAdmin);
         model.addAttribute("headerMenuCat", categoryId);
         model.addAttribute("headerMenuSearch", searchStr);
         model.addAttribute("menuItems", menuService.getMenuItems(roleId, sabEnabled));
@@ -226,5 +232,13 @@ public class BaseController {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public boolean isAdmin() {
+        return isAdmin;
+    }
+
+    public void setIsAdmin(boolean isAdmin) {
+        this.isAdmin = isAdmin;
     }
 }
