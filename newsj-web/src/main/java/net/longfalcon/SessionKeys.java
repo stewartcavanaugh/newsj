@@ -26,5 +26,5 @@ package net.longfalcon;
 public class SessionKeys {
 
     public static final String USER_ID = "USER_ID";
-
+    public static final String UID = "uid";
 }

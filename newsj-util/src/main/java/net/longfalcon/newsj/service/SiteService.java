@@ -16,23 +16,15 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package net.longfalcon.newsj.persistence;
-
-import net.longfalcon.newsj.model.User;
+package net.longfalcon.newsj.service;
 
 /**
  * User: Sten Martinez
- * Date: 11/7/15
- * Time: 1:29 PM
+ * Date: 11/10/15
+ * Time: 8:22 PM
  */
-public interface UserDAO {
-    void update(User user);
-
-    void delete(User user);
-
-    User findByUserId(long userId);
-
-    User findByUsername(String username);
-
-    User findByEmail(String email);
+public class SiteService {
+    public static int REGISTER_STATUS_OPEN = 0;
+    public static int REGISTER_STATUS_INVITE = 1;
+    public static int REGISTER_STATUS_CLOSED = 2;
 }

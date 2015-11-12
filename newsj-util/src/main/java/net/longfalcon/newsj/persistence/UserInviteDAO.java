@@ -18,21 +18,21 @@
 
 package net.longfalcon.newsj.persistence;
 
-import net.longfalcon.newsj.model.User;
+import net.longfalcon.newsj.model.UserInvite;
+
+import java.util.Date;
 
 /**
  * User: Sten Martinez
- * Date: 11/7/15
- * Time: 1:29 PM
+ * Date: 11/10/15
+ * Time: 10:20 PM
  */
-public interface UserDAO {
-    void update(User user);
+public interface UserInviteDAO {
+    void update(UserInvite userInvite);
 
-    void delete(User user);
+    void delete(UserInvite userInvite);
 
-    User findByUserId(long userId);
+    void cleanOldInvites(Date expireDate);
 
-    User findByUsername(String username);
-
-    User findByEmail(String email);
+    UserInvite getInviteByGuid(String guid);
 }

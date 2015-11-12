@@ -390,7 +390,7 @@
         <property name="newGroupsScanMethod" column="newgroupscanmethod"/>
         <property name="newGroupDaysToScan" column="newgroupdaystoscan"/>
         <property name="newGroupMsgsToScan" column="newgroupmsgstoscan"/>
-        <property name="storeUserRips" column="storeuserips"/>
+        <property name="storeUserIps" column="storeuserips"/>
         <property name="minFilesToFormRelease" column="minfilestoformrelease"/>
         <property name="latestRegexUrl" column="latestregexurl"/>
         <property name="latestRegexRevision" column="latestregexrevision"/>

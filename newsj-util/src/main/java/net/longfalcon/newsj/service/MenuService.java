@@ -20,6 +20,7 @@ package net.longfalcon.newsj.service;
 
 import net.longfalcon.newsj.model.MenuItem;
 import net.longfalcon.newsj.persistence.MenuItemDAO;
+import org.springframework.stereotype.Service;
 
 import java.util.Iterator;
 import java.util.List;
@@ -29,6 +30,7 @@ import java.util.List;
  * Date: 11/9/15
  * Time: 2:39 PM
  */
+@Service
 public class MenuService {
     private MenuItemDAO menuItemDAO;
 

@@ -18,48 +18,42 @@
 
 package net.longfalcon.newsj.service;
 
-import net.longfalcon.newsj.model.Content;
-import net.longfalcon.newsj.persistence.ContentDAO;
+import net.longfalcon.newsj.model.UserInvite;
+import net.longfalcon.newsj.persistence.UserInviteDAO;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.joda.time.DateTime;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * User: Sten Martinez
  * Date: 11/10/15
- * Time: 11:24 AM
+ * Time: 10:02 PM
  */
 @Service
-public class ContentService {
-    public static int TYPEUSEFUL = 1;
-    public static int TYPEARTICLE = 2;
-    public static int TYPEINDEX = 3;
+public class UserInviteService {
+    private static final Log _log = LogFactory.getLog(UserInviteService.class);
 
-    private static final Log _log = LogFactory.getLog(ContentService.class);
+    private UserInviteDAO userInviteDAO;
 
-    private ContentDAO contentDAO;
+    @Transactional
+    public UserInvite getInvite(String inviteToken) {
 
-    public List<Content> getForMenuByTypeAndRole(int type, int roleId) {
-        return contentDAO.findByTypeAndRole(type, roleId, (roleId == UserService.ROLE_ADMIN));
+        // TODO: move this to a daily job
+        DateTime expireDate = new DateTime();
+        expireDate.minusDays(UserService.DEFAULT_INVITE_EXPIRY_DAYS);
+
+        userInviteDAO.cleanOldInvites(expireDate.toDate());
+
+        return userInviteDAO.getInviteByGuid(inviteToken);
     }
 
-    public Content getIndex() {
-        List<Content> indexContents = contentDAO.findByTypeAndRole(TYPEINDEX, UserService.ROLE_GUEST);
-        if (!indexContents.isEmpty()) {
-            return indexContents.get(0);
-        }
-
-        return null;
+    public UserInviteDAO getUserInviteDAO() {
+        return userInviteDAO;
     }
 
-    public ContentDAO getContentDAO() {
-        return contentDAO;
+    public void setUserInviteDAO(UserInviteDAO userInviteDAO) {
+        this.userInviteDAO = userInviteDAO;
     }
-
-    public void setContentDAO(ContentDAO contentDAO) {
-        this.contentDAO = contentDAO;
-    }
-
 }

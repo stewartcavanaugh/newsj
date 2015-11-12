@@ -16,23 +16,30 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package net.longfalcon.newsj.persistence;
+package net.longfalcon.web;
 
-import net.longfalcon.newsj.model.User;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * User: Sten Martinez
- * Date: 11/7/15
- * Time: 1:29 PM
+ * Date: 11/10/15
+ * Time: 5:46 PM
  */
-public interface UserDAO {
-    void update(User user);
+@Controller
+public class ErrorController {
 
-    void delete(User user);
+    @RequestMapping("/error")
+    public String handle(HttpServletRequest request, Model model) {
 
-    User findByUserId(long userId);
+        model.addAttribute("status", request.getAttribute("javax.servlet.error.status_code"));
+        model.addAttribute("reason", request.getAttribute("javax.servlet.error.message"));
+        model.addAttribute("request_uri", request.getAttribute("javax.servlet.error.request_uri"));
 
-    User findByUsername(String username);
+        return "error";
+    }
 
-    User findByEmail(String email);
 }

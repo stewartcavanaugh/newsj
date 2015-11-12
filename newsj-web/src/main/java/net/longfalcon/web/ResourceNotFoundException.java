@@ -16,23 +16,16 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package net.longfalcon.newsj.persistence;
+package net.longfalcon.web;
 
-import net.longfalcon.newsj.model.User;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
  * User: Sten Martinez
- * Date: 11/7/15
- * Time: 1:29 PM
+ * Date: 11/10/15
+ * Time: 5:53 PM
  */
-public interface UserDAO {
-    void update(User user);
-
-    void delete(User user);
-
-    User findByUserId(long userId);
-
-    User findByUsername(String username);
-
-    User findByEmail(String email);
+@ResponseStatus(value = HttpStatus.NOT_FOUND)
+public class ResourceNotFoundException extends RuntimeException {
 }

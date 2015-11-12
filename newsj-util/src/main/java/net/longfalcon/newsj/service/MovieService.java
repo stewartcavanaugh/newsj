@@ -30,6 +30,7 @@ import net.longfalcon.newsj.ws.GoogleSearchResult;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +50,7 @@ public class MovieService {
     private CategoryDAO categoryDAO;
     private GoogleSearchService googleSearchService;
 
+    @Transactional
     public void processMovieReleases() {
         List<Category> movieCats = categoryDAO.findByParentId(CategoryService.CAT_PARENT_MOVIE);
         List<Integer> ids = new ArrayList<>();

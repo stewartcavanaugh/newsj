@@ -157,6 +157,10 @@
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
 
+    <bean id="userInviteDAO" class="net.longfalcon.newsj.persistence.hibernate.UserInviteDAOImpl">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+
     <!-- Services -->
 
     <bean id="config" class="net.longfalcon.newsj.Config" init-method="init">
@@ -262,7 +266,14 @@
     <bean id="menuService" class="net.longfalcon.newsj.service.MenuService">
         <property name="menuItemDAO" ref="menuItemDAO"/>
     </bean>
-    <bean class="net.longfalcon.newsj.service.ContentService">
+    <bean id="contentService" class="net.longfalcon.newsj.service.ContentService">
         <property name="contentDAO" ref="contentDAO"/>
+    </bean>
+    <bean id="userInviteService" class="net.longfalcon.newsj.service.UserInviteService">
+        <property name="userInviteDAO" ref="userInviteDAO"/>
+    </bean>
+    <bean id="userService" class="net.longfalcon.newsj.service.UserService">
+        <property name="userDAO" ref="userDAO"/>
+        <property name="userInviteDAO" ref="userInviteDAO"/>
     </bean>
 </beans>

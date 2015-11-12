@@ -18,55 +18,49 @@
 
 package net.longfalcon.newsj.persistence.hibernate;
 
-import net.longfalcon.newsj.model.User;
+import net.longfalcon.newsj.model.UserInvite;
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
+
 /**
  * User: Sten Martinez
- * Date: 11/7/15
- * Time: 1:22 PM
+ * Date: 11/10/15
+ * Time: 10:06 PM
  */
-public class UserDAOImpl extends HibernateDAOImpl implements net.longfalcon.newsj.persistence.UserDAO {
+public class UserInviteDAOImpl extends HibernateDAOImpl implements net.longfalcon.newsj.persistence.UserInviteDAO {
     @Override
     @Transactional
-    public void update(User user) {
-        sessionFactory.getCurrentSession().saveOrUpdate(user);
+    public void update(UserInvite userInvite) {
+        sessionFactory.getCurrentSession().saveOrUpdate(userInvite);
     }
 
     @Override
     @Transactional
-    public void delete(User user) {
-        sessionFactory.getCurrentSession().delete(user);
+    public void delete(UserInvite userInvite) {
+        sessionFactory.getCurrentSession().delete(userInvite);
     }
 
     @Override
     @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
-    public User findByUserId(long userId) {
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(User.class);
-        criteria.add(Restrictions.eq("id", userId));
+    public void cleanOldInvites(Date expireDate) {
+        Query query = sessionFactory.getCurrentSession().createQuery("delete from UserInvite ui where createDate < :expireDate");
+        query.setParameter("expireDate", expireDate);
 
-        return (User) criteria.uniqueResult();
+        query.executeUpdate();
     }
 
     @Override
     @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
-    public User findByUsername(String username) {
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(User.class);
-        criteria.add(Restrictions.eq("username", username));
+    public UserInvite getInviteByGuid(String guid) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserInvite.class);
+        criteria.add(Restrictions.eq("guid", guid));
 
-        return (User) criteria.uniqueResult();
-    }
-
-    @Override
-    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
-    public User findByEmail(String email) {
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(User.class);
-        criteria.add(Restrictions.eq("email", email));
-
-        return (User) criteria.uniqueResult();
+        return (UserInvite) criteria.uniqueResult();
     }
 }

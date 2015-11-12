@@ -26,6 +26,7 @@ import net.longfalcon.newsj.persistence.UserDAO;
 import net.longfalcon.newsj.service.ContentService;
 import net.longfalcon.newsj.service.MenuService;
 import net.longfalcon.newsj.service.UserService;
+import net.longfalcon.newsj.util.EncodingUtil;
 import net.longfalcon.newsj.util.ValidatorUtil;
 import net.longfalcon.view.UserData;
 import org.apache.commons.logging.Log;
@@ -38,7 +39,9 @@ import org.springframework.web.context.request.NativeWebRequest;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.util.Date;
 
 /**
  * User: Sten Martinez
@@ -62,6 +65,9 @@ public class BaseController {
     MenuService menuService;
     @Autowired
     ContentService contentService;
+    private long userId;
+    private int roleId;
+    private boolean isLoggedIn;
 
     @ModelAttribute
     public void populateModel(Model model, HttpSession httpSession, NativeWebRequest nativeWebRequest,
@@ -75,8 +81,9 @@ public class BaseController {
         model.addAttribute("year", config.getYear());
 
         boolean sabEnabled = false;
-        long userId = 0;
-        int roleId = UserService.ROLE_GUEST;
+        isLoggedIn = false;
+        userId = 0;
+        roleId = UserService.ROLE_GUEST;
         String userIdString = null;
         String rssToken = null;
         try {
@@ -88,7 +95,7 @@ public class BaseController {
                 if (user != null) {
                     rssToken = user.getRssToken();
                     roleId = user.getRole();
-                    model.addAttribute("loggedIn", true);
+                    isLoggedIn = true;
                     model.addAttribute("userData", _getUserData(user));
                     String sabCookieName = "sabnzbd_" + String.valueOf(userId) + "__apikey";
                     sabEnabled = isCookieSet(sabCookieName, nativeWebRequest);
@@ -103,6 +110,7 @@ public class BaseController {
         model.addAttribute("categories", categoryService.getCategoriesForMenu(userId));
         model.addAttribute("rssToken", rssToken);
         model.addAttribute("userId", userIdString);
+        model.addAttribute("loggedIn", isLoggedIn);
         model.addAttribute("headerMenuCat", categoryId);
         model.addAttribute("headerMenuSearch", searchStr);
         model.addAttribute("menuItems", menuService.getMenuItems(roleId, sabEnabled));
@@ -125,6 +133,41 @@ public class BaseController {
         return false;
     }
 
+    protected void login(HttpSession httpSession, HttpServletResponse httpServletResponse, String host, boolean rememberMe, User user) {
+        long userId = user.getId();
+        httpSession.setAttribute(SessionKeys.USER_ID, userId);
+        httpSession.setAttribute(SessionKeys.UID, userId);
+
+        if (config.getDefaultSite().getStoreUserIps() != 1) {
+            host = "";
+        }
+
+        updateSiteAccessed(user, host);
+
+        if (rememberMe) {
+            setCookies(user, httpServletResponse);
+        }
+    }
+
+    protected void setCookies(User user, HttpServletResponse httpServletResponse) {
+        long userId = user.getId();
+        String idh = EncodingUtil.sha1Hash(user.getUserseed() + String.valueOf(userId));
+        Cookie uidCookie = new Cookie("uid", String.valueOf(userId));
+        uidCookie.setMaxAge(2592000);
+        Cookie idhCookie = new Cookie("idh", idh);
+        idhCookie.setMaxAge(2592000);
+        httpServletResponse.addCookie(uidCookie);
+        httpServletResponse.addCookie(idhCookie);
+    }
+
+    protected void updateSiteAccessed(User user, String host) {
+        user.setLastLogin(new Date());
+        if (ValidatorUtil.isNotNull(host)) {
+            user.setHost(host);
+        }
+        userDAO.update(user);
+    }
+
     private UserData _getUserData(User user) {
         return new UserData(user);
     }
@@ -139,5 +182,49 @@ public class BaseController {
 
     public String getPageMetaTitle() {
         return pageMetaTitle;
+    }
+
+    public void setPageMetaTitle(String pageMetaTitle) {
+        this.pageMetaTitle = pageMetaTitle;
+    }
+
+    public void setPageMetaKeywords(String pageMetaKeywords) {
+        this.pageMetaKeywords = pageMetaKeywords;
+    }
+
+    public void setPageMetaDescription(String pageMetaDescription) {
+        this.pageMetaDescription = pageMetaDescription;
+    }
+
+    public long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(long userId) {
+        this.userId = userId;
+    }
+
+    public int getRoleId() {
+        return roleId;
+    }
+
+    public void setRoleId(int roleId) {
+        this.roleId = roleId;
+    }
+
+    public boolean isLoggedIn() {
+        return isLoggedIn;
+    }
+
+    public void setIsLoggedIn(boolean isLoggedIn) {
+        this.isLoggedIn = isLoggedIn;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 }

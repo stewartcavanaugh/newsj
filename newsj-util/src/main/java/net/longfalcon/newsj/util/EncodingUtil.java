@@ -37,6 +37,7 @@ public class EncodingUtil {
     private static final String _UTF8 = "UTF-8";
 
     private static MessageDigest _md5Digest = null;
+    private static MessageDigest _sha1Digest = null;
     private static final Log _log = LogFactory.getLog(EncodingUtil.class);
 
     public static String md5Hash(String input) {
@@ -51,6 +52,33 @@ public class EncodingUtil {
         }
 
         byte[] digest = _md5Digest.digest(input.getBytes());
+
+        StringBuilder sb = new StringBuilder();
+
+        for (byte b : digest) {
+            sb.append(String.format("%02x", b));
+        }
+
+        return sb.toString();
+    }
+
+    /**
+     * TODO: move to better algorithm?
+     * @param input
+     * @return
+     */
+    public static String sha1Hash(String input) {
+        if (_sha1Digest == null) {
+            try {
+                _sha1Digest = MessageDigest.getInstance("SHA-1");
+            } catch (NoSuchAlgorithmException e) {
+                // this will not fail.
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        byte[] digest = _sha1Digest.digest(input.getBytes());
 
         StringBuilder sb = new StringBuilder();
 
