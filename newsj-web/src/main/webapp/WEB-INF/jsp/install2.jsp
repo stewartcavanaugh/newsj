@@ -18,8 +18,8 @@
 
 <%--
   User: Sten Martinez
-  Date: 11/11/15
-  Time: 9:28 PM
+  Date: 11/12/15
+  Time: 2:47 PM
 --%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
@@ -38,37 +38,27 @@
 <div class="content">
     <h2>${title}</h2>
     <%--START PAGE CONTENT--%>
-    <p>You must setup an admin user. Please provide the following information:</p>
-    <form:form modelAttribute="registerForm" action="install" method="post">
+    <p>You must set the NZB file path. This is the location where the NZB files are stored:</p>
+    <form action="install2" method="post">
         <table width="100%" border="0" style="margin-top:10px;" class="data highlight">
             <tr class="alt">
-                <td><label for="user">Username:</label></td>
-                <td><form:input path="userName" autocomplete="off" type="text" name="user" id="user" /></td>
-            </tr>
-            <tr class="">
-                <td><label for="pass">Password:</label></td>
-                <td><form:input path="password" autocomplete="off" type="text" name="pass" id="pass" /></td>
-            </tr>
-            <tr class="alt">
-                <td><label for="email">Email:</label> </td>
-                <td><form:input path="email" autocomplete="off" type="text" name="email" id="email" /></td>
+                <td><label for="nzbpath">Location:</label></td>
+                <td><input id="nzbpath" type="text" name="nzbpath" value="{$cfg->NZB_PATH}" size="70" /></td>
             </tr>
         </table>
 
         <div style="padding-top:20px; text-align:center;">
-            <c:if test="${errorSet.size() > 0}">
-                <div>
-                    The following error(s) were encountered:<br />
-                    <c:forEach items="${errorSet}" var="errorMessage">
-                        <span class="error">&bull; ${errorMessage}</span><br />
-                    </c:forEach>
-
-                    <br />
-                </div>
-            </c:if>
-            <input type="submit" value="Create Admin User" />
+            {if $cfg->error}
+            <div>
+                The following error was encountered:<br />
+                {if !$cfg->nzbPathCheck}<br /><span class="error">The installer cannot write to {$cfg->NZB_PATH}. A quick solution is to run:<br />chmod -R 777 {$cfg->NZB_PATH}</span><br />{/if}
+                <br />
+            </div>
+            {/if}
+            <input type="submit" value="Set NZB File Path" />
         </div>
-    </form:form>
+
+    </form>
     <%--END PAGE CONTENT --%>
     <div class="footer">
         <p><br /><a href="http://www.newznab.com/">newznab</a> is released under GPL. All rights reserved ${year}.</p>
@@ -76,4 +66,3 @@
 </div>
 </body>
 </html>
-
