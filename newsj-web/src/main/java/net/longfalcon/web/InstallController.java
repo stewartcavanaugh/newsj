@@ -18,8 +18,10 @@
 
 package net.longfalcon.web;
 
+import net.longfalcon.newsj.service.UserService;
 import net.longfalcon.newsj.util.ValidatorUtil;
 import net.longfalcon.view.UserRegistrationVO;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -36,6 +38,9 @@ import java.util.Set;
  */
 @Controller
 public class InstallController {
+
+    @Autowired
+    UserService userService;
 
     public static final String INSTALL_STEP_1_TITLE = "Setup Admin User";
     public static final String INSTALL_STEP_2_TITLE = "NZB File Path";
@@ -70,7 +75,6 @@ public class InstallController {
             errorSet.add("Invalid email");
         }
 
-
         if (errorSet.size() > 0) {
             title = INSTALL_STEP_1_TITLE;
             model.addAttribute("title", title);
@@ -78,6 +82,8 @@ public class InstallController {
             model.addAttribute("errorSet", errorSet);
             return "install";
         }
+
+        userService.add(username, password, email, UserService.ROLE_ADMIN, null, UserService.DEFAULT_INVITES, null);
 
         title = INSTALL_STEP_2_TITLE;
         model.addAttribute("title", title);

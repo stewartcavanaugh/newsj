@@ -122,7 +122,7 @@ public class UserService {
     }
 
     @Transactional
-    private User add(String userName, String password, String email, int roleId, String host, int inviteCount, Long invitedByUserId) {
+    public User add(String userName, String password, String email, int roleId, String host, int inviteCount, Long invitedByUserId) {
         User user = new User();
         user.setUsername(userName);
 

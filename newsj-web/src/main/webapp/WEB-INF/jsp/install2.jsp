@@ -55,6 +55,16 @@
                 <br />
             </div>
             {/if}
+            <c:if test="${errorSet.size() > 0}">
+                <div>
+                    The following error(s) were encountered:<br />
+                    <c:forEach items="${errorSet}" var="errorMessage">
+                        <span class="error">&bull; ${errorMessage}</span><br />
+                    </c:forEach>
+
+                    <br />
+                </div>
+            </c:if>
             <input type="submit" value="Set NZB File Path" />
         </div>
 
