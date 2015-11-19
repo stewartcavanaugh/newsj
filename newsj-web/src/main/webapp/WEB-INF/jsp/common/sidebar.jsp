@@ -98,14 +98,20 @@
             </li>
         </c:if>
 
-        <li>
-            <a title="Sickbeard - The ultimate usenet PVR" href="http://www.sickbeard.com/"><img class="menupic" alt="Sickbeard - The ultimate usenet PVR" src="${pageContext.request.contextPath}/resources/images/sickbeard.png" /></a>
-        </li>
-        <li>
-            <a title="CouchPotato - Automatic movie downloader" href="http://www.couchpotatoapp.com/"><img style="padding-left:30px;"  class="menupic" alt="CouchPotato - Automatic Movie Downloader" src="${pageContext.request.contextPath}/resources/images/couchpotato.png" /></a>
-        </li>
-        <li>
-            <a title="Sabznbd - A great usenet binary downloader" href="http://www.sabnzbd.org/"><img class="menupic" alt="Sabznbd - A great usenet binary downloader" src="${pageContext.request.contextPath}/resources/images/sabnzbd.png" /></a>
-        </li>
+            <li>
+                <a title="Sickbeard - The ultimate usenet PVR" href="http://www.sickbeard.com/">
+                    <img class="menupic" alt="Sickbeard - The ultimate usenet PVR" src="${pageContext.request.contextPath}/resources/images/sickbeard.png"/>
+                </a>
+            </li>
+            <li>
+                <a title="CouchPotato - Automatic movie downloader" href="http://www.couchpotatoapp.com/">
+                    <img style="padding-left:30px;" class="menupic" alt="CouchPotato - Automatic Movie Downloader" src="${pageContext.request.contextPath}/resources/images/couchpotato.png"/>
+                </a>
+            </li>
+            <li>
+                <a title="Sabznbd - A great usenet binary downloader" href="http://www.sabnzbd.org/">
+                    <img class="menupic" alt="Sabznbd - A great usenet binary downloader" src="${pageContext.request.contextPath}/resources/images/sabnzbd.png"/>
+                </a>
+            </li>
     </ul>
 </div>

@@ -123,10 +123,10 @@
     <p>
         ${site.footer}
         <br/><br/><br/>
-        <a title="Newznab - A usenet indexing web application with community features." href="http://www.newznab.com/">Newznab</a>
-        is released under GPL. All rights reserved ${year}. <br/> <a title="Chat about newznab"
-                                                                     href="http://www.newznab.com/chat.html">Newznab
-        Chat</a> <br/><a href="${pageContext.request.contextPath}/terms-and-conditions">${site.title} Terms and
+        <a title="Newznab - A usenet indexing web application with community features." href="http://www.newznab.com/">Newznab</a> is released under GPL. All rights reserved ${year}. <br/>
+            <a title="Chat about newznab" href="http://www.newznab.com/chat.html">Newznab Chat</a>
+            <br/>
+            <a href="${pageContext.request.contextPath}/terms-and-conditions">${site.title} Terms and
         Conditions</a>
     </p>
 </div>
