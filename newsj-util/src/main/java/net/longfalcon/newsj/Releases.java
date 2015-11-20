@@ -75,7 +75,7 @@ public class Releases {
     private PlatformTransactionManager transactionManager;
     private Binaries binaries;
     private FileSystemService fileSystemService;
-    private Categories categories;
+    private CategoryService categoryService;
     private Nfo nfo;
     private Nzb nzb;
 
@@ -441,7 +441,7 @@ public class Releases {
             Long regexId;
             Integer reqId;
             if (regexAppliedCategoryId == 0) {
-                categoryId = categories.determineCategory(groupId, releaseName);
+                categoryId = categoryService.determineCategory(groupId, releaseName);
             } else {
                 categoryId = regexAppliedCategoryId;
             }
@@ -734,12 +734,12 @@ public class Releases {
         this.nfo = nfo;
     }
 
-    public Categories getCategories() {
-        return categories;
+    public CategoryService getCategoryService() {
+        return categoryService;
     }
 
-    public void setCategories(Categories categories) {
-        this.categories = categories;
+    public void setCategoryService(CategoryService categoryService) {
+        this.categoryService = categoryService;
     }
 
     public Nzb getNzb() {

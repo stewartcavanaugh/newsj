@@ -28,7 +28,7 @@ import java.util.Date;
 public class UserExCat {
     private long id;
     private long userId;
-    private long categoryId;
+    private int categoryId;
     private Date createDate;
 
     public long getId() {
@@ -47,11 +47,11 @@ public class UserExCat {
         this.userId = userId;
     }
 
-    public long getCategoryId() {
+    public int getCategoryId() {
         return categoryId;
     }
 
-    public void setCategoryId(long categoryId) {
+    public void setCategoryId(int categoryId) {
         this.categoryId = categoryId;
     }
 

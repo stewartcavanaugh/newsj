@@ -62,7 +62,7 @@ public class Site {
     private int newGroupsScanMethod;
     private int newGroupDaysToScan;
     private int newGroupMsgsToScan;
-    private int storeUserRips;
+    private int storeUserIps;
     private int minFilesToFormRelease;
     private String reqIdUrl;
     private String latestRegexUrl;
@@ -255,12 +255,12 @@ public class Site {
         this.deReferrerLink = deReferrerLink;
     }
 
-    public int getStoreUserRips() {
-        return storeUserRips;
+    public int getStoreUserIps() {
+        return storeUserIps;
     }
 
-    public void setStoreUserRips(int storeUserRips) {
-        this.storeUserRips = storeUserRips;
+    public void setStoreUserIps(int storeUserRips) {
+        this.storeUserIps = storeUserRips;
     }
 
     public String getReqIdUrl() {

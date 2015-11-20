@@ -18,6 +18,8 @@
 
 package net.longfalcon.newsj.model;
 
+import java.util.List;
+
 /**
  * User: Sten Martinez
  * Date: 10/16/15
@@ -29,6 +31,7 @@ public class Category {
     private Integer parentId;
     private int status;
     private String description;
+    private List<Category> subCategories;
 
     public int getId() {
         return id;
@@ -68,5 +71,22 @@ public class Category {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public List<Category> getSubCategories() {
+        return subCategories;
+    }
+
+    public void setSubCategories(List<Category> subCategories) {
+        this.subCategories = subCategories;
+    }
+
+    @Override
+    public String toString() {
+        return "Category{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                '}';
     }
 }

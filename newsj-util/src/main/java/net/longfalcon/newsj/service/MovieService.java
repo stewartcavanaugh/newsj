@@ -18,7 +18,7 @@
 
 package net.longfalcon.newsj.service;
 
-import net.longfalcon.newsj.Categories;
+import net.longfalcon.newsj.CategoryService;
 import net.longfalcon.newsj.model.Category;
 import net.longfalcon.newsj.model.Release;
 import net.longfalcon.newsj.persistence.CategoryDAO;
@@ -30,6 +30,7 @@ import net.longfalcon.newsj.ws.GoogleSearchResult;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,8 +50,9 @@ public class MovieService {
     private CategoryDAO categoryDAO;
     private GoogleSearchService googleSearchService;
 
+    @Transactional
     public void processMovieReleases() {
-        List<Category> movieCats = categoryDAO.findByParentId(Categories.CAT_PARENT_MOVIE);
+        List<Category> movieCats = categoryDAO.findByParentId(CategoryService.CAT_PARENT_MOVIE);
         List<Integer> ids = new ArrayList<>();
         for (Category category : movieCats) {
             ids.add(category.getId());
@@ -110,7 +112,7 @@ public class MovieService {
     }
 
     private String parseMovieName(Release release) {
-        if (release.getCategoryId() != Categories.CAT_MOVIE_FOREIGN) {
+        if (release.getCategoryId() != CategoryService.CAT_MOVIE_FOREIGN) {
             Pattern movieNamePattern = Pattern.compile("^(?<name>.*)[\\.\\-_\\( ](?<year>19\\d{2}|20\\d{2})", Pattern.CASE_INSENSITIVE);
             Matcher movieNameMatcher = movieNamePattern.matcher(release.getSearchName());
             if (movieNameMatcher.find()) {

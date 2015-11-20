@@ -16,36 +16,15 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package net.longfalcon.newsj.persistence.hibernate;
-
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;
+package net.longfalcon.newsj.service;
 
 /**
  * User: Sten Martinez
- * Date: 10/5/15
- * Time: 5:16 PM
+ * Date: 11/10/15
+ * Time: 8:22 PM
  */
-public class DB {
-    private SessionFactory sessionFactory;
-
-    public void init() {
-
-        // A SessionFactory is set up once for an application
-        sessionFactory = new Configuration()
-                .configure() // configures settings from hibernate.cfg.xml
-                .buildSessionFactory();
-
-    }
-
-    public void destroy() {
-        if ( sessionFactory != null ) {
-            sessionFactory.close();
-        }
-    }
-
-    public Session getSession() {
-         return sessionFactory.openSession();
-    }
+public class SiteService {
+    public static int REGISTER_STATUS_OPEN = 0;
+    public static int REGISTER_STATUS_INVITE = 1;
+    public static int REGISTER_STATUS_CLOSED = 2;
 }

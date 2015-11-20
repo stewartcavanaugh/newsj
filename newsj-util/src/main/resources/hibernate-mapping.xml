@@ -70,7 +70,7 @@
         <!--<cache usage="read-only"/>-->
         <id name="id" column="ID">
             <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
-                <param name="hibernate_sequence">Newsj_SEQ</param>
+                <param name="sequence_name">Newsj_SEQ</param>
                 <param name="optimizer">pooled</param>
                 <param name="initial_value">1</param>
                 <param name="increment_size">100</param>
@@ -84,7 +84,7 @@
     <class name="ConsoleInfo" table="consoleinfo">
         <id name="id" column="ID">
             <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
-                <param name="hibernate_sequence">Newsj_SEQ</param>
+                <param name="sequence_name">Newsj_SEQ</param>
                 <param name="optimizer">pooled</param>
                 <param name="initial_value">1</param>
                 <param name="increment_size">100</param>
@@ -107,7 +107,7 @@
     <class name="Content" table="content">
         <id name="id" column="ID">
             <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
-                <param name="hibernate_sequence">Newsj_SEQ</param>
+                <param name="sequence_name">Newsj_SEQ</param>
                 <param name="optimizer">pooled</param>
                 <param name="initial_value">1</param>
                 <param name="increment_size">100</param>
@@ -127,7 +127,7 @@
     <class name="ForumPost" table="forumpost">
         <id name="id" column="ID">
             <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
-                <param name="hibernate_sequence">FORUMPOST_SEQ</param>
+                <param name="sequence_name">FORUMPOST_SEQ</param>
                 <param name="optimizer">pooled</param>
                 <param name="initial_value">1</param>
                 <param name="increment_size">100</param>
@@ -147,7 +147,7 @@
     <class name="Genre" table="genres">
         <id name="id" column="ID">
             <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
-                <param name="hibernate_sequence">Newsj_SEQ</param>
+                <param name="sequence_name">Newsj_SEQ</param>
                 <param name="optimizer">pooled</param>
                 <param name="initial_value">1</param>
                 <param name="increment_size">100</param>
@@ -180,7 +180,7 @@
     <class name="MenuItem" table="menu">
         <id name="id" column="ID">
             <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
-                <param name="hibernate_sequence">Newsj_SEQ</param>
+                <param name="sequence_name">Newsj_SEQ</param>
                 <param name="optimizer">pooled</param>
                 <param name="initial_value">1</param>
                 <param name="increment_size">100</param>
@@ -196,7 +196,7 @@
     <class name="MovieInfo" table="movieinfo">
         <id name="id" column="ID">
             <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
-                <param name="hibernate_sequence">Newsj_SEQ</param>
+                <param name="sequence_name">Newsj_SEQ</param>
                 <param name="optimizer">pooled</param>
                 <param name="initial_value">1</param>
                 <param name="increment_size">100</param>
@@ -221,7 +221,7 @@
     <class name="MusicInfo" table="musicinfo">
         <id name="id" column="ID">
             <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
-                <param name="hibernate_sequence">Newsj_SEQ</param>
+                <param name="sequence_name">Newsj_SEQ</param>
                 <param name="optimizer">pooled</param>
                 <param name="initial_value">1</param>
                 <param name="increment_size">100</param>
@@ -278,7 +278,7 @@
     <class name="ReleaseComment" table="releasecomment">
         <id name="id" column="ID">
             <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
-                <param name="hibernate_sequence">RELEASECOMMENT_SEQ</param>
+                <param name="sequence_name">RELEASECOMMENT_SEQ</param>
                 <param name="optimizer">pooled</param>
                 <param name="initial_value">1</param>
                 <param name="increment_size">100</param>
@@ -361,7 +361,7 @@
         <!--<cache usage="read-write"/>-->
         <id name="id" column="id">
             <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
-                <param name="hibernate_sequence">Newsj_SEQ</param>
+                <param name="sequence_name">Newsj_SEQ</param>
                 <param name="optimizer">pooled</param>
                 <param name="initial_value">1</param>
                 <param name="increment_size">100</param>
@@ -390,7 +390,7 @@
         <property name="newGroupsScanMethod" column="newgroupscanmethod"/>
         <property name="newGroupDaysToScan" column="newgroupdaystoscan"/>
         <property name="newGroupMsgsToScan" column="newgroupmsgstoscan"/>
-        <property name="storeUserRips" column="storeuserips"/>
+        <property name="storeUserIps" column="storeuserips"/>
         <property name="minFilesToFormRelease" column="minfilestoformrelease"/>
         <property name="latestRegexUrl" column="latestregexurl"/>
         <property name="latestRegexRevision" column="latestregexrevision"/>
@@ -414,7 +414,7 @@
     <class name="TvRage" table="tvrage">
         <id name="id" column="ID">
             <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
-                <param name="hibernate_sequence">Newsj_SEQ</param>
+                <param name="sequence_name">Newsj_SEQ</param>
                 <param name="optimizer">pooled</param>
                 <param name="initial_value">1</param>
                 <param name="increment_size">100</param>
@@ -431,7 +431,7 @@
     <class name="UserCart" table="usercart">
         <id name="id" column="ID">
             <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
-                <param name="hibernate_sequence">Newsj_SEQ</param>
+                <param name="sequence_name">Newsj_SEQ</param>
                 <param name="optimizer">pooled</param>
                 <param name="initial_value">1</param>
                 <param name="increment_size">100</param>
@@ -444,7 +444,7 @@
     <class name="UserExCat" table="userexcat">
         <id name="id" column="ID">
             <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
-                <param name="hibernate_sequence">Newsj_SEQ</param>
+                <param name="sequence_name">Newsj_SEQ</param>
                 <param name="optimizer">pooled</param>
                 <param name="initial_value">1</param>
                 <param name="increment_size">100</param>
@@ -457,7 +457,7 @@
     <class name="UserInvite" table="userinvite">
         <id name="id" column="ID">
             <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
-                <param name="hibernate_sequence">Newsj_SEQ</param>
+                <param name="sequence_name">Newsj_SEQ</param>
                 <param name="optimizer">pooled</param>
                 <param name="initial_value">1</param>
                 <param name="increment_size">100</param>
@@ -470,7 +470,7 @@
     <class name="User" table="users">
         <id name="id" column="ID">
             <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
-                <param name="hibernate_sequence">USER_SEQ</param>
+                <param name="sequence_name">USER_SEQ</param>
                 <param name="optimizer">pooled</param>
                 <param name="initial_value">1</param>
                 <param name="increment_size">100</param>

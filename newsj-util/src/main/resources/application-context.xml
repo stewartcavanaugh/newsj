@@ -141,10 +141,31 @@
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
 
+    <bean id="userDAO" class="net.longfalcon.newsj.persistence.hibernate.UserDAOImpl">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+
+    <bean id="userExCatDAO" class="net.longfalcon.newsj.persistence.hibernate.UserExCatDAOImpl">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+
+    <bean id="menuItemDAO" class="net.longfalcon.newsj.persistence.hibernate.MenuItemDAOImpl">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+
+    <bean id="contentDAO" class="net.longfalcon.newsj.persistence.hibernate.ContentDAOImpl">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+
+    <bean id="userInviteDAO" class="net.longfalcon.newsj.persistence.hibernate.UserInviteDAOImpl">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+
     <!-- Services -->
 
     <bean id="config" class="net.longfalcon.newsj.Config" init-method="init">
         <property name="propertyLocations" value="classpath:config.properties"/>
+        <property name="siteDAO" ref="siteDAO"/>
     </bean>
 
     <bean id="fileSystemService" class="net.longfalcon.newsj.fs.DefaultFileSystemServiceImpl" init-method="init">
@@ -179,7 +200,7 @@
     <bean id="releases" class="net.longfalcon.newsj.Releases">
         <property name="fileSystemService" ref="fileSystemService"/>
         <property name="binaries" ref="binaries"/>
-        <property name="categories" ref="category"/>
+        <property name="categoryService" ref="categoryService"/>
         <property name="nfo" ref="nfo"/>
         <property name="nzb" ref="nzb"/>
         <property name="tvRageService" ref="tvRage"/>
@@ -214,8 +235,10 @@
         <property name="fileSystemService" ref="fileSystemService"/>
         <property name="nntpConnectionFactory" ref="nntpConnectionFactory"/>
     </bean>
-    <bean id="category" class="net.longfalcon.newsj.Categories">
+    <bean id="categoryService" class="net.longfalcon.newsj.CategoryService">
         <property name="groupDAO" ref="groupDAO"/>
+        <property name="userExCatDAO" ref="userExCatDAO"/>
+        <property name="categoryDAO" ref="categoryDAO"/>
     </bean>
     <bean id="nzb" class="net.longfalcon.newsj.Nzb">
         <property name="config" ref="config"/>
@@ -239,5 +262,18 @@
     <bean id="regexService" class="net.longfalcon.newsj.service.RegexService"/>
     <bean id="googleSearchService" class="net.longfalcon.newsj.service.GoogleSearchService">
         <property name="restTemplate" ref="restTemplate"/>
+    </bean>
+    <bean id="menuService" class="net.longfalcon.newsj.service.MenuService">
+        <property name="menuItemDAO" ref="menuItemDAO"/>
+    </bean>
+    <bean id="contentService" class="net.longfalcon.newsj.service.ContentService">
+        <property name="contentDAO" ref="contentDAO"/>
+    </bean>
+    <bean id="userInviteService" class="net.longfalcon.newsj.service.UserInviteService">
+        <property name="userInviteDAO" ref="userInviteDAO"/>
+    </bean>
+    <bean id="userService" class="net.longfalcon.newsj.service.UserService">
+        <property name="userDAO" ref="userDAO"/>
+        <property name="userInviteDAO" ref="userInviteDAO"/>
     </bean>
 </beans>
