@@ -16,30 +16,22 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package net.longfalcon.newsj.persistence;
-
-import org.junit.Ignore;
-import org.junit.Test;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+package net.longfalcon.view;
 
 /**
  * User: Sten Martinez
- * Date: 10/9/15
- * Time: 3:15 PM
+ * Date: 12/15/15
+ * Time: 4:50 PM
  */
-public class DaoTester {
-    private long userId = -1L;
+public class InstallerVO {
 
-    @Test
-    @Ignore
-    public void testDAO(){
-        ApplicationContext context =
-                new ClassPathXmlApplicationContext(new String[] {"application-context.xml"});
-        UserDAO userDAO = (UserDAO) context.getBean("userDAO");
-        long userCount = userDAO.countUsers();
+    private String nzbFileLocation;
 
+    public String getNzbFileLocation() {
+        return nzbFileLocation;
+    }
 
-        System.out.println("users: " + userCount);
+    public void setNzbFileLocation(String nzbFileLocation) {
+        this.nzbFileLocation = nzbFileLocation;
     }
 }

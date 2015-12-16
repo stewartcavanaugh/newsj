@@ -20,6 +20,7 @@ package net.longfalcon.newsj.persistence.hibernate;
 
 import net.longfalcon.newsj.model.User;
 import org.hibernate.Criteria;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -68,5 +69,14 @@ public class UserDAOImpl extends HibernateDAOImpl implements net.longfalcon.news
         criteria.add(Restrictions.eq("email", email));
 
         return (User) criteria.uniqueResult();
+    }
+
+    @Override
+    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
+    public long countUsers() {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(User.class);
+        criteria.setProjection(Projections.countDistinct("id"));
+
+        return (long) criteria.uniqueResult();
     }
 }
