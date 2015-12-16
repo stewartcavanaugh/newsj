@@ -31,7 +31,6 @@
     <title>${title}</title>
     <link href="${pageContext.request.contextPath}/resources/styles/install.css" rel="stylesheet" type="text/css" media="screen" />
     <link rel="shortcut icon" type="image/ico" href="${pageContext.request.contextPath}/resources/images/favicon.ico"/>
-    {$page->head}
 </head>
 <body>
 <h1 id="logo"><img alt="Newznab" src="${pageContext.request.contextPath}/resources/images/banner.jpg" /></h1>
@@ -39,22 +38,15 @@
     <h2>${title}</h2>
     <%--START PAGE CONTENT--%>
     <p>You must set the NZB file path. This is the location where the NZB files are stored:</p>
-    <form action="install2" method="post">
+    <form:form modelAttribute="installerForm" action="install2" method="post">
         <table width="100%" border="0" style="margin-top:10px;" class="data highlight">
             <tr class="alt">
                 <td><label for="nzbpath">Location:</label></td>
-                <td><input id="nzbpath" type="text" name="nzbpath" value="{$cfg->NZB_PATH}" size="70" /></td>
+                <td><form:input path="nzbFileLocation" id="nzbpath" type="text" name="nzbpath" value="${nzbPath}" size="70" /></td>
             </tr>
         </table>
 
         <div style="padding-top:20px; text-align:center;">
-            {if $cfg->error}
-            <div>
-                The following error was encountered:<br />
-                {if !$cfg->nzbPathCheck}<br /><span class="error">The installer cannot write to {$cfg->NZB_PATH}. A quick solution is to run:<br />chmod -R 777 {$cfg->NZB_PATH}</span><br />{/if}
-                <br />
-            </div>
-            {/if}
             <c:if test="${errorSet.size() > 0}">
                 <div>
                     The following error(s) were encountered:<br />
@@ -68,7 +60,7 @@
             <input type="submit" value="Set NZB File Path" />
         </div>
 
-    </form>
+    </form:form>
     <%--END PAGE CONTENT --%>
     <div class="footer">
         <p><br /><a href="http://www.newznab.com/">newznab</a> is released under GPL. All rights reserved ${year}.</p>

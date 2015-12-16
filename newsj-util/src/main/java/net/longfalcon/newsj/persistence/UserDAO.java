@@ -35,4 +35,6 @@ public interface UserDAO {
     User findByUsername(String username);
 
     User findByEmail(String email);
+
+    long countUsers();
 }

@@ -26,5 +26,8 @@ import net.longfalcon.newsj.model.Site;
  * Time: 10:00 PM
  */
 public interface SiteDAO {
+
+    public void update(Site site);
+
     public Site getDefaultSite();
 }

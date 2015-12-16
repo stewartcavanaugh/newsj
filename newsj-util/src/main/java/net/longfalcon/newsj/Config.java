@@ -24,6 +24,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.joda.time.DateTime;
 import org.springframework.core.io.Resource;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.Properties;
@@ -43,6 +46,7 @@ public class Config {
     Properties properties;
     private Site defaultSite;
 
+    @Transactional(propagation = Propagation.SUPPORTS, isolation = Isolation.REPEATABLE_READ)
     public void init() {
         properties = new Properties();
         for (Resource resource : propertyLocations) {
@@ -81,6 +85,18 @@ public class Config {
 
     public Boolean getNntpSslEnabled() {
         return "true".equals(properties.getProperty(PropsKeys.NNTP_SSLENABLED));
+    }
+
+    public String getNzbFileLocation() {
+        String fileLocation = null;
+
+        try {
+            fileLocation = getDefaultSite().getNzbPath();
+        } catch (Exception e) {
+            _log.error(e);
+        }
+
+        return fileLocation;
     }
 
     public int getYear() {

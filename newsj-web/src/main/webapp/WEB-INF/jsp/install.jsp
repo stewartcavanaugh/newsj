@@ -31,7 +31,6 @@
     <title>${title}</title>
     <link href="${pageContext.request.contextPath}/resources/styles/install.css" rel="stylesheet" type="text/css" media="screen" />
     <link rel="shortcut icon" type="image/ico" href="${pageContext.request.contextPath}/resources/images/favicon.ico"/>
-    {$page->head}
 </head>
 <body>
 <h1 id="logo"><img alt="Newznab" src="${pageContext.request.contextPath}/resources/images/banner.jpg" /></h1>
@@ -47,7 +46,7 @@
             </tr>
             <tr class="">
                 <td><label for="pass">Password:</label></td>
-                <td><form:input path="password" autocomplete="off" type="text" name="pass" id="pass" /></td>
+                <td><form:password path="password" autocomplete="off" name="pass" id="pass" /></td>
             </tr>
             <tr class="alt">
                 <td><label for="email">Email:</label> </td>

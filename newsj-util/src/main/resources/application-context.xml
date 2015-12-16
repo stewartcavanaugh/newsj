@@ -169,6 +169,13 @@
     </bean>
 
     <bean id="fileSystemService" class="net.longfalcon.newsj.fs.DefaultFileSystemServiceImpl" init-method="init">
+        <property name="config" ref="config"/>
+    </bean>
+
+    <bean id="installerService" class="net.longfalcon.newsj.service.InstallerService">
+        <property name="fileSystemService" ref="fileSystemService"/>
+        <property name="siteDAO" ref="siteDAO"/>
+        <property name="config" ref="config"/>
     </bean>
 
     <bean id="nntpConnectionFactory" class="net.longfalcon.newsj.nntp.NntpConnectionFactory">
