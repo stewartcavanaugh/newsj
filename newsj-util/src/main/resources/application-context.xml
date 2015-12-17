@@ -283,4 +283,7 @@
         <property name="userDAO" ref="userDAO"/>
         <property name="userInviteDAO" ref="userInviteDAO"/>
     </bean>
+    <bean id="siteService" class="net.longfalcon.newsj.service.SiteService">
+        <property name="siteDAO" ref="siteDAO"/>
+    </bean>
 </beans>

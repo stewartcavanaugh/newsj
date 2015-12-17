@@ -18,13 +18,30 @@
 
 package net.longfalcon.newsj.service;
 
+import net.longfalcon.newsj.model.Site;
+import net.longfalcon.newsj.persistence.SiteDAO;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 /**
  * User: Sten Martinez
  * Date: 11/10/15
  * Time: 8:22 PM
  */
+@Service
 public class SiteService {
-    public static int REGISTER_STATUS_OPEN = 0;
-    public static int REGISTER_STATUS_INVITE = 1;
-    public static int REGISTER_STATUS_CLOSED = 2;
+    public static final int REGISTER_STATUS_OPEN = 0;
+    public static final int REGISTER_STATUS_INVITE = 1;
+    public static final int REGISTER_STATUS_CLOSED = 2;
+
+    private SiteDAO siteDAO;
+
+    @Transactional
+    public void updateSite(Site site) {
+        siteDAO.update(site);
+    }
+
+    public void setSiteDAO(SiteDAO siteDAO) {
+        this.siteDAO = siteDAO;
+    }
 }
