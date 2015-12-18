@@ -42,5 +42,5 @@ public interface ReleaseDAO {
 
     List<Release> findReleasesByNoImdbIdAndCategoryId(Collection<Integer> categoryIds);
 
-    List<Release> findReleasesByRageIdAndCategoryId(int rageId, Collection<Integer> categoryIds);
+    List<Release> findReleasesByRageIdAndCategoryId(long rageId, Collection<Integer> categoryIds);
 }

@@ -1,4 +1,4 @@
-
+-- original newznab schema sql
 DROP TABLE IF EXISTS `binaries`;
 CREATE TABLE `binaries` (
 		`ID` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
