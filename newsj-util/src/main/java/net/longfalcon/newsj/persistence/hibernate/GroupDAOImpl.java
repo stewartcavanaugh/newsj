@@ -20,8 +20,10 @@ package net.longfalcon.newsj.persistence.hibernate;
 
 import net.longfalcon.newsj.model.Group;
 import org.hibernate.Criteria;
+import org.hibernate.FetchMode;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Isolation;
@@ -38,6 +40,33 @@ import java.util.List;
 @Repository
 public class GroupDAOImpl extends HibernateDAOImpl implements net.longfalcon.newsj.persistence.GroupDAO {
 
+    @Override
+    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
+    public List<Group> getGroups() {
+        return this.sessionFactory.getCurrentSession()
+                .createQuery("from Group group")
+                .list();
+    }
+
+    @Override
+    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
+    public List<Group> getGroups(int start, int pageSize) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Group.class);
+        criteria.setFirstResult(start).setMaxResults(pageSize);
+        criteria.setFetchMode("releases", FetchMode.JOIN);
+
+        return criteria.list();
+    }
+
+    @Override
+    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
+    public Long getGroupsCount() {
+        Criteria criteria = this.sessionFactory.getCurrentSession().createCriteria(Group.class);
+        criteria.setProjection(Projections.rowCount());
+
+        return (Long) criteria.uniqueResult();
+    }
+
     @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
     public List<Group> getActiveGroups() {
         return this.sessionFactory.getCurrentSession()
@@ -50,6 +79,13 @@ public class GroupDAOImpl extends HibernateDAOImpl implements net.longfalcon.new
         Session currentSession = this.sessionFactory.getCurrentSession();
         currentSession.saveOrUpdate(group);
         //currentSession.flush();
+    }
+
+    @Override
+    @Transactional
+    public void delete(Group group) {
+        Session currentSession = this.sessionFactory.getCurrentSession();
+        currentSession.delete(group);
     }
 
     @Override

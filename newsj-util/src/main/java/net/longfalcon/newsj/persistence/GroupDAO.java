@@ -28,9 +28,17 @@ import java.util.List;
  * Time: 9:48 PM
  */
 public interface GroupDAO {
+    List<Group> getGroups();
+
+    List<Group> getGroups(int start, int pageSize);
+
+    Long getGroupsCount();
+
     List<Group> getActiveGroups();
 
     void update(Group group);
+
+    void delete(Group group);
 
     Group getGroupByName(String name);
 
