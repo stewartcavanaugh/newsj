@@ -199,4 +199,13 @@ public class BinaryDAOImpl extends HibernateDAOImpl implements net.longfalcon.ne
 
         return criteria.list();
     }
+
+    @Override
+    @Transactional
+    public void deleteByGroupId(long groupId) {
+        Query query = sessionFactory.getCurrentSession().createQuery("delete from Binary b where b.groupId = :group_id");
+        query.setParameter("group_id", groupId);
+
+        query.executeUpdate();
+    }
 }

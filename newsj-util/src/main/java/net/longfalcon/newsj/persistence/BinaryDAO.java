@@ -57,4 +57,6 @@ public interface BinaryDAO {
     void updateProcStatByProcStatAndDate(int newStatus, int procStat, Date before);
 
     List<Binary> findBinariesByReleaseId(long releaseId);
+
+    void deleteByGroupId(long groupId);
 }

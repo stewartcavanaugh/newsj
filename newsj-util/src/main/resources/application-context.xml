@@ -286,4 +286,8 @@
     <bean id="siteService" class="net.longfalcon.newsj.service.SiteService">
         <property name="siteDAO" ref="siteDAO"/>
     </bean>
+    <bean id="groupService" class="net.longfalcon.newsj.service.GroupService">
+        <property name="groupDAO" ref="groupDAO"/>
+        <property name="releaseDAO" ref="releaseDAO"/>
+    </bean>
 </beans>

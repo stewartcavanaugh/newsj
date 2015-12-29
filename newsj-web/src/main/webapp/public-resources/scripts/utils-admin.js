@@ -11,7 +11,7 @@ function ajax_group_status(id, what)
     if (what != undefined)
     {
         $.ajax({
-          url       : WWW_TOP + '/admin/ajax_group-edit.php?rand=' + rand_no,
+          url       : WWW_TOP + '/admin/ajax_group-edit?rand=' + rand_no,
           data      : { group_id: id, group_status: what },
           dataType  : "html",
           success   : function(data)
@@ -49,7 +49,7 @@ function ajax_group_delete(id)
     // no caching of results
     var rand_no = Math.random();
 	$.ajax({
-	  url       : WWW_TOP + '/admin/ajax_group-edit.php?action=2&rand=' + rand_no,
+	  url       : WWW_TOP + '/admin/ajax_group-edit?action=2&rand=' + rand_no,
 	  data      : { group_id: id},
 	  dataType  : "html",
 	  success   : function(data)
@@ -73,7 +73,7 @@ function ajax_group_reset(id)
     // no caching of results
     var rand_no = Math.random();
 	$.ajax({
-	  url       : WWW_TOP + '/admin/ajax_group-edit.php?action=3&rand=' + rand_no,
+	  url       : WWW_TOP + '/admin/ajax_group-edit?action=3&rand=' + rand_no,
 	  data      : { group_id: id},
 	  dataType  : "html",
 	  success   : function(data)
@@ -97,7 +97,7 @@ function ajax_group_purge(id)
     // no caching of results
     var rand_no = Math.random();
 	$.ajax({
-	  url       : WWW_TOP + '/admin/ajax_group-edit.php?action=4&rand=' + rand_no,
+	  url       : WWW_TOP + '/admin/ajax_group-edit?action=4&rand=' + rand_no,
 	  data      : { group_id: id},
 	  dataType  : "html",
 	  success   : function(data)
@@ -121,7 +121,7 @@ function ajax_releaseregex_delete(id)
     // no caching of results
     var rand_no = Math.random();
 	$.ajax({
-	  url       : WWW_TOP + '/admin/ajax_regex-list.php?action=2&rand=' + rand_no,
+	  url       : WWW_TOP + '/admin/ajax_regex-list?action=2&rand=' + rand_no,
 	  data      : { regex_id: id},
 	  dataType  : "html",
 	  success   : function(data)
@@ -146,7 +146,7 @@ function ajax_binaryblacklist_delete(id)
     // no caching of results
     var rand_no = Math.random();
 	$.ajax({
-	  url       : WWW_TOP + '/admin/ajax_binaryblacklist-list.php?action=2&rand=' + rand_no,
+	  url       : WWW_TOP + '/admin/ajax_binaryblacklist-list?action=2&rand=' + rand_no,
 	  data      : { bin_id: id},
 	  dataType  : "html",
 	  success   : function(data)

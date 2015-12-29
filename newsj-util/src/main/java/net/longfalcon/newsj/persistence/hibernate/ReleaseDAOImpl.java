@@ -20,6 +20,8 @@ package net.longfalcon.newsj.persistence.hibernate;
 
 import net.longfalcon.newsj.model.Release;
 import org.hibernate.Criteria;
+import org.hibernate.Query;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Isolation;
@@ -90,11 +92,30 @@ public class ReleaseDAOImpl extends HibernateDAOImpl implements net.longfalcon.n
 
     @Override
     @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
-    public List<Release> findReleasesByRageIdAndCategoryId(int rageId, Collection<Integer> categoryIds) {
+    public List<Release> findReleasesByRageIdAndCategoryId(long rageId, Collection<Integer> categoryIds) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Release.class);
         criteria.add(Restrictions.eq("rageId", rageId));
         criteria.add(Restrictions.in("categoryId", categoryIds));
 
         return criteria.list();
+    }
+
+    @Override
+    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
+    public Long countByGroupId(long groupId) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Release.class);
+        criteria.add(Restrictions.eq("groupId", groupId));
+        criteria.setProjection(Projections.rowCount());
+
+        return (Long) criteria.uniqueResult();
+    }
+
+    @Override
+    @Transactional
+    public void deleteByGroupId(long groupId) {
+        Query query = sessionFactory.getCurrentSession().createQuery("delete from Release r where r.groupId = :group_id");
+        query.setParameter("group_id", groupId);
+
+        query.executeUpdate();
     }
 }
