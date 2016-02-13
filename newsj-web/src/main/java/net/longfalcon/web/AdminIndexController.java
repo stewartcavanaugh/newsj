@@ -43,7 +43,7 @@ import java.util.*;
  */
 @Controller
 @RequestMapping("/admin")
-@SessionAttributes("siteObject")
+@SessionAttributes({"siteObject","group"})
 public class AdminIndexController extends BaseController {
 
     @Autowired
@@ -187,5 +187,24 @@ public class AdminIndexController extends BaseController {
             }
         }
         return "ajaxGroupEdit called incorrectly.";
+    }
+
+    @RequestMapping(value = "/group-edit", method = RequestMethod.GET)
+    public String editGroupView(@RequestParam(value = "id")Long groupId, Model model, HttpSession httpSession) {
+        Group group = groupService.getGroup(groupId);
+        Map<Integer, String> yesNoMap = new HashMap<>();
+        yesNoMap.put(1,"Yes");
+        yesNoMap.put(0, "No");
+
+        model.addAttribute("title", group.getName());
+        model.addAttribute("yesNoMap", yesNoMap);
+        model.addAttribute("group", group);
+        return "admin/group-edit";
+    }
+
+    @RequestMapping(value = "/group-edit", method = RequestMethod.POST)
+    public String editGroupPost(@ModelAttribute("group")Group group, Model model, HttpSession httpSession) {
+        groupService.update(group);
+        return editGroupView(group.getId(), model, httpSession);
     }
 }
