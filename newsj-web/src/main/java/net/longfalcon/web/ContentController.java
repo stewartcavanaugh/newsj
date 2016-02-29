@@ -25,6 +25,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpSession;
@@ -42,6 +43,14 @@ public class ContentController extends BaseController {
     public String content(Model model, HttpSession httpSession) {
         Content indexContent = contentService.getIndex();
         model.addAttribute("content", indexContent);
+        return "content";
+    }
+
+    @RequestMapping("/content/{id:\\d+}{url:\\/.*$}")
+    public String viewContent(@PathVariable long id, @PathVariable String url, Model model) {
+        Content indexContent = contentService.getContent(id);
+        model.addAttribute("content", indexContent);
+
         return "content";
     }
 

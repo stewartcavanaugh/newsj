@@ -20,6 +20,7 @@ package net.longfalcon.newsj.persistence.hibernate;
 
 import net.longfalcon.newsj.model.Content;
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -47,6 +48,23 @@ public class ContentDAOImpl extends HibernateDAOImpl implements net.longfalcon.n
 
     @Override
     @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
+    public Content getById(long id) {
+        Query query = sessionFactory.getCurrentSession().createQuery("from Content c where c.id = :contentId");
+        query.setParameter("contentId", id);
+
+        return (Content) query.uniqueResult();
+    }
+
+    @Override
+    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
+    public List<Content> getAllContent() {
+        Query query = sessionFactory.getCurrentSession().createQuery("from Content c");
+
+        return query.list();
+    }
+
+    @Override
+    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
     public List<Content> findByTypeAndRole(int type, int roleId, boolean isAdmin) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Content.class);
         criteria.add(Restrictions.eq("showInMenu", 1));
@@ -67,5 +85,14 @@ public class ContentDAOImpl extends HibernateDAOImpl implements net.longfalcon.n
         criteria.add(Restrictions.eq("role", roleId));
 
         return criteria.list();
+    }
+
+    @Override
+    @Transactional
+    public void deleteById(long id) {
+        Query query = sessionFactory.getCurrentSession().createQuery("delete from Content c where c.id = :id");
+        query.setParameter("id", id);
+
+        query.executeUpdate();
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015. Sten Martinez
+ * Copyright (c) 2016. Sten Martinez
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,29 +16,23 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package net.longfalcon.newsj.persistence;
+package net.longfalcon.taglib;
 
-import net.longfalcon.newsj.model.Content;
-
-import java.util.List;
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * User: Sten Martinez
- * Date: 11/10/15
- * Time: 12:48 PM
+ * Date: 2/29/16
+ * Time: 9:25 AM
  */
-public interface ContentDAO {
-    void update(Content content);
+public class TextFunctions {
 
-    void delete(Content content);
+    public static String truncate(String s, int length) {
+        return StringUtils.abbreviate(s, length);
+    }
 
-    Content getById(long id);
-
-    List<Content> getAllContent();
-
-    List<Content> findByTypeAndRole(int type, int roleId, boolean isAdmin);
-
-    List<Content> findByTypeAndRole(int type, int roleId);
-
-    void deleteById(long id);
+    public static String escapeHtml(String s) {
+        return StringEscapeUtils.escapeHtml4(s);
+    }
 }

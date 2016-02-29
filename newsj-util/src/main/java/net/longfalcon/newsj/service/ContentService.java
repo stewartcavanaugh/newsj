@@ -23,6 +23,7 @@ import net.longfalcon.newsj.persistence.ContentDAO;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -60,6 +61,29 @@ public class ContentService {
 
     public void setContentDAO(ContentDAO contentDAO) {
         this.contentDAO = contentDAO;
+    }
+
+    public Content getContent(long id) {
+        return contentDAO.getById(id);
+    }
+
+    public List<Content> getAllContent() {
+        return contentDAO.getAllContent();
+    }
+
+    @Transactional
+    public void update(Content content) {
+        contentDAO.update(content);
+    }
+
+    @Transactional
+    public void delete(Content content) {
+        contentDAO.delete(content);
+    }
+
+    @Transactional
+    public void delete(long contentId) {
+        contentDAO.deleteById(contentId);
     }
 
 }

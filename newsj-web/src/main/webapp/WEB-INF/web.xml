@@ -55,4 +55,10 @@
    <!-- <error-page>
         <location>/error</location>
     </error-page>-->
+    <jsp-config>
+        <taglib>
+            <taglib-uri>http://java.longfalcon.net/jsp/jstl/text</taglib-uri>
+            <taglib-location>tld/text.tld</taglib-location>
+        </taglib>
+    </jsp-config>
 </web-app>

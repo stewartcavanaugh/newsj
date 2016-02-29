@@ -269,7 +269,14 @@ INSERT INTO `releaseregex` (`ID`, `groupname`, `regex`, `ordinal`, `status`, `de
   (643, 'alt.binaries.*', '/^.*\\[(?P<parts>\\d+\\/\\d+)\\].*"(?P<name>[^"]+(?:S\\d\\d?E\\d\\d?|S\\d\\d|\\d\\d?x|\\d{4}\\W+\\d\\d\\W+\\d\\d|Season\\W+\\d+\\W+|E(?:p?(?:isode)?[\\._ -]*?)\\d+)[^"]+?)(?:\\.(?:part\\d*|vol[\\d+]+))*\\.(?:nfo|nzb|sfv|par2|par|rar|avi|mkv)"\\ yEnc.*$/', 20, 0, '', NULL);
 
 ALTER TABLE `releaseregex`
-MODIFY `ID` int(11) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=10000;
+MODIFY `ID` int(11) unsigned NOT NULL; -- remove auto increment
+
+DROP TABLE IF EXISTS `ReleaseRegex_SEQ`;
+CREATE TABLE IF NOT EXISTS `ReleaseRegex_SEQ` (
+  `next_val` BIGINT NOT NULL DEFAULT 0
+) ENGINE = InnoDB DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ;
+
+INSERT INTO `ReleaseRegex_SEQ` VALUES (10000);
 
 DROP TABLE IF EXISTS `Binary_SEQ`;
 CREATE TABLE IF NOT EXISTS `Binary_SEQ` (
@@ -293,6 +300,16 @@ INSERT INTO `Part_SEQ` VALUES (1);
 
 ALTER TABLE `parts`
     MODIFY `ID` BIGINT NOT NULL ; -- remove auto increment;
+
+DROP TABLE IF EXISTS `PartRepair_SEQ`;
+CREATE TABLE IF NOT EXISTS `PartRepair_SEQ` (
+  `next_val` BIGINT NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ;
+
+INSERT INTO `PartRepair_SEQ` VALUES (1);
+
+ALTER TABLE `partrepair`
+MODIFY `ID` BIGINT NOT NULL ; -- remove auto increment;
 
 DROP TABLE IF EXISTS `Release_SEQ`;
 CREATE TABLE IF NOT EXISTS `Release_SEQ` (
@@ -355,6 +372,15 @@ CREATE TABLE IF NOT EXISTS `USER_SEQ` (
 INSERT INTO `USER_SEQ` VALUES (1);
 
 ALTER TABLE `users` MODIFY `ID` BIGINT NOT NULL ;
+
+DROP TABLE IF EXISTS `Group_SEQ`;
+CREATE TABLE IF NOT EXISTS `Group_SEQ` (
+  `next_val` BIGINT NOT NULL DEFAULT 0
+) ENGINE = InnoDB DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ;
+
+INSERT INTO `Group_SEQ` VALUES (150);
+
+ALTER TABLE `groups` MODIFY `ID` BIGINT NOT NULL ;
 
 ALTER TABLE `category` MODIFY `ID` BIGINT NOT NULL;
 ALTER TABLE `consoleinfo` MODIFY `ID` BIGINT NOT NULL;
