@@ -264,10 +264,6 @@ public class Binaries {
 
     }
 
-
-
-
-
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     private void partRepair(NewsClient nntpClient, Group group) throws IOException {
         List<PartRepair> partRepairList = partRepairDAO.findByGroupIdAndAttempts(group.getId(), 5, true);
