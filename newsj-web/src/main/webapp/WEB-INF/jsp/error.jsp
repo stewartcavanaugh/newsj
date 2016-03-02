@@ -29,14 +29,15 @@
         a:hover { text-decoration: underline; }
         -->
     </style>
+    <link rel="shortcut icon" type="image/ico" href="${pageContext.request.contextPath}/resources/images/favicon.ico"/>
 </head>
 
-<body bgcolor="red">
+<body>
 <h1>${status}</h1>
 <p>
-    The request to
-    (${request_uri})
-    has failed because ${reason}
+    The request to<br/>
+    (${request_uri})<br/>
+    has failed because ${reason}<br/>
 </p>
 
 

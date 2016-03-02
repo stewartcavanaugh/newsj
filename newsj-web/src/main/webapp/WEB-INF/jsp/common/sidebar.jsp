@@ -47,8 +47,8 @@
                 <h2>Articles</h2>
                 <ul>
                     <c:forEach items="${articlecontentlist}" var="content">
-                        <li onclick="document.location='${pageContext.request.contextPath}/content/${content.id}${content.url}'">
-                            <a title="${content.title}" href="${pageContext.request.contextPath}/content/${content.id}${content.url}">${content.title}</a>
+                        <li onclick="document.location='${pageContext.request.contextPath}/content/${content.id}/-${content.url}'">
+                            <a title="${content.title}" href="${pageContext.request.contextPath}/content/${content.id}/-${content.url}">${content.title}</a>
                         </li>
                     </c:forEach>
                 </ul>
