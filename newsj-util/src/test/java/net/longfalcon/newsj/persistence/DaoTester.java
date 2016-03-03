@@ -18,10 +18,17 @@
 
 package net.longfalcon.newsj.persistence;
 
+import net.longfalcon.newsj.util.ArrayUtil;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+
+import java.util.List;
 
 /**
  * User: Sten Martinez
@@ -36,10 +43,14 @@ public class DaoTester {
     public void testDAO(){
         ApplicationContext context =
                 new ClassPathXmlApplicationContext(new String[] {"application-context.xml"});
-        UserDAO userDAO = (UserDAO) context.getBean("userDAO");
-        long userCount = userDAO.countUsers();
+        PlatformTransactionManager transactionManager = (PlatformTransactionManager) context.getBean("transactionManager");
+        CategoryDAO categoryDAO = (CategoryDAO) context.getBean("categoryDAO");
+
+        TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition(TransactionDefinition.PROPAGATION_REQUIRED));
+        List returnList = categoryDAO.findByParentId(1000);
 
 
-        System.out.println("users: " + userCount);
+        System.out.println("list: " + ArrayUtil.stringify(returnList, "\n"));
+        transaction.flush();
     }
 }

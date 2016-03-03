@@ -21,6 +21,7 @@ package net.longfalcon.newsj;
 import net.longfalcon.newsj.fs.FileSystemService;
 import net.longfalcon.newsj.fs.model.Directory;
 import net.longfalcon.newsj.model.Binary;
+import net.longfalcon.newsj.model.Category;
 import net.longfalcon.newsj.model.Group;
 import net.longfalcon.newsj.model.MatchedReleaseQuery;
 import net.longfalcon.newsj.model.Release;
@@ -90,6 +91,22 @@ public class Releases {
     private BinaryDAO binaryDAO;
     private PartDAO partDAO;
     private ReleaseDAO releaseDAO;
+
+    public List<Release> getTopDownloads() {
+        return releaseDAO.findTopDownloads();
+    }
+
+    public List<Release> getTopComments() {
+        return releaseDAO.findTopCommentedReleases();
+    }
+
+    /**
+     *
+     * @return List of Object[Category,Long]
+     */
+    public List<Object[]> getRecentlyAddedReleases() {
+        return releaseDAO.findRecentlyAddedReleaseCategories();
+    }
 
     public void processReleases() {
         String startDateString = DateUtil.displayDateFormatter.print(System.currentTimeMillis());
@@ -438,12 +455,16 @@ public class Releases {
 
             String releaseGuid = UUID.randomUUID().toString();
             int categoryId;
+            Category category = null;
             Long regexId;
             Integer reqId;
             if (regexAppliedCategoryId == 0) {
                 categoryId = categoryService.determineCategory(groupId, releaseName);
             } else {
                 categoryId = regexAppliedCategoryId;
+            }
+            if (categoryId > 0) {
+                category = categoryService.getCategory(categoryId);
             }
 
             if (regexIdUsed == 0) {
@@ -467,7 +488,7 @@ public class Releases {
             release.setGroupId(groupId);
             release.setAddDate(new Date());
             release.setGuid(releaseGuid);
-            release.setCategoryId(categoryId);
+            release.setCategory(category);
             release.setRegexId(regexId);
             release.setRageId((long) -1);
             release.setPostDate(addedDate.toDate());

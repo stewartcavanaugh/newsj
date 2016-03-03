@@ -37,7 +37,7 @@ public class Release {
     private String guid;
     private String fromName;
     private float completion;
-    private Integer categoryId;
+    private Category category;
     private Long regexId;
     private Long rageId;
     private String seriesFull;
@@ -141,12 +141,12 @@ public class Release {
         this.completion = completion;
     }
 
-    public Integer getCategoryId() {
-        return categoryId;
+    public Category getCategory() {
+        return category;
     }
 
-    public void setCategoryId(Integer categoryId) {
-        this.categoryId = categoryId;
+    public void setCategory(Category category) {
+        this.category = category;
     }
 
     public Long getRegexId() {

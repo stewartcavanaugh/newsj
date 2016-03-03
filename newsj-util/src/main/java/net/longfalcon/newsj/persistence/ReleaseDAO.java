@@ -30,6 +30,13 @@ import java.util.List;
  * Time: 9:43 PM
  */
 public interface ReleaseDAO {
+
+    List<Release> findTopCommentedReleases();
+
+    List<Release> findTopDownloads();
+
+    List<Object[]> findRecentlyAddedReleaseCategories();
+
     void updateRelease(Release release);
 
     void deleteRelease(Release release);

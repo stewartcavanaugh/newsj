@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015. Sten Martinez
+ * Copyright (c) 2016. Sten Martinez
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,24 +16,27 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package net.longfalcon.newsj.persistence;
-
-import net.longfalcon.newsj.model.Category;
-
-import java.util.List;
-import java.util.Set;
+package net.longfalcon.view;
 
 /**
  * User: Sten Martinez
- * Date: 10/16/15
- * Time: 4:50 PM
+ * Date: 3/2/16
+ * Time: 5:29 PM
  */
-public interface CategoryDAO {
-    Category findByCategoryId(int categoryId);
+public class RecentReleaseCategoryView {
+    private String categoryName;
+    private long count;
 
-    List<Category> findByParentId(int parentId);
+    public RecentReleaseCategoryView(String category, long count) {
+        this.categoryName = category;
+        this.count = count;
+    }
 
-    List<Category> getForMenu(Set<Integer> userExcludedCategoryIds);
+    public String getCategoryName() {
+        return categoryName;
+    }
 
-    List<Category> getForMenu(Set<Integer> userExcludedCategoryIds, Integer parentId);
+    public long getCount() {
+        return count;
+    }
 }

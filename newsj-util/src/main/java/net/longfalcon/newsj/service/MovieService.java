@@ -112,7 +112,12 @@ public class MovieService {
     }
 
     private String parseMovieName(Release release) {
-        if (release.getCategoryId() != CategoryService.CAT_MOVIE_FOREIGN) {
+        int categoryId = 0;
+        Category category = release.getCategory();
+        if (category != null) {
+            categoryId = category.getId();
+        }
+        if (categoryId != CategoryService.CAT_MOVIE_FOREIGN) {
             Pattern movieNamePattern = Pattern.compile("^(?<name>.*)[\\.\\-_\\( ](?<year>19\\d{2}|20\\d{2})", Pattern.CASE_INSENSITIVE);
             Matcher movieNameMatcher = movieNamePattern.matcher(release.getSearchName());
             if (movieNameMatcher.find()) {

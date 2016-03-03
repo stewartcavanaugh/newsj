@@ -21,8 +21,10 @@ package net.longfalcon.newsj.persistence.hibernate;
 import net.longfalcon.newsj.model.Release;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.joda.time.DateTime;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -39,6 +41,43 @@ import java.util.List;
  */
 @Repository
 public class ReleaseDAOImpl extends HibernateDAOImpl implements net.longfalcon.newsj.persistence.ReleaseDAO {
+
+    @Override
+    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
+    public List<Release> findTopCommentedReleases() {
+        Query query = sessionFactory.getCurrentSession().createQuery("select r from Release r where comments > 0 order by comments desc");
+        query.setMaxResults(10);
+        return query.list();
+    }
+
+    @Override
+    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
+    public List<Release> findTopDownloads() {
+        Query query = sessionFactory.getCurrentSession().createQuery("select r from Release r where grabs > 0 order by grabs desc");
+        query.setMaxResults(10);
+        return query.list();
+    }
+
+
+    /**
+     *
+     * @return List of Object[] = {Category,long}
+     */
+    @Override
+    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
+    public List<Object[]> findRecentlyAddedReleaseCategories() {
+        Date oneWeekAgo = DateTime.now().minusWeeks(1).toDate();
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Release.class);
+        criteria.add(Restrictions.ge("addDate", oneWeekAgo));
+        criteria.setProjection(Projections.projectionList()
+                        .add(Projections.groupProperty("category").as("category"))
+                        .add(Projections.count("id").as("count"))
+        );
+        criteria.addOrder(Order.desc("count"));
+        criteria.setMaxResults(10);
+
+        return criteria.list();
+    }
 
     @Override
     @Transactional

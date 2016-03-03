@@ -32,6 +32,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -145,6 +146,10 @@ public class UserService {
             return null;
         }
         return user;
+    }
+
+    public List<User> getTopGrabbers() {
+        return userDAO.findTopGrabbers();
     }
 
     private long checkAndUseInvite(String inviteCode) {
