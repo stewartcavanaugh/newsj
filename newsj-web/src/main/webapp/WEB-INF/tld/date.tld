@@ -34,5 +34,9 @@
         <function-class>net.longfalcon.taglib.DateFunctions</function-class>
         <function-signature>java.lang.String timeAgo(java.util.Date)</function-signature>
     </function>
-
+    <function>
+        <name>formatDate</name>
+        <function-class>net.longfalcon.taglib.DateFunctions</function-class>
+        <function-signature>java.lang.String dateFormat(java.util.Date)</function-signature>
+    </function>
 </taglib>

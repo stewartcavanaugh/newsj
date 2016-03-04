@@ -148,6 +148,45 @@ public class UserService {
         return user;
     }
 
+    @Transactional
+    public long update(User user) {
+        String userName = user.getUsername();
+        String password = user.getPassword();
+        String email = user.getEmail();
+
+        if (!_isValidUserName(userName)) {
+            return ERR_SIGNUP_BADUNAME;
+        }
+
+        if (!_isValidPassword(password)) {
+            return ERR_SIGNUP_BADPASS;
+        }
+
+        if (!_isValidEmail(email)) {
+            return ERR_SIGNUP_BADEMAIL;
+        }
+
+        User existingUser = userDAO.findByUsername(userName);
+        if ( existingUser.getId() != user.getId()) {
+            return ERR_SIGNUP_UNAMEINUSE;
+        }
+
+        existingUser = userDAO.findByEmail(email);
+        if (existingUser.getId() != user.getId()) {
+            return ERR_SIGNUP_EMAILINUSE;
+        }
+
+        try {
+            userDAO.update(user);
+        } catch (Exception e) {
+            _log.error(e.toString());
+            _log.debug(null, e);
+            return ERR_SIGNUP_GENERAL;
+        }
+
+        return user.getId();
+    }
+
     public List<User> getTopGrabbers() {
         return userDAO.findTopGrabbers();
     }

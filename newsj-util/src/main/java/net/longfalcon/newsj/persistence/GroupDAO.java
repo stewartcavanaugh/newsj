@@ -32,6 +32,8 @@ public interface GroupDAO {
 
     List<Group> getGroups(int start, int pageSize);
 
+    List<Group> getGroups(int start, int pageSize, String orderByField, boolean descending);
+
     Long getGroupsCount();
 
     List<Group> getActiveGroups();

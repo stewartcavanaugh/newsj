@@ -34,6 +34,10 @@ public interface UserDAO {
 
     void delete(User user);
 
+    List<User> getUsers(int start, int pageSize);
+
+    List<User> getUsers(int start, int pageSize, String orderByField, boolean descending);
+
     User findByUserId(long userId);
 
     User findByUsername(String username);

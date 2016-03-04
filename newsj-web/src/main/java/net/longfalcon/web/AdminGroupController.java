@@ -63,49 +63,20 @@ public class AdminGroupController extends BaseController {
     private static final Log _log = LogFactory.getLog(AdminGroupController.class);
 
     @RequestMapping(value = "/admin/group-list", method = RequestMethod.GET)
-    public String groupListView(@RequestParam(value = "page", required = false, defaultValue = "0") Integer pageNum, Model model) {
-        List<Group> groupList;
+    public String groupListView(@RequestParam(value = "offset", required = false, defaultValue = "0") Integer offset,
+                                Model model) {
+        List<Group> groupList = groupDAO.getGroups(offset, pageSize);
 
-        // pager logic
-        Map<Integer,String> pagerMap = new HashMap<>();
-        long resultCount = groupDAO.getGroupsCount();
-
-        if (resultCount > pageSize) {
-            int firstResult = pageNum * pageSize;
-
-            groupList = groupDAO.getGroups(firstResult, pageSize);
-            int totalPages = (int) (resultCount + pageSize -1 ) / pageSize;
-            for (int i = 0; i < totalPages; i++) {
-                String pageName = "";
-                if (i == 0) {
-                    pageName = "first";
-                }
-                if (i == (totalPages -1)) {
-                    pageName = "last";
-                }
-                if (i == pageNum) {
-                    pageName += ":current";
-                }
-                if (i == pageNum - 1) {
-                    pageName += ":prev";
-                }
-                if (i == pageNum + 1) {
-                    pageName += ":next";
-                }
-                if (ValidatorUtil.isNotNull(pageName)) {
-                    pagerMap.put(i,pageName);
-                }
-            }
-        } else {
-            groupList = groupDAO.getGroups();
-        }
-
+        int pagerTotalItems = Math.toIntExact(groupDAO.getGroupsCount());
 
         model.addAttribute("title", "Group List");
         model.addAttribute("groupList", groupList);
         model.addAttribute("dateView", new DateView());
         model.addAttribute("groupService", groupService);
-        model.addAttribute("pagerMap", pagerMap);
+        model.addAttribute("pagerTotalItems", pagerTotalItems);
+        model.addAttribute("pagerOffset", offset);
+        model.addAttribute("pagerItemsPerPage", pageSize);
+
         return "admin/group-list";
     }
 

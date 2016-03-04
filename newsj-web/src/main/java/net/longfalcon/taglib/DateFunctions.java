@@ -18,6 +18,8 @@
 
 package net.longfalcon.taglib;
 
+import net.longfalcon.newsj.util.DateUtil;
+
 import java.util.Date;
 
 /**
@@ -85,4 +87,9 @@ public class DateFunctions {
         return days + "d";
     }
 
+
+    public static String dateFormat(Date date) {
+
+        return DateUtil.formatDefaultDate(date);
+    }
 }
