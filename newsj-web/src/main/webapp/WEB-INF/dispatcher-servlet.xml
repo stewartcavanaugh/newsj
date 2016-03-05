@@ -28,12 +28,17 @@
         http://www.springframework.org/schema/mvc
         http://www.springframework.org/schema/mvc/spring-mvc.xsd">
     <context:component-scan base-package="net.longfalcon.web"/>
+
     <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
         <property name="prefix" value="/WEB-INF/jsp/"/>
         <property name="suffix" value=".jsp"/>
     </bean>
 
+    <bean id="webExceptionHandlerResolver" class="net.longfalcon.web.WebExceptionHandlerResolver"/>
+
     <mvc:annotation-driven/>
     <mvc:resources mapping="/resources/**" location="/public-resources/"/>
+
+
 </beans>

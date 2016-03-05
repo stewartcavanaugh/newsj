@@ -47,6 +47,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import java.sql.Timestamp;
@@ -98,6 +99,43 @@ public class Releases {
 
     public List<Release> getTopComments() {
         return releaseDAO.findTopCommentedReleases();
+    }
+
+    public Release findByReleaseId(long releaseId) {
+        Release release = releaseDAO.findByReleaseId(releaseId);
+        if (release != null && release.getCategory() != null) {
+            release.setCategoryId(release.getCategory().getId());
+            Group group = groupDAO.findGroupByGroupId(release.getGroupId());
+            release.setGroupName(group.getName());
+        }
+
+        return release;
+    }
+
+    public Release findByGuid(String guid) {
+        Release release = releaseDAO.findByGuid(guid);
+        if (release != null && release.getCategory() != null) {
+            release.setCategoryId(release.getCategory().getId());
+            Group group = groupDAO.findGroupByGroupId(release.getGroupId());
+            release.setGroupName(group.getName());
+        }
+
+        return release;
+    }
+
+    @Transactional
+    public void resetRelease(long releaseId) {
+        binaryDAO.resetReleaseBinaries(releaseId);
+    }
+
+    @Transactional
+    public void updateRelease(Release release) {
+        if (release.getCategoryId() > 0) {
+            Category newCategory = categoryService.getCategory(release.getCategoryId());
+            release.setCategory(newCategory);
+        }
+
+        releaseDAO.updateRelease(release);
     }
 
     /**

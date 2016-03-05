@@ -109,6 +109,10 @@ public class CategoryService {
         return categoryList;
     }
 
+    public List<Category> getCategories() {
+        return categoryDAO.getCategories();
+    }
+
     public Category getCategory(int categoryId) {
         return categoryDAO.findByCategoryId(categoryId);
 

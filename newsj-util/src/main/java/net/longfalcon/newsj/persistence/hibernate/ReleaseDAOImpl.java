@@ -20,6 +20,7 @@ package net.longfalcon.newsj.persistence.hibernate;
 
 import net.longfalcon.newsj.model.Release;
 import org.hibernate.Criteria;
+import org.hibernate.FetchMode;
 import org.hibernate.Query;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
@@ -96,6 +97,17 @@ public class ReleaseDAOImpl extends HibernateDAOImpl implements net.longfalcon.n
     public Release findByReleaseId(long releaseId) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Release.class);
         criteria.add(Restrictions.eq("id", releaseId));
+        criteria.setFetchMode("category", FetchMode.JOIN);
+
+        return (Release) criteria.uniqueResult();
+    }
+
+    @Override
+    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
+    public Release findByGuid(String guid) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Release.class);
+        criteria.add(Restrictions.eq("guid", guid));
+        criteria.setFetchMode("category", FetchMode.JOIN);
 
         return (Release) criteria.uniqueResult();
     }
@@ -105,6 +117,7 @@ public class ReleaseDAOImpl extends HibernateDAOImpl implements net.longfalcon.n
     public List<Release> findReleasesBeforeDate(Date before) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Release.class);
         criteria.add(Restrictions.lt("postDate", before));
+        criteria.setFetchMode("category", FetchMode.JOIN);
 
         return criteria.list();
     }
@@ -115,6 +128,7 @@ public class ReleaseDAOImpl extends HibernateDAOImpl implements net.longfalcon.n
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Release.class);
         criteria.add(Restrictions.eq("searchName", relName));
         criteria.add(Restrictions.between("postDate", startDate, endDate));
+        criteria.setFetchMode("category", FetchMode.JOIN);
 
         return criteria.list();
     }
@@ -124,7 +138,7 @@ public class ReleaseDAOImpl extends HibernateDAOImpl implements net.longfalcon.n
     public List<Release> findReleasesByNoImdbIdAndCategoryId(Collection<Integer> categoryIds) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Release.class);
         criteria.add(Restrictions.isNull("imdbId"));
-        criteria.add(Restrictions.in("categoryId", categoryIds));
+        criteria.add(Restrictions.in("category.id", categoryIds));
 
         return criteria.list();
     }
@@ -134,7 +148,7 @@ public class ReleaseDAOImpl extends HibernateDAOImpl implements net.longfalcon.n
     public List<Release> findReleasesByRageIdAndCategoryId(long rageId, Collection<Integer> categoryIds) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Release.class);
         criteria.add(Restrictions.eq("rageId", rageId));
-        criteria.add(Restrictions.in("categoryId", categoryIds));
+        criteria.add(Restrictions.in("category.id", categoryIds));
 
         return criteria.list();
     }
@@ -156,5 +170,24 @@ public class ReleaseDAOImpl extends HibernateDAOImpl implements net.longfalcon.n
         query.setParameter("group_id", groupId);
 
         query.executeUpdate();
+    }
+
+    @Override
+    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
+    public Long getReleasesCount() {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Release.class);
+        criteria.setProjection(Projections.rowCount());
+
+        return (Long) criteria.uniqueResult();
+    }
+
+    @Override
+    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
+    public List<Release> getReleases(int offset, int pageSize) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Release.class);
+        criteria.setFirstResult(offset).setMaxResults(pageSize);
+        criteria.setFetchMode("category", FetchMode.JOIN);
+
+        return criteria.list();
     }
 }

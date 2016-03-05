@@ -20,6 +20,7 @@ package net.longfalcon.taglib;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.text.WordUtils;
 
 /**
  * User: Sten Martinez
@@ -34,5 +35,18 @@ public class TextFunctions {
 
     public static String escapeHtml(String s) {
         return StringEscapeUtils.escapeHtml4(s);
+    }
+
+    public static String wordWrap(String s, int width) {
+        return WordUtils.wrap(s,width);
+    }
+
+    public static String formatFileSize(long bytes, boolean si) {
+        // thanks stackoverflow
+        int unit = si ? 1000 : 1024;
+        if (bytes < unit) return bytes + " B";
+        int exp = (int) (Math.log(bytes) / Math.log(unit));
+        String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp-1) + (si ? "" : "i");
+        return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
     }
 }

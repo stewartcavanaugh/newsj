@@ -57,7 +57,6 @@ public class AdminUserController extends BaseController {
     UserService userService;
 
     private static Set<String> userFieldNames;
-    private static int pageSize = 50;
     private static final Log _log = LogFactory.getLog(AdminUserController.class);
     static {
         userFieldNames = new HashSet<>();
@@ -84,12 +83,12 @@ public class AdminUserController extends BaseController {
         int pagerTotalItems = Math.toIntExact(userDAO.countUsers());
 
         if (ValidatorUtil.isNull(orderBy)) {
-            userList = userDAO.getUsers(offset, pageSize);
+            userList = userDAO.getUsers(offset, PAGE_SIZE);
         } else {
             String propertyName = getOrderByProperty(orderBy);
             boolean descending = getOrderByOrder(orderBy);
             if (ValidatorUtil.isNotNull(propertyName)) {
-                userList = userDAO.getUsers(offset, pageSize, propertyName, descending);
+                userList = userDAO.getUsers(offset, PAGE_SIZE, propertyName, descending);
             }
         }
 
@@ -97,7 +96,7 @@ public class AdminUserController extends BaseController {
         model.addAttribute("userList", userList);
         model.addAttribute("pagerTotalItems", pagerTotalItems);
         model.addAttribute("pagerOffset", offset);
-        model.addAttribute("pagerItemsPerPage", pageSize);
+        model.addAttribute("pagerItemsPerPage", PAGE_SIZE);
         model.addAttribute("orderBy", orderBy);
         return "admin/user-list";
     }
@@ -114,6 +113,7 @@ public class AdminUserController extends BaseController {
             user.setInvites(UserService.DEFAULT_INVITES);
             user.setMovieView(1);
         } else {
+            title = "Edit User";
             user = userDAO.findByUserId(id);
             if (user == null) {
                 error = "User does not exist";
@@ -170,7 +170,7 @@ public class AdminUserController extends BaseController {
     }
 
     @RequestMapping(value = "/admin/user-delete", method = RequestMethod.POST)
-    public String userDeletePost(@RequestParam(value = "id", required = false)Long id, Model model) {
+    public String userDeletePost(@RequestParam(value = "id")Long id, Model model) {
         User user = userDAO.findByUserId(id);
         if (user == null) {
             _log.error("userId="+id+" does not exist.");

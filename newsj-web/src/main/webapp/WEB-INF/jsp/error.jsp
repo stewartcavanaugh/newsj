@@ -19,17 +19,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <title>${status}</title>
-    <style type="text/css">
-        <!--
-        body { margin: 0; padding: 0; background: #FFF url(${pageContext.request.contextPath}/resources/images/menu.gif) repeat-x left top; font-family: Calibri, Arial, Helvetica, sans-serif;	font-size: 12px; color: #515151; }
-        h1, h2, h3 {	margin: 0;	font-weight: normal; color: #485459; }
-        PRE, TT {border: 1px dotted #525D76}
-        a { color: #4D9408; text-decoration: none;}
-        a:hover { text-decoration: underline; }
-        -->
-    </style>
-    <link rel="shortcut icon" type="image/ico" href="${pageContext.request.contextPath}/resources/images/favicon.ico"/>
+    <%@ include file="common/common_head.jsp"%>
 </head>
 
 <body>

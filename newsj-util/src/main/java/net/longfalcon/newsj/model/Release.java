@@ -18,6 +18,7 @@
 
 package net.longfalcon.newsj.model;
 
+import javax.persistence.Transient;
 import java.util.Date;
 
 /**
@@ -52,6 +53,9 @@ public class Release {
     private int grabs;
     private int comments;
     private int passwordStatus;
+
+    private int categoryId;
+    private String groupName;
 
     public long getId() {
         return id;
@@ -259,5 +263,23 @@ public class Release {
 
     public void setImdbId(Integer imdbId) {
         this.imdbId = imdbId;
+    }
+
+    @Transient
+    public int getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(int categoryId) {
+        this.categoryId = categoryId;
+    }
+
+    @Transient
+    public String getGroupName() {
+        return groupName;
+    }
+
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
     }
 }

@@ -37,9 +37,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
 import javax.servlet.http.HttpSession;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * User: Sten Martinez
@@ -59,13 +57,12 @@ public class AdminGroupController extends BaseController {
     @Autowired
     GroupService groupService;
 
-    private static int pageSize = 50;
     private static final Log _log = LogFactory.getLog(AdminGroupController.class);
 
     @RequestMapping(value = "/admin/group-list", method = RequestMethod.GET)
     public String groupListView(@RequestParam(value = "offset", required = false, defaultValue = "0") Integer offset,
                                 Model model) {
-        List<Group> groupList = groupDAO.getGroups(offset, pageSize);
+        List<Group> groupList = groupDAO.getGroups(offset, PAGE_SIZE);
 
         int pagerTotalItems = Math.toIntExact(groupDAO.getGroupsCount());
 
@@ -75,7 +72,7 @@ public class AdminGroupController extends BaseController {
         model.addAttribute("groupService", groupService);
         model.addAttribute("pagerTotalItems", pagerTotalItems);
         model.addAttribute("pagerOffset", offset);
-        model.addAttribute("pagerItemsPerPage", pageSize);
+        model.addAttribute("pagerItemsPerPage", PAGE_SIZE);
 
         return "admin/group-list";
     }
@@ -113,12 +110,9 @@ public class AdminGroupController extends BaseController {
     @RequestMapping(value = "/admin/group-edit", method = RequestMethod.GET)
     public String editGroupView(@RequestParam(value = "id")Long groupId, Model model, HttpSession httpSession) {
         Group group = groupService.getGroup(groupId);
-        Map<Integer, String> yesNoMap = new HashMap<>();
-        yesNoMap.put(1,"Yes");
-        yesNoMap.put(0, "No");
 
         model.addAttribute("title", group.getName());
-        model.addAttribute("yesNoMap", yesNoMap);
+        model.addAttribute("yesNoMap", YES_NO_MAP);
         model.addAttribute("group", group);
         return "admin/group-edit";
     }

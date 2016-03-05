@@ -20,6 +20,7 @@ package net.longfalcon.newsj.persistence.hibernate;
 
 import net.longfalcon.newsj.model.Category;
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Isolation;
@@ -71,5 +72,13 @@ public class CategoryDAOImpl extends HibernateDAOImpl implements net.longfalcon.
     @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
     public List<Category> getForMenu(Set<Integer> userExcludedCategoryIds) {
         return getForMenu(userExcludedCategoryIds, null);
+    }
+
+    @Override
+    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
+    public List<Category> getCategories() {
+        Query query = sessionFactory.getCurrentSession().createQuery("from Category c where c.parentId != 0 order by c.id");
+
+        return query.list();
     }
 }

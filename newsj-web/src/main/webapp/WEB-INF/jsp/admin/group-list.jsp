@@ -77,7 +77,6 @@
                             </form>
                         </div>
 
-                        <%--PAGER: MOVE TO A TAG OR AN INCLUDE LATER--%>
                         <tags:pager pagerTotalItems="${pagerTotalItems}" pagerItemsPerPage="${pagerItemsPerPage}"
                                     pagerOffset="${pagerOffset}" pagerQueryBase="${pageContext.request.contextPath}/admin/group-list?offset="/>
                         <br/><br/>

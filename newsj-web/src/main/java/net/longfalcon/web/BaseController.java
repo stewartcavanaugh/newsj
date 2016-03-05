@@ -42,6 +42,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * User: Sten Martinez
@@ -50,6 +52,12 @@ import java.util.Date;
  */
 public class BaseController {
     private static final Log _log = LogFactory.getLog(BaseController.class);
+    protected static int PAGE_SIZE = 50;
+    protected static final Map<Integer, String> YES_NO_MAP = new HashMap<>();
+    static {
+        YES_NO_MAP.put(1, "Yes");
+        YES_NO_MAP.put(0, "No");
+    }
 
     protected String title = "";
     protected String pageMetaTitle = "";
@@ -187,7 +195,7 @@ public class BaseController {
     }
 
     public String getPageMetaTitle() {
-        return pageMetaTitle;
+        return title;
     }
 
     public void setPageMetaTitle(String pageMetaTitle) {

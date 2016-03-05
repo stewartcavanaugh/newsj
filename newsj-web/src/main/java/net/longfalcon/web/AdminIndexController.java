@@ -82,10 +82,6 @@ public class AdminIndexController extends BaseController {
             _log.error(e, e);
         }
 
-        Map<Integer, String> yesNoMap = new HashMap<>();
-        yesNoMap.put(1,"Yes");
-        yesNoMap.put(0, "No");
-
         Map<Integer, String> showPasswordedRelOptionsMap = new HashMap<>();
         showPasswordedRelOptionsMap.put(0,"Dont show passworded or potentially passworded");
         showPasswordedRelOptionsMap.put(1,"Dont show passworded");
@@ -100,7 +96,7 @@ public class AdminIndexController extends BaseController {
         registerStatusMap.put(SiteService.REGISTER_STATUS_INVITE, "Invite");
         registerStatusMap.put(SiteService.REGISTER_STATUS_CLOSED, "Closed");
 
-        model.addAttribute("yesNoMap", yesNoMap);
+        model.addAttribute("yesNoMap", YES_NO_MAP);
         model.addAttribute("showPasswordedRelOptionsMap", showPasswordedRelOptionsMap);
         model.addAttribute("newGroupsScanMethodMap", newGroupsScanMethodMap);
         model.addAttribute("registerStatusMap", registerStatusMap);

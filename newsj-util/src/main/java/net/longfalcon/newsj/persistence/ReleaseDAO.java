@@ -43,6 +43,8 @@ public interface ReleaseDAO {
 
     Release findByReleaseId(long releaseId);
 
+    Release findByGuid(String guid);
+
     List<Release> findReleasesBeforeDate(Date before);
 
     List<Release> findReleasesByNameAndDateRange(String relName, Date startDate, Date endDate);
@@ -54,4 +56,8 @@ public interface ReleaseDAO {
     Long countByGroupId(long groupId);
 
     void deleteByGroupId(long groupId);
+
+    Long getReleasesCount();
+
+    List<Release> getReleases(int offset, int pageSize);
 }
