@@ -21,6 +21,8 @@
   Time: 6:52 PM
 --%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="date" uri="http://java.longfalcon.net/jsp/jstl/date" %>
+<%@ taglib prefix="tags" tagdir="/WEB-INF/tags" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -75,27 +77,8 @@
                             </form>
                         </div>
 
-                        <%--PAGER: MOVE TO A TAG OR AN INCLUDE LATER--%>
-                        <c:if test="${!empty pagerMap}">
-                            <div class="pager">
-                                <c:forEach items="${pagerMap}" var="entry">
-                                    <c:choose>
-                                        <c:when test='${entry.value.contains("current")}'>
-                                            <span class="current" title="Current page ${entry.key + 1}">${entry.key + 1}</span>&nbsp;
-                                        </c:when>
-                                        <c:when test="${entry.value == 'prev'}">
-                                            ...<a title="Goto page ${entry.key + 1}" href="${pageContext.request.contextPath}/admin/group-list?page=${entry.key}">${entry.key + 1}</a>&nbsp;
-                                        </c:when>
-                                        <c:when test="${entry.value == 'next'}">
-                                            <a title="Goto page ${entry.key + 1}" href="${pageContext.request.contextPath}/admin/group-list?page=${entry.key}">${entry.key + 1}</a>&nbsp;...
-                                        </c:when>
-                                        <c:otherwise>
-                                            <a title="Goto page ${entry.key + 1}" href="${pageContext.request.contextPath}/admin/group-list?page=${entry.key}">${entry.key + 1}</a>&nbsp;
-                                        </c:otherwise>
-                                    </c:choose>
-                                </c:forEach>
-                            </div>
-                        </c:if>
+                        <tags:pager pagerTotalItems="${pagerTotalItems}" pagerItemsPerPage="${pagerItemsPerPage}"
+                                    pagerOffset="${pagerOffset}" pagerQueryBase="${pageContext.request.contextPath}/admin/group-list?offset="/>
                         <br/><br/>
 
                         <div id="message">msg</div>
@@ -119,9 +102,9 @@
                                     <a href="${pageContext.request.contextPath}/admin/group-edit?id=${group.id}">${group.name.replace('alt.binaries','a.b')}</a>
                                     <div class="hint">${group.description}</div>
                                 </td>
-                                <td class="less">${dateView.timeAgo(group.firstRecordPostdate)}</td>
-                                <td class="less">${dateView.timeAgo(group.lastRecordPostdate)}</td>
-                                <td class="less">${dateView.timeAgo(group.lastUpdated)} ago</td>
+                                <td class="less">${date:timeAgo(group.firstRecordPostdate)}</td>
+                                <td class="less">${date:timeAgo(group.lastRecordPostdate)}</td>
+                                <td class="less">${date:timeAgo(group.lastUpdated)} ago</td>
                                 <td class="less" id="group-${group.id}">
                                     <c:choose>
                                         <c:when test="${group.active}">

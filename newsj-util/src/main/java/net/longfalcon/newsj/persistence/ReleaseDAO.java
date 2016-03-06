@@ -30,11 +30,20 @@ import java.util.List;
  * Time: 9:43 PM
  */
 public interface ReleaseDAO {
+
+    List<Release> findTopCommentedReleases();
+
+    List<Release> findTopDownloads();
+
+    List<Object[]> findRecentlyAddedReleaseCategories();
+
     void updateRelease(Release release);
 
     void deleteRelease(Release release);
 
     Release findByReleaseId(long releaseId);
+
+    Release findByGuid(String guid);
 
     List<Release> findReleasesBeforeDate(Date before);
 
@@ -47,4 +56,8 @@ public interface ReleaseDAO {
     Long countByGroupId(long groupId);
 
     void deleteByGroupId(long groupId);
+
+    Long getReleasesCount();
+
+    List<Release> getReleases(int offset, int pageSize);
 }

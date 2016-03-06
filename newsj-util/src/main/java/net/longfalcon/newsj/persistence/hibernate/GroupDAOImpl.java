@@ -23,6 +23,7 @@ import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
@@ -53,6 +54,21 @@ public class GroupDAOImpl extends HibernateDAOImpl implements net.longfalcon.new
     public List<Group> getGroups(int start, int pageSize) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Group.class);
         criteria.setFirstResult(start).setMaxResults(pageSize);
+        criteria.setFetchMode("releases", FetchMode.JOIN);
+
+        return criteria.list();
+    }
+
+    @Override
+    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
+    public List<Group> getGroups(int start, int pageSize, String orderByField, boolean descending) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Group.class);
+        criteria.setFirstResult(start).setMaxResults(pageSize);
+        if (descending) {
+            criteria.addOrder(Order.desc(orderByField));
+        } else {
+            criteria.addOrder(Order.asc(orderByField));
+        }
         criteria.setFetchMode("releases", FetchMode.JOIN);
 
         return criteria.list();

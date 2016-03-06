@@ -28,6 +28,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 /**
@@ -46,8 +47,28 @@ public class ContentController extends BaseController {
         return "content";
     }
 
-    @RequestMapping("/content/{id:\\d+}{url:\\/.*$}")
-    public String viewContent(@PathVariable long id, @PathVariable String url, Model model) {
+    @RequestMapping("/content/{id:\\d+}/-/**")
+    public String viewContentUrl(@PathVariable long id, HttpServletRequest httpServletRequest, Model model) {
+        Content indexContent = contentService.getContent(id);
+        String url = httpServletRequest.getRequestURI();
+        String[] urlParts = url.split("/-");
+        String urlPart = urlParts[1];
+        if (urlPart.equals(indexContent.getUrl())) {
+            model.addAttribute("content", indexContent);
+        } else {
+            model.asMap().clear();
+            model.addAttribute("status", "404");
+            model.addAttribute("request_uri", url);
+            model.addAttribute("reason", "Content page not found");
+            return "error";
+        }
+
+
+        return "content";
+    }
+
+    @RequestMapping("/content/{id:\\d+}")
+    public String viewContent(@PathVariable long id, Model model) {
         Content indexContent = contentService.getContent(id);
         model.addAttribute("content", indexContent);
 

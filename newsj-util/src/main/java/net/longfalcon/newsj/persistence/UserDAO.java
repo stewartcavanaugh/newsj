@@ -20,15 +20,23 @@ package net.longfalcon.newsj.persistence;
 
 import net.longfalcon.newsj.model.User;
 
+import java.util.List;
+
 /**
  * User: Sten Martinez
  * Date: 11/7/15
  * Time: 1:29 PM
  */
 public interface UserDAO {
+    List<User> findTopGrabbers();
+
     void update(User user);
 
     void delete(User user);
+
+    List<User> getUsers(int start, int pageSize);
+
+    List<User> getUsers(int start, int pageSize, String orderByField, boolean descending);
 
     User findByUserId(long userId);
 

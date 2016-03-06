@@ -32,6 +32,8 @@ import java.util.List;
  */
 public interface BinaryDAO {
 
+    List<Binary> findByReleaseId(long releaseId);
+
     Binary findByBinaryHash(String binaryHash);
 
     List<Binary> findByGroupIdsAndProcStat(Collection<Long> groupIds, int procStat);
@@ -55,6 +57,8 @@ public interface BinaryDAO {
     Timestamp findMaxDateAddedBinaryByReleaseNameProcStatGroupIdFromName(String relName, int procStat, long groupId, String fromName);
 
     void updateProcStatByProcStatAndDate(int newStatus, int procStat, Date before);
+
+    void resetReleaseBinaries(long releaseId);
 
     List<Binary> findBinariesByReleaseId(long releaseId);
 

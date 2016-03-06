@@ -109,6 +109,15 @@ public class CategoryService {
         return categoryList;
     }
 
+    public List<Category> getCategories() {
+        return categoryDAO.getCategories();
+    }
+
+    public Category getCategory(int categoryId) {
+        return categoryDAO.findByCategoryId(categoryId);
+
+    }
+
     private List<Category> getSubCategories(Set<Integer> userExcludedCategoryIds, int parentId) {
         List<Category> categoryList = categoryDAO.getForMenu(userExcludedCategoryIds, parentId);
         for (Category category : categoryList) {

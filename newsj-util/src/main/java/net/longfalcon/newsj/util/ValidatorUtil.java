@@ -49,4 +49,8 @@ public class ValidatorUtil {
     public static boolean isNotNull(Long l) {
         return !(l == null || l == 0 || l == -1);
     }
+
+    public static boolean isNull(Long l) {
+        return !isNotNull(l);
+    }
 }

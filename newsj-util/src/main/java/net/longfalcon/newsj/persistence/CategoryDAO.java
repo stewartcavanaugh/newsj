@@ -19,9 +19,6 @@
 package net.longfalcon.newsj.persistence;
 
 import net.longfalcon.newsj.model.Category;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Set;
@@ -38,6 +35,7 @@ public interface CategoryDAO {
 
     List<Category> getForMenu(Set<Integer> userExcludedCategoryIds);
 
-    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
     List<Category> getForMenu(Set<Integer> userExcludedCategoryIds, Integer parentId);
+
+    List<Category> getCategories();
 }

@@ -341,7 +341,7 @@
         <property name="guid" column="guid" not-null="true"/>
         <property name="fromName" column="fromname"/>
         <property name="completion" column="completion"/>
-        <property name="categoryId" column="categoryID"/>
+        <many-to-one name="category" class="Category" not-null="true" unique="false" column="categoryID"/>
         <property name="regexId" column="regexID"/>
         <property name="rageId" column="rageID"/>
         <property name="seriesFull" column="seriesfull"/>

@@ -20,11 +20,15 @@ package net.longfalcon.newsj.persistence.hibernate;
 
 import net.longfalcon.newsj.model.User;
 import org.hibernate.Criteria;
+import org.hibernate.Query;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * User: Sten Martinez
@@ -42,6 +46,29 @@ public class UserDAOImpl extends HibernateDAOImpl implements net.longfalcon.news
     @Transactional
     public void delete(User user) {
         sessionFactory.getCurrentSession().delete(user);
+    }
+
+    @Override
+    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
+    public List<User> getUsers(int start, int pageSize) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(User.class);
+        criteria.setFirstResult(start).setMaxResults(pageSize);
+
+        return criteria.list();
+    }
+
+    @Override
+    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
+    public List<User> getUsers(int start, int pageSize, String orderByField, boolean descending) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(User.class);
+        if (descending) {
+            criteria.addOrder(Order.desc(orderByField));
+        } else {
+            criteria.addOrder(Order.asc(orderByField));
+        }
+        criteria.setFirstResult(start).setMaxResults(pageSize);
+
+        return criteria.list();
     }
 
     @Override
@@ -78,5 +105,13 @@ public class UserDAOImpl extends HibernateDAOImpl implements net.longfalcon.news
         criteria.setProjection(Projections.countDistinct("id"));
 
         return (long) criteria.uniqueResult();
+    }
+
+    @Override
+    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
+    public List<User> findTopGrabbers() {
+        Query query = sessionFactory.getCurrentSession().createQuery("select u from User u where u.grabs > 0 order by u.grabs desc");
+        query.setMaxResults(10);
+        return query.list();
     }
 }

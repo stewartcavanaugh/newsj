@@ -74,7 +74,7 @@
                     <td>${content.ordinal}</td>
                     <td>${content.id}</td>
                     <td><a href="${pageContext.request.contextPath}/admin/content-add?id=${content.id}" title="Edit ${content.title}">${content.title}</a></td>
-                    <td><a title="Preview in new window" href="${pageContext.request.contextPath}/content/${content.id}${content.url}" target="null">${content.url}</a></td>
+                    <td><a title="Preview in new window" href="${pageContext.request.contextPath}/content/${content.id}/-${content.url}" target="null">${content.url}</a></td>
                     <td>
                         <c:choose>
                             <c:when test="${content.contentType == 1}">

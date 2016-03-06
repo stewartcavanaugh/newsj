@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015. Sten Martinez
+ * Copyright (c) 2016. Sten Martinez
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,37 +16,27 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package net.longfalcon.newsj.persistence;
-
-import net.longfalcon.newsj.model.Group;
-
-import java.util.List;
+package net.longfalcon.view;
 
 /**
  * User: Sten Martinez
- * Date: 10/5/15
- * Time: 9:48 PM
+ * Date: 3/2/16
+ * Time: 5:29 PM
  */
-public interface GroupDAO {
-    List<Group> getGroups();
+public class RecentReleaseCategoryView {
+    private String categoryName;
+    private long count;
 
-    List<Group> getGroups(int start, int pageSize);
+    public RecentReleaseCategoryView(String category, long count) {
+        this.categoryName = category;
+        this.count = count;
+    }
 
-    List<Group> getGroups(int start, int pageSize, String orderByField, boolean descending);
+    public String getCategoryName() {
+        return categoryName;
+    }
 
-    Long getGroupsCount();
-
-    List<Group> getActiveGroups();
-
-    void update(Group group);
-
-    void delete(Group group);
-
-    Group getGroupByName(String name);
-
-    List<Group> findGroupsByName(String name);
-
-    Group findGroupByGroupId(long groupId);
-
-    public List<String> getGroupsForSelect();
+    public long getCount() {
+        return count;
+    }
 }

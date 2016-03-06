@@ -21,6 +21,8 @@ package net.longfalcon.newsj.util;
 import org.joda.time.DateTime;
 import org.junit.Test;
 
+import java.util.Date;
+
 /**
  * User: Sten Martinez
  * Date: 10/8/15
@@ -31,5 +33,11 @@ public class DateUtilTest {
     @Test
     public void testParseNNTPDate() throws Exception {
         DateTime dateTime = DateUtil.parseNNTPDate("Tue, 06 Oct 2015 01:54:02 +0200 (UTC)");
+    }
+
+    @Test
+    public void testDateFormat() throws Exception {
+        Date now = new Date();
+        System.out.println("Date: " + DateUtil.formatDefaultDate(now));
     }
 }

@@ -20,9 +20,12 @@ package net.longfalcon.newsj.persistence.hibernate;
 
 import net.longfalcon.newsj.model.Release;
 import org.hibernate.Criteria;
+import org.hibernate.FetchMode;
 import org.hibernate.Query;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.joda.time.DateTime;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -41,6 +44,43 @@ import java.util.List;
 public class ReleaseDAOImpl extends HibernateDAOImpl implements net.longfalcon.newsj.persistence.ReleaseDAO {
 
     @Override
+    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
+    public List<Release> findTopCommentedReleases() {
+        Query query = sessionFactory.getCurrentSession().createQuery("select r from Release r where comments > 0 order by comments desc");
+        query.setMaxResults(10);
+        return query.list();
+    }
+
+    @Override
+    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
+    public List<Release> findTopDownloads() {
+        Query query = sessionFactory.getCurrentSession().createQuery("select r from Release r where grabs > 0 order by grabs desc");
+        query.setMaxResults(10);
+        return query.list();
+    }
+
+
+    /**
+     *
+     * @return List of Object[] = {Category,long}
+     */
+    @Override
+    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
+    public List<Object[]> findRecentlyAddedReleaseCategories() {
+        Date oneWeekAgo = DateTime.now().minusWeeks(1).toDate();
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Release.class);
+        criteria.add(Restrictions.ge("addDate", oneWeekAgo));
+        criteria.setProjection(Projections.projectionList()
+                        .add(Projections.groupProperty("category").as("category"))
+                        .add(Projections.count("id").as("count"))
+        );
+        criteria.addOrder(Order.desc("count"));
+        criteria.setMaxResults(10);
+
+        return criteria.list();
+    }
+
+    @Override
     @Transactional
     public void updateRelease(Release release) {
         sessionFactory.getCurrentSession().saveOrUpdate(release);
@@ -57,6 +97,17 @@ public class ReleaseDAOImpl extends HibernateDAOImpl implements net.longfalcon.n
     public Release findByReleaseId(long releaseId) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Release.class);
         criteria.add(Restrictions.eq("id", releaseId));
+        criteria.setFetchMode("category", FetchMode.JOIN);
+
+        return (Release) criteria.uniqueResult();
+    }
+
+    @Override
+    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
+    public Release findByGuid(String guid) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Release.class);
+        criteria.add(Restrictions.eq("guid", guid));
+        criteria.setFetchMode("category", FetchMode.JOIN);
 
         return (Release) criteria.uniqueResult();
     }
@@ -66,6 +117,7 @@ public class ReleaseDAOImpl extends HibernateDAOImpl implements net.longfalcon.n
     public List<Release> findReleasesBeforeDate(Date before) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Release.class);
         criteria.add(Restrictions.lt("postDate", before));
+        criteria.setFetchMode("category", FetchMode.JOIN);
 
         return criteria.list();
     }
@@ -76,6 +128,7 @@ public class ReleaseDAOImpl extends HibernateDAOImpl implements net.longfalcon.n
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Release.class);
         criteria.add(Restrictions.eq("searchName", relName));
         criteria.add(Restrictions.between("postDate", startDate, endDate));
+        criteria.setFetchMode("category", FetchMode.JOIN);
 
         return criteria.list();
     }
@@ -85,7 +138,7 @@ public class ReleaseDAOImpl extends HibernateDAOImpl implements net.longfalcon.n
     public List<Release> findReleasesByNoImdbIdAndCategoryId(Collection<Integer> categoryIds) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Release.class);
         criteria.add(Restrictions.isNull("imdbId"));
-        criteria.add(Restrictions.in("categoryId", categoryIds));
+        criteria.add(Restrictions.in("category.id", categoryIds));
 
         return criteria.list();
     }
@@ -95,7 +148,7 @@ public class ReleaseDAOImpl extends HibernateDAOImpl implements net.longfalcon.n
     public List<Release> findReleasesByRageIdAndCategoryId(long rageId, Collection<Integer> categoryIds) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Release.class);
         criteria.add(Restrictions.eq("rageId", rageId));
-        criteria.add(Restrictions.in("categoryId", categoryIds));
+        criteria.add(Restrictions.in("category.id", categoryIds));
 
         return criteria.list();
     }
@@ -117,5 +170,24 @@ public class ReleaseDAOImpl extends HibernateDAOImpl implements net.longfalcon.n
         query.setParameter("group_id", groupId);
 
         query.executeUpdate();
+    }
+
+    @Override
+    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
+    public Long getReleasesCount() {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Release.class);
+        criteria.setProjection(Projections.rowCount());
+
+        return (Long) criteria.uniqueResult();
+    }
+
+    @Override
+    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
+    public List<Release> getReleases(int offset, int pageSize) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Release.class);
+        criteria.setFirstResult(offset).setMaxResults(pageSize);
+        criteria.setFetchMode("category", FetchMode.JOIN);
+
+        return criteria.list();
     }
 }

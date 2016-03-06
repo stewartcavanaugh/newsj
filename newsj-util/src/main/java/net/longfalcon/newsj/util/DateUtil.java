@@ -24,6 +24,8 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import java.util.Date;
+
 /**
  * TODO: run through java DateFormat, then Joda, then use a natural language parser.
  * User: Sten Martinez
@@ -32,6 +34,7 @@ import org.joda.time.format.DateTimeFormatter;
  */
 public class DateUtil {
 
+    public static final DateTimeFormatter defaultDateFormat = DateTimeFormat.mediumDate();
     public static final DateTimeFormatter RFC_dateFormatter = DateTimeFormat.forPattern("dd MMM yyyy HH:mm:ss z");
     public static final DateTimeFormatter displayDateFormatter = DateTimeFormat.forPattern("Y-M-d H:m:s");
     public static final DateTimeFormatter airDateFormatter = DateTimeFormat.forPattern("Y-M-d");
@@ -87,5 +90,12 @@ public class DateUtil {
         }
 
         return dateTime;
+    }
+
+    public static String formatDefaultDate(Date date) {
+        if (date == null) {
+            return "Never";
+        }
+        return defaultDateFormat.print(new DateTime(date));
     }
 }

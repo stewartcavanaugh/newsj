@@ -37,9 +37,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
 import javax.servlet.http.HttpSession;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * User: Sten Martinez
@@ -59,53 +57,23 @@ public class AdminGroupController extends BaseController {
     @Autowired
     GroupService groupService;
 
-    private static int pageSize = 50;
     private static final Log _log = LogFactory.getLog(AdminGroupController.class);
 
     @RequestMapping(value = "/admin/group-list", method = RequestMethod.GET)
-    public String groupListView(@RequestParam(value = "page", required = false, defaultValue = "0") Integer pageNum, Model model) {
-        List<Group> groupList;
+    public String groupListView(@RequestParam(value = "offset", required = false, defaultValue = "0") Integer offset,
+                                Model model) {
+        List<Group> groupList = groupDAO.getGroups(offset, PAGE_SIZE);
 
-        // pager logic
-        Map<Integer,String> pagerMap = new HashMap<>();
-        long resultCount = groupDAO.getGroupsCount();
-
-        if (resultCount > pageSize) {
-            int firstResult = pageNum * pageSize;
-
-            groupList = groupDAO.getGroups(firstResult, pageSize);
-            int totalPages = (int) (resultCount + pageSize -1 ) / pageSize;
-            for (int i = 0; i < totalPages; i++) {
-                String pageName = "";
-                if (i == 0) {
-                    pageName = "first";
-                }
-                if (i == (totalPages -1)) {
-                    pageName = "last";
-                }
-                if (i == pageNum) {
-                    pageName += ":current";
-                }
-                if (i == pageNum - 1) {
-                    pageName += ":prev";
-                }
-                if (i == pageNum + 1) {
-                    pageName += ":next";
-                }
-                if (ValidatorUtil.isNotNull(pageName)) {
-                    pagerMap.put(i,pageName);
-                }
-            }
-        } else {
-            groupList = groupDAO.getGroups();
-        }
-
+        int pagerTotalItems = Math.toIntExact(groupDAO.getGroupsCount());
 
         model.addAttribute("title", "Group List");
         model.addAttribute("groupList", groupList);
         model.addAttribute("dateView", new DateView());
         model.addAttribute("groupService", groupService);
-        model.addAttribute("pagerMap", pagerMap);
+        model.addAttribute("pagerTotalItems", pagerTotalItems);
+        model.addAttribute("pagerOffset", offset);
+        model.addAttribute("pagerItemsPerPage", PAGE_SIZE);
+
         return "admin/group-list";
     }
 
@@ -142,12 +110,9 @@ public class AdminGroupController extends BaseController {
     @RequestMapping(value = "/admin/group-edit", method = RequestMethod.GET)
     public String editGroupView(@RequestParam(value = "id")Long groupId, Model model, HttpSession httpSession) {
         Group group = groupService.getGroup(groupId);
-        Map<Integer, String> yesNoMap = new HashMap<>();
-        yesNoMap.put(1,"Yes");
-        yesNoMap.put(0, "No");
 
         model.addAttribute("title", group.getName());
-        model.addAttribute("yesNoMap", yesNoMap);
+        model.addAttribute("yesNoMap", YES_NO_MAP);
         model.addAttribute("group", group);
         return "admin/group-edit";
     }

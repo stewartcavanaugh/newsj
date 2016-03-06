@@ -21,6 +21,7 @@ package net.longfalcon.newsj;
 import net.longfalcon.newsj.fs.FileSystemService;
 import net.longfalcon.newsj.fs.model.Directory;
 import net.longfalcon.newsj.model.Binary;
+import net.longfalcon.newsj.model.Category;
 import net.longfalcon.newsj.model.Group;
 import net.longfalcon.newsj.model.MatchedReleaseQuery;
 import net.longfalcon.newsj.model.Release;
@@ -46,6 +47,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import java.sql.Timestamp;
@@ -90,6 +92,59 @@ public class Releases {
     private BinaryDAO binaryDAO;
     private PartDAO partDAO;
     private ReleaseDAO releaseDAO;
+
+    public List<Release> getTopDownloads() {
+        return releaseDAO.findTopDownloads();
+    }
+
+    public List<Release> getTopComments() {
+        return releaseDAO.findTopCommentedReleases();
+    }
+
+    public Release findByReleaseId(long releaseId) {
+        Release release = releaseDAO.findByReleaseId(releaseId);
+        if (release != null && release.getCategory() != null) {
+            release.setCategoryId(release.getCategory().getId());
+            Group group = groupDAO.findGroupByGroupId(release.getGroupId());
+            release.setGroupName(group.getName());
+        }
+
+        return release;
+    }
+
+    public Release findByGuid(String guid) {
+        Release release = releaseDAO.findByGuid(guid);
+        if (release != null && release.getCategory() != null) {
+            release.setCategoryId(release.getCategory().getId());
+            Group group = groupDAO.findGroupByGroupId(release.getGroupId());
+            release.setGroupName(group.getName());
+        }
+
+        return release;
+    }
+
+    @Transactional
+    public void resetRelease(long releaseId) {
+        binaryDAO.resetReleaseBinaries(releaseId);
+    }
+
+    @Transactional
+    public void updateRelease(Release release) {
+        if (release.getCategoryId() > 0) {
+            Category newCategory = categoryService.getCategory(release.getCategoryId());
+            release.setCategory(newCategory);
+        }
+
+        releaseDAO.updateRelease(release);
+    }
+
+    /**
+     *
+     * @return List of Object[Category,Long]
+     */
+    public List<Object[]> getRecentlyAddedReleases() {
+        return releaseDAO.findRecentlyAddedReleaseCategories();
+    }
 
     public void processReleases() {
         String startDateString = DateUtil.displayDateFormatter.print(System.currentTimeMillis());
@@ -438,12 +493,16 @@ public class Releases {
 
             String releaseGuid = UUID.randomUUID().toString();
             int categoryId;
+            Category category = null;
             Long regexId;
             Integer reqId;
             if (regexAppliedCategoryId == 0) {
                 categoryId = categoryService.determineCategory(groupId, releaseName);
             } else {
                 categoryId = regexAppliedCategoryId;
+            }
+            if (categoryId > 0) {
+                category = categoryService.getCategory(categoryId);
             }
 
             if (regexIdUsed == 0) {
@@ -467,7 +526,7 @@ public class Releases {
             release.setGroupId(groupId);
             release.setAddDate(new Date());
             release.setGuid(releaseGuid);
-            release.setCategoryId(categoryId);
+            release.setCategory(category);
             release.setRegexId(regexId);
             release.setRageId((long) -1);
             release.setPostDate(addedDate.toDate());

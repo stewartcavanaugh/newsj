@@ -60,5 +60,9 @@
             <taglib-uri>http://java.longfalcon.net/jsp/jstl/text</taglib-uri>
             <taglib-location>tld/text.tld</taglib-location>
         </taglib>
+        <taglib>
+            <taglib-uri>http://java.longfalcon.net/jsp/jstl/date</taglib-uri>
+            <taglib-location>tld/date.tld</taglib-location>
+        </taglib>
     </jsp-config>
 </web-app>

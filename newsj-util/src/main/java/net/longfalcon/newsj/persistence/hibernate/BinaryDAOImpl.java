@@ -46,6 +46,15 @@ public class BinaryDAOImpl extends HibernateDAOImpl implements net.longfalcon.ne
 
     @Override
     @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
+    public List<Binary> findByReleaseId(long releaseId) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Binary.class);
+        criteria.add(Restrictions.eq("releaseId", releaseId));
+
+        return criteria.list();
+    }
+
+    @Override
+    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
     public Binary findByBinaryHash(String binaryHash) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Binary.class);
         criteria.add(Restrictions.eq("binaryHash", binaryHash));
@@ -185,6 +194,29 @@ public class BinaryDAOImpl extends HibernateDAOImpl implements net.longfalcon.ne
         query.setParameter("newstatus", newStatus);
         query.setParameter("procstat", procStat);
         query.setParameter("beforeDate", before);
+
+        query.executeUpdate();
+    }
+
+    @Override
+    @Transactional
+    public void resetReleaseBinaries(long releaseId) {
+        Query query =
+                sessionFactory.getCurrentSession().createQuery("update Binary b set b.procStat = :procstat, " +
+                        "b.procAttempts = :procAttempts, b.categoryId = :categoryId, b.regexId = :regexId, " +
+                        "b.reqId = :reqId, b.relPart = :relPart, b.relTotalPart = :relTotalPart, b.relName = :relName, " +
+                        "b.releaseId = :newReleaseId " +
+                        "where b.releaseId = :releaseId");
+        query.setParameter("releaseId", releaseId);
+        query.setParameter("procstat", 0);
+        query.setParameter("procAttempts", 0);
+        query.setParameter("categoryId", null);
+        query.setParameter("regexId", null);
+        query.setParameter("reqId", null);
+        query.setParameter("relPart", null);
+        query.setParameter("relTotalPart", null);
+        query.setParameter("relName", null);
+        query.setParameter("newReleaseId", null);
 
         query.executeUpdate();
     }

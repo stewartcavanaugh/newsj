@@ -91,11 +91,13 @@ public class Nzb {
         long releaseId = release.getId();
         String releaseGuid = release.getGuid();
         String releaseName = release.getName();
-        Integer categoryId = release.getCategoryId();
         long startTime = System.currentTimeMillis();
 
-        Category category = categoryDAO.findByCategoryId(categoryId);
-        String categoryName = category.getTitle();
+        Category category = release.getCategory();
+        String categoryName = null;
+        if (category != null) {
+            categoryName = category.getTitle();
+        }
 
         net.longfalcon.newsj.xml.Nzb nzbRoot = new net.longfalcon.newsj.xml.Nzb();
         nzbRoot.setXmlns(_XMLNS);
