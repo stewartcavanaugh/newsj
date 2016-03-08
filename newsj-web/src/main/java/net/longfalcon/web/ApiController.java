@@ -2,6 +2,7 @@ package net.longfalcon.web;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import net.longfalcon.newsj.model.Category;
 import net.longfalcon.newsj.model.Site;
 import net.longfalcon.newsj.persistence.CategoryDAO;
 import net.longfalcon.newsj.persistence.SiteDAO;
@@ -9,11 +10,13 @@ import net.longfalcon.newsj.util.ValidatorUtil;
 import net.longfalcon.web.api.xml.ApiResponse;
 import net.longfalcon.web.api.xml.CapsType;
 import net.longfalcon.web.api.xml.Error;
+import net.longfalcon.web.api.xml.caps.CategoriesType;
 import net.longfalcon.web.api.xml.caps.CategoryType;
 import net.longfalcon.web.api.xml.caps.LimitsType;
 import net.longfalcon.web.api.xml.caps.RegistrationType;
 import net.longfalcon.web.api.xml.caps.SearchingType;
 import net.longfalcon.web.api.xml.caps.ServerType;
+import net.longfalcon.web.api.xml.caps.SubCatType;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -122,8 +125,20 @@ public class ApiController {
         caps.setLimitsType(new LimitsType(100,100));
         caps.setRegistrationType(new RegistrationType(true, site.getRegisterStatus() == 1));
         caps.setSearchingType(new SearchingType(true, true, true, false));
-        List<CategoryType> categories = new ArrayList<>();
-
+        List<CategoryType> categoryTypes = new ArrayList<>();
+        List<Category> parentCategories = categoryDAO.getParentCategories();
+        for (Category parentCategory: parentCategories) {
+            List<Category> subCategories = categoryDAO.findByParentId(parentCategory.getId());
+            List<SubCatType> subCatTypes = new ArrayList<>();
+            for (Category category : subCategories) {
+                SubCatType subCatType = new SubCatType(category.getId(), category.getTitle());
+                subCatTypes.add(subCatType);
+            }
+            CategoryType categoryType = new CategoryType(parentCategory.getId(), parentCategory.getTitle(), subCatTypes);
+            categoryTypes.add(categoryType);
+        }
+        CategoriesType categoriesType = new CategoriesType(categoryTypes);
+        caps.setCategoriesType(categoriesType);
 
         return caps;
     }

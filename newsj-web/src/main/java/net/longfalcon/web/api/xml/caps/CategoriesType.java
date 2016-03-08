@@ -16,6 +16,13 @@ public class CategoriesType {
     @XmlElement(name = "category")
     protected List<CategoryType> categories;
 
+    public CategoriesType() {
+    }
+
+    public CategoriesType(List<CategoryType> categories) {
+        this.categories = categories;
+    }
+
     public List<CategoryType> getCategories() {
         return categories;
     }

@@ -37,6 +37,10 @@ public interface CategoryDAO {
 
     List<Category> getForMenu(Set<Integer> userExcludedCategoryIds, Integer parentId);
 
+    List<Category> getCategories();
+
+    List<Category> getParentCategories();
+
     List<Category> getChildCategories();
 
     List<Category> getAllCategories(boolean activeOnly);
