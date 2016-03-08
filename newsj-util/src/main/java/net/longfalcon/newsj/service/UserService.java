@@ -65,7 +65,7 @@ public class UserService {
     public static int SHA1LEN = 40;
 
     private static final Log _log = LogFactory.getLog(UserService.class);
-    private static Pattern emailPattern = Pattern.compile("^([a-z0-9\\+_\\-]+)(\\.[a-z0-9\\+_\\-]+)*@([a-z0-9\\-]+\\.)+[a-z]{2,6}$", Pattern.CASE_INSENSITIVE);
+
     private static Pattern usernamePattern = Pattern.compile("^[a-z][a-z0-9]{2,}$", Pattern.CASE_INSENSITIVE);
 
     private UserDAO userDAO;
@@ -86,7 +86,7 @@ public class UserService {
             return ERR_SIGNUP_BADPASS;
         }
 
-        if (!_isValidEmail(email)) {
+        if (!ValidatorUtil.isValidEmail(email)) {
             return ERR_SIGNUP_BADEMAIL;
         }
 
@@ -162,7 +162,7 @@ public class UserService {
             return ERR_SIGNUP_BADPASS;
         }
 
-        if (!_isValidEmail(email)) {
+        if (!ValidatorUtil.isValidEmail(email)) {
             return ERR_SIGNUP_BADEMAIL;
         }
 
@@ -191,6 +191,30 @@ public class UserService {
         return userDAO.findTopGrabbers();
     }
 
+    public String generateUsername(String email) {
+        String[] strings = email.split("@");
+        String username = strings[0];
+        User otherUser = userDAO.findByUsername(username);
+        if (username != null && otherUser == null) {
+            return username;
+        } else {
+            String uuid = UUID.randomUUID().toString();
+            String md5Hash = EncodingUtil.md5Hash(uuid);
+            return "u" + md5Hash.substring(0, 7);
+        }
+    }
+
+    // TODO: this really belongs somewhere else.
+    public String generatePassword() {
+        String uuid = UUID.randomUUID().toString();
+        String md5Hash = EncodingUtil.md5Hash(uuid);
+        if (md5Hash != null) {
+            return md5Hash.substring(0, 8);
+        } else {
+            return "kitty";
+        }
+    }
+
     private long checkAndUseInvite(String inviteCode) {
         UserInvite userInvite = userInviteDAO.getInviteByGuid(inviteCode);
         if (userInvite == null) {
@@ -212,12 +236,6 @@ public class UserService {
 
     private boolean _isValidPassword(String password) {
         return (password.length() > 5);
-    }
-
-    private boolean _isValidEmail(String email) {
-        Matcher matcher = emailPattern.matcher(email);
-
-        return matcher.matches();
     }
 
     public UserDAO getUserDAO() {

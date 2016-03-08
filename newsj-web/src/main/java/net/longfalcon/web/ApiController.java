@@ -4,12 +4,18 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.longfalcon.newsj.model.Category;
 import net.longfalcon.newsj.model.Site;
+import net.longfalcon.newsj.model.User;
 import net.longfalcon.newsj.persistence.CategoryDAO;
 import net.longfalcon.newsj.persistence.SiteDAO;
+import net.longfalcon.newsj.persistence.UserDAO;
+import net.longfalcon.newsj.service.SiteService;
+import net.longfalcon.newsj.service.UserService;
 import net.longfalcon.newsj.util.ValidatorUtil;
+import net.longfalcon.view.UserRegistrationVO;
 import net.longfalcon.web.api.xml.ApiResponse;
 import net.longfalcon.web.api.xml.CapsType;
 import net.longfalcon.web.api.xml.Error;
+import net.longfalcon.web.api.xml.RegisterType;
 import net.longfalcon.web.api.xml.caps.CategoriesType;
 import net.longfalcon.web.api.xml.caps.CategoryType;
 import net.longfalcon.web.api.xml.caps.LimitsType;
@@ -41,6 +47,12 @@ public class ApiController {
     @Autowired
     SiteDAO siteDAO;
 
+    @Autowired
+    UserService userService;
+
+    @Autowired
+    UserDAO userDAO;
+
     private static final String TYPE_DETAILS = "d";
     private static final String TYPE_GET = "g";
     private static final String TYPE_SEARCH = "s";
@@ -63,7 +75,8 @@ public class ApiController {
                               @RequestParam(value = "imdbid", required = false) String imdbId,
                               @RequestParam(value = "rid", required = false) String rid,
                               @RequestParam(value = "season", required = false) String season,
-                              @RequestParam(value = "ep", required = false) String ep) {
+                              @RequestParam(value = "ep", required = false) String ep,
+                              @RequestParam(value = "email", required = false) String email) {
         String function = TYPE_SEARCH;
         if (ValidatorUtil.isNotNull(type)) {
             if (type.equals("details") || type.equals(TYPE_DETAILS)) {
@@ -91,7 +104,12 @@ public class ApiController {
             return getCaps();
         }
 
-        return null;
+        if (function.equals(TYPE_REGISTER)) {
+            return getRegister(email);
+
+        }
+
+        return generateError(202);
     }
 
     @RequestMapping(value = "/api", params = "o=json", produces = "application/json")
@@ -107,13 +125,54 @@ public class ApiController {
                          @RequestParam(value = "imdbid", required = false) String imdbId,
                          @RequestParam(value = "rid", required = false) String rid,
                          @RequestParam(value = "season", required = false) String season,
-                         @RequestParam(value = "ep", required = false) String ep) throws JsonProcessingException {
+                         @RequestParam(value = "ep", required = false) String ep,
+                          @RequestParam(value = "email", required = false) String email) throws JsonProcessingException {
 
-        ApiResponse apiResponse = xmlApi(type, apiKey, extended, del, query, maxAge, limit, offset, imdbId, rid, season, ep);
+        ApiResponse apiResponse = xmlApi(type, apiKey, extended, del, query, maxAge, limit, offset, imdbId, rid, season, ep, email);
 
         ObjectMapper objectMapper = new ObjectMapper();
 
         return objectMapper.writeValueAsString(apiResponse);
+    }
+
+    private ApiResponse getRegister( String email) {
+        Site site = siteDAO.getDefaultSite();
+        if (ValidatorUtil.isNull(email)) {
+            return generateError(200);
+        }
+
+        if (site.getRegisterStatus() != SiteService.REGISTER_STATUS_OPEN) {
+            return generateError(104);
+        }
+
+        if (!ValidatorUtil.isValidEmail(email)) {
+            return generateError(106);
+        }
+
+        User user = userDAO.findByEmail(email);
+        if ( user != null) {
+            return generateError(105);
+        }
+
+        String username = userService.generateUsername(email);
+        String password = userService.generatePassword();
+
+        UserRegistrationVO userRegistrationVO = new UserRegistrationVO();
+        userRegistrationVO.setEmail(email);
+        userRegistrationVO.setUserName(username);
+        userRegistrationVO.setPassword(password);
+        long returnCode = userService.signup(userRegistrationVO);
+
+        if (returnCode < 0) {
+            return generateError(107);
+        }
+
+        user = userDAO.findByUserId(returnCode);
+        if (user == null) {
+            return generateError(107);
+        }
+
+        return new RegisterType(username, password, user.getRssToken());
     }
 
     private ApiResponse getCaps() {

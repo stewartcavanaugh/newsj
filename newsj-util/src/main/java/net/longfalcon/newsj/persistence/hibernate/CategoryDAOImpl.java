@@ -78,14 +78,6 @@ public class CategoryDAOImpl extends HibernateDAOImpl implements net.longfalcon.
 
     @Override
     @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
-    public List<Category> getCategories() {
-        Query query = sessionFactory.getCurrentSession().createQuery("from Category c where c.parentId != 0 order by c.id");
-
-        return query.list();
-    }
-
-    @Override
-    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
     public List<Category> getParentCategories() {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Category.class);
         criteria.add(Restrictions.isNull("parentId"));
