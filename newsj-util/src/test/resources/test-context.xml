@@ -36,4 +36,11 @@
 <!--        <jdbc:script location="classpath:sql/data-derby.sql"/>-->
         <jdbc:script location="classpath:sql/test-data-derby.sql"/>
     </jdbc:embedded-database>
+
+    <bean id="testNewsDatabase" class="net.longfalcon.newsj.nntp.client.MockNewsServer" init-method="init">
+        <property name="dataFileLocations" value="classpath:data/news-data.xml"/>
+    </bean>
+    <bean id="nntpConnectionFactory" class="net.longfalcon.newsj.mock.news.MockNntpConnectionFactory">
+        <property name="newsServer" ref="testNewsDatabase"/>
+    </bean>
 </beans>

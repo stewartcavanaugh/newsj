@@ -1,4 +1,5 @@
--- derby test schema
+-- Derby Test Schema
+-- This is purely to be dropped by the real schema - TODO: remove later
 CREATE SCHEMA SA;
 SET SCHEMA SA;
 --------------------------------------------------------

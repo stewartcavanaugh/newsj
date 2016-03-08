@@ -98,4 +98,8 @@ public class DateUtil {
         }
         return defaultDateFormat.print(new DateTime(date));
     }
+
+    public static String formatNNTPDate(Date date) {
+        return RFC_dateFormatter.print(date.getTime());
+    }
 }

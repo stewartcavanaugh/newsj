@@ -17,7 +17,7 @@ values (1,'newznab','Newznab','A great usenet indexer','Newznab - A great usenet
 
 
 Insert into GROUPS (ID,NAME_,BACKFILL_TARGET,FIRST_RECORD,FIRST_RECORD_POSTDATE,LAST_RECORD,LAST_RECORD_POSTDATE,LAST_UPDATED,MINFILESTOFORMRELEASE,ACTIVE,DESCRIPTION)
-values (0,'alt.binaries.test',1,0,null,0,null,null,null,FALSE,'This group contains Test Binaries.');
+values (0,'alt.binaries.test',1,0,null,0,null,null,null,TRUE,'This group contains Test Binaries.');
 
 INSERT INTO USERS(ID, USERNAME, EMAIL, PASSWORD, ROLE, HOST, GRABS, RSSTOKEN, CREATEDDATE, RESETGUID, LASTLOGIN,
                   APIACCESS, INVITES, INVITEDBY, MOVIEVIEW, MUSICVIEW, CONSOLEVIEW, USERSEED)
