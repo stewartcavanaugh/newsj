@@ -40,4 +40,6 @@ public interface PartDAO {
     Long countPartsByBinaryId(long binaryId);
 
     Long sumPartsSizeByBinaryId(long binaryId);
+
+    List<Part> findByNumberAndBinaryIds(long number, List<Long> binaryIds);
 }

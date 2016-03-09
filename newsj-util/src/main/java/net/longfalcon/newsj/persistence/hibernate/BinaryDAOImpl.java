@@ -240,4 +240,14 @@ public class BinaryDAOImpl extends HibernateDAOImpl implements net.longfalcon.ne
 
         query.executeUpdate();
     }
+
+    @Override
+    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
+    public List<Long> findBinaryIdsByGroupId(long groupId) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Binary.class);
+        criteria.add(Restrictions.eq("groupId", groupId));
+        criteria.setProjection(Projections.property("id"));
+
+        return criteria.list();
+    }
 }

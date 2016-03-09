@@ -28,7 +28,6 @@ public class PartRepair {
     private long numberId;
     private long groupId;
     private int attempts;
-    private Part part;
 
     public long getId() {
         return id;
@@ -60,13 +59,5 @@ public class PartRepair {
 
     public void setAttempts(int attempts) {
         this.attempts = attempts;
-    }
-
-    public Part getPart() {
-        return part;
-    }
-
-    public void setPart(Part part) {
-        this.part = part;
     }
 }
