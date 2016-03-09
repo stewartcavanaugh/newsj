@@ -1,127 +1,93 @@
---------------------------------------------------------
---  Derby Schema
---------------------------------------------------------
-DROP TABLE "BINARIES";
-DROP TABLE "BINARYBLACKLIST";
-DROP TABLE "CATEGORY";
-DROP TABLE "CONSOLEINFO";
-DROP TABLE "CONTENT" ;
-DROP TABLE "FORUMPOST";
-DROP TABLE "GENRES";
-DROP TABLE "GROUPS";
-DROP TABLE "MENU";
-DROP TABLE "MOVIEINFO";
-DROP TABLE "MUSICINFO" ;
-DROP TABLE "PARTREPAIR" ;
-DROP TABLE "PARTS";
-DROP TABLE "RELEASECOMMENT";
-DROP TABLE "RELEASENFO";
-DROP TABLE "RELEASEREGEX";
-DROP TABLE "RELEASES";
-DROP TABLE "SITE";
-DROP TABLE "TVRAGE";
-DROP TABLE "USERCART";
-DROP TABLE "USEREXCAT";
-DROP TABLE "USERINVITE";
-DROP TABLE "USERS";
-DROP SEQUENCE "BINARYBLACKLISTENTRY_SEQ" RESTRICT;
-DROP SEQUENCE "BINARY_SEQ" RESTRICT;
-DROP SEQUENCE "FORUMPOST_SEQ" RESTRICT;
-DROP SEQUENCE "GROUP_SEQ" RESTRICT;
-DROP SEQUENCE "NEWSJ_SEQ" RESTRICT;
-DROP SEQUENCE "PARTREPAIR_SEQ" RESTRICT;
-DROP SEQUENCE "PART_SEQ" RESTRICT;
-DROP SEQUENCE "RELEASECOMMENT_SEQ" RESTRICT;
-DROP SEQUENCE "RELEASENFO_SEQ" RESTRICT;
-DROP SEQUENCE "RELEASEREGEX_SEQ" RESTRICT;
-DROP SEQUENCE "RELEASE_SEQ" RESTRICT;
-DROP SEQUENCE "USER_SEQ" RESTRICT;
+-- Derby Test Schema
+-- This is purely to be dropped by the real schema - TODO: remove later
+CREATE SCHEMA SA;
+SET SCHEMA SA;
 --------------------------------------------------------
 --  DDL for Sequence BINARYBLACKLISTENTRY_SEQ
 --------------------------------------------------------
 
 CREATE SEQUENCE  "BINARYBLACKLISTENTRY_SEQ" AS BIGINT
-   MINVALUE 1
-   INCREMENT BY 10 START WITH 100001;
+  MINVALUE 1
+  INCREMENT BY 10 START WITH 100001;
 --------------------------------------------------------
 --  DDL for Sequence BINARY_SEQ
 --------------------------------------------------------
 
 CREATE SEQUENCE  "BINARY_SEQ" AS BIGINT
-   MINVALUE 1
-   INCREMENT BY 100 START WITH 1 ;
+  MINVALUE 1
+  INCREMENT BY 100 START WITH 1 ;
 --------------------------------------------------------
 --  DDL for Sequence FORUMPOST_SEQ
 --------------------------------------------------------
 
 CREATE SEQUENCE  "FORUMPOST_SEQ" AS BIGINT
-   MINVALUE 1
-   INCREMENT BY 100 START WITH 101  ;
+  MINVALUE 1
+  INCREMENT BY 100 START WITH 101  ;
 --------------------------------------------------------
 --  DDL for Sequence GROUP_SEQ
 --------------------------------------------------------
 
 CREATE SEQUENCE  "GROUP_SEQ" AS BIGINT
-   MINVALUE 1
-   INCREMENT BY 100 START WITH 101  ;
+  MINVALUE 1
+  INCREMENT BY 100 START WITH 101  ;
 --------------------------------------------------------
 --  DDL for Sequence NEWSJ_SEQ
 --------------------------------------------------------
 
 CREATE SEQUENCE "NEWSJ_SEQ" AS BIGINT
-   MINVALUE 1
-   INCREMENT BY 100
-   START WITH 10301;
+  MINVALUE 1
+  INCREMENT BY 100
+  START WITH 10301;
 --------------------------------------------------------
 --  DDL for Sequence PARTREPAIR_SEQ
 --------------------------------------------------------
 
 CREATE SEQUENCE  "PARTREPAIR_SEQ" AS BIGINT
-   MINVALUE 1
-   INCREMENT BY 100 START WITH 1  ;
+  MINVALUE 1
+  INCREMENT BY 100 START WITH 1  ;
 --------------------------------------------------------
 --  DDL for Sequence PART_SEQ
 --------------------------------------------------------
 
 CREATE SEQUENCE  "PART_SEQ" AS BIGINT
-   MINVALUE 1
-   INCREMENT BY 1000 START WITH 1 ;
+  MINVALUE 1
+  INCREMENT BY 1000 START WITH 1 ;
 --------------------------------------------------------
 --  DDL for Sequence RELEASECOMMENT_SEQ
 --------------------------------------------------------
 
 CREATE SEQUENCE  "RELEASECOMMENT_SEQ" AS BIGINT
-   MINVALUE 1
-   INCREMENT BY 100 START WITH 1;
+  MINVALUE 1
+  INCREMENT BY 100 START WITH 1;
 --------------------------------------------------------
 --  DDL for Sequence RELEASENFO_SEQ
 --------------------------------------------------------
 
 CREATE SEQUENCE  "RELEASENFO_SEQ" AS BIGINT
-   MINVALUE 1
-   INCREMENT BY 100 START WITH 1;
+  MINVALUE 1
+  INCREMENT BY 100 START WITH 1;
 --------------------------------------------------------
 --  DDL for Sequence RELEASEREGEX_SEQ
 --------------------------------------------------------
 
 CREATE SEQUENCE  "RELEASEREGEX_SEQ" AS BIGINT
-   MINVALUE 1
-   INCREMENT BY 100 START WITH 1001 ;
+  MINVALUE 1
+  INCREMENT BY 100 START WITH 1001 ;
 --------------------------------------------------------
 --  DDL for Sequence RELEASE_SEQ
 --------------------------------------------------------
 
 CREATE SEQUENCE  "RELEASE_SEQ" AS BIGINT
-   MINVALUE 1
-   INCREMENT BY 100 START WITH 1;
+  MINVALUE 1
+  INCREMENT BY 100 START WITH 1;
 --------------------------------------------------------
 --  DDL for Sequence USER_SEQ
 --------------------------------------------------------
 
 CREATE SEQUENCE "USER_SEQ" AS BIGINT
-    MINVALUE 1
-    INCREMENT BY 100
-    START WITH 1;
+  MINVALUE 1
+  INCREMENT BY 100
+  START WITH 1;
 --------------------------------------------------------
 --  DDL for Table BINARIES
 --------------------------------------------------------
@@ -517,255 +483,3 @@ CREATE TABLE "USERS"
    "CONSOLEVIEW" INT NOT NULL DEFAULT 1,
    "USERSEED" VARCHAR(50) NOT NULL
 );
-
---------------------------------------------------------
---  DDL for Index ACTIVE
---------------------------------------------------------
-
-CREATE INDEX "ACTIVE" ON "GROUPS" ("ACTIVE");
---------------------------------------------------------
---  DDL for Index IX_USERCART_USERRELEASE
---------------------------------------------------------
-
-CREATE UNIQUE INDEX "IX_USERCART_USERRELEASE" ON "USERCART" ("USERID", "RELEASEID") ;
---------------------------------------------------------
---  DDL for Index IX_BINARY_FROMNAME
---------------------------------------------------------
-
-CREATE INDEX "IX_BINARY_FROMNAME" ON "BINARIES" ("FROMNAME");
---------------------------------------------------------
---  DDL for Index IX_RELEASECOMMENT_RELEASEID
---------------------------------------------------------
-
-CREATE INDEX "IX_RELEASECOMMENT_RELEASEID" ON "RELEASECOMMENT" ("RELEASEID");
---------------------------------------------------------
---  DDL for Index IX_TVRAGE_RAGEID
---------------------------------------------------------
-
-CREATE INDEX "IX_TVRAGE_RAGEID" ON "TVRAGE" ("RAGEID");
---------------------------------------------------------
---  DDL for Index IX_USEREXCAT_USERCAT
---------------------------------------------------------
-
-CREATE UNIQUE INDEX "IX_USEREXCAT_USERCAT" ON "USEREXCAT" ("USERID", "CATEGORYID");
---------------------------------------------------------
---  DDL for Index IX_BINARY_PROCSTAT
---------------------------------------------------------
-
-CREATE INDEX "IX_BINARY_PROCSTAT" ON "BINARIES" ("PROCSTAT");
---------------------------------------------------------
---  DDL for Index IX_RELEASES_GUID
---------------------------------------------------------
-
-CREATE INDEX "IX_RELEASES_GUID" ON "RELEASES" ("GUID");
---------------------------------------------------------
---  DDL for Index IX_PARTS_DATEADDED
---------------------------------------------------------
-
-CREATE INDEX "IX_PARTS_DATEADDED" ON "PARTS" ("DATEADDED");
---------------------------------------------------------
---  DDL for Index IX_RELEASES_POSTDATE
---------------------------------------------------------
-
-CREATE INDEX "IX_RELEASES_POSTDATE" ON "RELEASES" ("POSTDATE");
---------------------------------------------------------
---  DDL for Index IX_BINARY_BINARYHASH
---------------------------------------------------------
-
-CREATE UNIQUE INDEX "IX_BINARY_BINARYHASH" ON "BINARIES" ("BINARYHASH");
---------------------------------------------------------
---  DDL for Index IX_BINARY_GROUPID
---------------------------------------------------------
-
-CREATE INDEX "IX_BINARY_GROUPID" ON "BINARIES" ("GROUPID");
---------------------------------------------------------
---  DDL for Index IX_RELEASECOMMENT_USERID
---------------------------------------------------------
-
-CREATE INDEX "IX_RELEASECOMMENT_USERID" ON "RELEASECOMMENT" ("USERID");
---------------------------------------------------------
---  DDL for Index USERID
---------------------------------------------------------
-
-CREATE INDEX "USERID" ON "FORUMPOST" ("USERID");
---------------------------------------------------------
---  DDL for Index IX_NAME
---------------------------------------------------------
-
-CREATE UNIQUE INDEX "IX_NAME" ON "GROUPS" ("NAME_");
---------------------------------------------------------
---  DDL for Index IX_BINARY_RELNAME
---------------------------------------------------------
-
-CREATE INDEX "IX_BINARY_RELNAME" ON "BINARIES" ("RELNAME");
---------------------------------------------------------
---  DDL for Index IX_RELEASES_RAGEID
---------------------------------------------------------
-
-CREATE INDEX "IX_RELEASES_RAGEID" ON "RELEASES" ("RAGEID");
---------------------------------------------------------
---  DDL for Index IX_BINARY_RELEASEID
---------------------------------------------------------
-
-CREATE INDEX "IX_BINARY_RELEASEID" ON "BINARIES" ("RELEASEID");
---------------------------------------------------------
---  DDL for Index IX_RELEASES_IMDBID
---------------------------------------------------------
-
-CREATE INDEX "IX_RELEASES_IMDBID" ON "RELEASES" ("IMDBID");
---------------------------------------------------------
---  DDL for Index CREATEDDATE
---------------------------------------------------------
-
-CREATE INDEX "CREATEDDATE" ON "FORUMPOST" ("CREATEDDATE");
---------------------------------------------------------
---  DDL for Index IX_PARTREPAIR_NUMBERID_GROUPID
---------------------------------------------------------
-
-CREATE UNIQUE INDEX "IX_PARTREPAIR_NUMBERID_GROUPID" ON "PARTREPAIR" ("NUMBERID", "GROUPID");
---------------------------------------------------------
---  DDL for Index IX_RELEASES_CATEGORYID
---------------------------------------------------------
-
-CREATE INDEX "IX_RELEASES_CATEGORYID" ON "RELEASES" ("CATEGORYID");
---------------------------------------------------------
---  DDL for Index IX_BINARY_GROUPID_PROCSTAT
---------------------------------------------------------
-
-CREATE INDEX "IX_BINARY_GROUPID_PROCSTAT" ON "BINARIES" ("PROCSTAT", "GROUPID");
---------------------------------------------------------
---  DDL for Index UPDATEDDATE
---------------------------------------------------------
-
-CREATE INDEX "UPDATEDDATE" ON "FORUMPOST" ("UPDATEDDATE");
---------------------------------------------------------
---  DDL for Index IX_BINARY_DATEADDED
---------------------------------------------------------
-
-CREATE INDEX "IX_BINARY_DATEADDED" ON "BINARIES" ("DATEADDED");
---------------------------------------------------------
---  DDL for Index PARENTID
---------------------------------------------------------
-
-CREATE INDEX "PARENTID" ON "FORUMPOST" ("PARENTID");
---------------------------------------------------------
---  DDL for Index IX_PARTS_BINARYID
---------------------------------------------------------
-
-CREATE INDEX "IX_PARTS_BINARYID" ON "PARTS" ("BINARYID");
---------------------------------------------------------
---  DDL for Index IX_RELEASENFO_RELEASEID
---------------------------------------------------------
-
-CREATE UNIQUE INDEX "IX_RELEASENFO_RELEASEID" ON "RELEASENFO" ("RELEASEID");
---------------------------------------------------------
---  DDL for Index IMDBID
---------------------------------------------------------
-
-CREATE UNIQUE INDEX "IMDBID" ON "MOVIEINFO" ("IMDBID");
---------------------------------------------------------
---  DDL for Index IX_BINARY_DATE
---------------------------------------------------------
-
-CREATE INDEX "IX_BINARY_DATE" ON "BINARIES" ("DATE_");
---------------------------------------------------------
---  DDL for Index IX_PARTS_NUMBER
---------------------------------------------------------
-
-CREATE INDEX "IX_PARTS_NUMBER" ON "PARTS" ("NUMBER_");
---------------------------------------------------------
---  DDL for Index IX_RELEASES_ADDDATE
---------------------------------------------------------
-
-CREATE INDEX "IX_RELEASES_ADDDATE" ON "RELEASES" ("ADDDATE");
---------------------------------------------------------
---  Constraints for Table FORUMPOST
---------------------------------------------------------
-
---------------------------------------------------------
---  Constraints for Table TVRAGE
---------------------------------------------------------
-
---------------------------------------------------------
---  Constraints for Table SITE
---------------------------------------------------------
-
---------------------------------------------------------
---  Constraints for Table USERINVITE
---------------------------------------------------------
-
---------------------------------------------------------
---  Constraints for Table MUSICINFO
---------------------------------------------------------
-
---------------------------------------------------------
---  Constraints for Table CATEGORY
---------------------------------------------------------
-
---------------------------------------------------------
---  Constraints for Table CONTENT
---------------------------------------------------------
-
---------------------------------------------------------
---  Constraints for Table PARTS
---------------------------------------------------------
-
---------------------------------------------------------
---  Constraints for Table PARTREPAIR
---------------------------------------------------------
-
---------------------------------------------------------
---  Constraints for Table MOVIEINFO
---------------------------------------------------------
-
---------------------------------------------------------
---  Constraints for Table USERCART
---------------------------------------------------------
-
---------------------------------------------------------
---  Constraints for Table RELEASEREGEX
---------------------------------------------------------
-
---------------------------------------------------------
---  Constraints for Table BINARYBLACKLIST
---------------------------------------------------------
-
---------------------------------------------------------
---  Constraints for Table RELEASENFO
---------------------------------------------------------
-
---------------------------------------------------------
---  Constraints for Table GENRES
---------------------------------------------------------
-
---------------------------------------------------------
---  Constraints for Table USEREXCAT
---------------------------------------------------------
-
---------------------------------------------------------
---  Constraints for Table CONSOLEINFO
---------------------------------------------------------
-
---------------------------------------------------------
---  Constraints for Table MENU
---------------------------------------------------------
-
---------------------------------------------------------
---  Constraints for Table RELEASES
---------------------------------------------------------
-
---------------------------------------------------------
---  Constraints for Table GROUPS
---------------------------------------------------------
-
---------------------------------------------------------
---  Constraints for Table BINARIES
---------------------------------------------------------
-
---------------------------------------------------------
---  Constraints for Table USERS
---------------------------------------------------------
-
---------------------------------------------------------
---  Constraints for Table RELEASECOMMENT
---------------------------------------------------------

@@ -91,4 +91,14 @@ public class PartDAOImpl extends HibernateDAOImpl implements net.longfalcon.news
 
         return (Long) criteria.uniqueResult();
     }
+
+    @Override
+    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
+    public List<Part> findByNumberAndBinaryIds(long number, List<Long> binaryIds) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Part.class);
+        criteria.add(Restrictions.eq("number", number));
+        criteria.add(Restrictions.in("binaryId", binaryIds));
+
+        return criteria.list();
+    }
 }

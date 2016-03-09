@@ -1,0 +1,142 @@
+<!--
+  ~ Copyright (c) 2016. Sten Martinez
+  ~
+  ~ This program is free software; you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation; either version 2 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License along
+  ~ with this program; if not, write to the Free Software Foundation, Inc.,
+  ~ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+  -->
+
+<news>
+    <group name="alt.binaries.test">
+        <message number="1">
+            <id>1@testPoster.abc</id>
+            <date>28 Feb 2016 17:13:16 GMT</date>
+            <subject><![CDATA[*MetalFreak@Outlaws*>>>Best Metal Ever and SSL-News.info<<< [01/02] - "Onslaught.-.Live.At.The.Slaughterhouse.(2016).nfo" - 254,61 MB yEnc (1/1)]]></subject>
+            <content>
+                <![CDATA[
+
+
+
+
+                             The Best F*ing Metal
+
+                         www.usenet-of-outlaws.com
+
+
+
+               ÚÄ¿ ÚÄÄ Ú   ÚÄÄ  Ú¿ ÚÄÄ¿ÚÄÄ   Ú¿ Ú ÚÄÄ¿ÄÂÄÚÄÄÚÄÄ¿
+               ³ÄÀ¿ÃÄ  ³   ÃÄ  ÚÃÀ¿ÀÄÄ¿ÃÄ ÄÄ ³À¿³ ³  ³ ³ ÃÄ ÀÄÄ¿
+               À  ÀÀÄÄ ÀÄÄ ÀÄÄÄÙ  ÀÄÄÄÙÀÄÄ   Ä ÀÙ ÀÄÄÙ À ÀÄÄÄÄÄÙ
+               ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+      ARTIST ..... : Onslaught
+
+      ALBUM ...... : Live At The Slaughterhouse
+
+      GENRE ...... : Thrash Metal
+      YEAR ....... : 2016
+      VERSION .... : MPEG 1 Layer III
+      TAGS ....... : ID3v1 ID3v2.3
+      AVG.BITRATE. : 320 kBit/s
+      FREQUENZ ... : 44100 Hz
+      RUNTIME .... : 01:10:17
+      TOTALSIZE .. : 163,13 MB
+
+      PUBLISHER .. : n/a
+
+      INCLUDE .... : Cover, Tracks, TXT, M3U, NFO
+
+      RELEASE .... : Normal
+
+
+        ALBUM .............. [þ]          AUDIOBOOK .......... [ ]
+        SAMPLER ............ [ ]          MIX ................ [ ]
+        SINGLE/MAXI ........ [ ]          PROMO .............. [ ]
+        CHARTS ............. [ ]          SOUNDTRACK ......... [ ]
+
+
+      FORMAT ............. : mp3
+      MODE ............... : Stereo
+
+      NEWSGROUP........... : a.b.sounds.mp3.heavy-metal,
+      SOURCE/RIPPER ...... : CD / UNKNOWN
+      TAGGED-BY........... : MetalDept
+      Comment:.............: HQ-Posting 4 musiclovers
+
+      COVERS ............. : Yes ...... [þ]        No ...... [ ]
+      COVERART ........... : UNKNOWN
+
+
+
+
+                  ÄÂÄ ÚÄ¿  Ú¿ ÚÄÄ ¿Ú     Ú   Ä ÚÄÄ¿ÄÂÄ
+                   ³  ³ÄÀ¿ÚÃÀ¿³   ÃÄ¿ ÄÄ ³   ³ ÀÄÄ¿ ³
+                   À  À  ÀÙ  ÀÀÄÄÄÄ À    ÀÄÄ ÀÄÄÄÄÙ À
+                ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+      CD 1 of 1
+
+  01. The Sound Of Violence
+  02. Killing Peace
+  03. Chaos Is King
+  04. Let There Be Death
+  05. Children Of The Sand
+  06. Rest In Pieces
+  07. Destroyer Of Worlds
+  08. 66' Fucking '6
+  09. In Search Of Sanity
+  10. Fight With The Beast
+  11. Metal Forces
+  12. Onslaught (Power From Hell)
+  13. Thermonuclear Devastation
+
+                                         Runtime:  1:10:17
+
+
+                                 DER
+                            Usenetprovider
+
+
+
+
+                  by Mp3tag v2.73  28.02.2016 14:20:46
+
+
+                           ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ
+]]>        </content>
+        </message>
+        <message number="2">
+            <id>2@testPoster.abc</id>
+            <date>28 Feb 2016 17:13:24 GMT</date>
+            <subject><![CDATA[*MetalFreak@Outlaws*>>>Best Metal Ever and SSL-News.info<<< [02/02] - "Onslaught.-.Live.At.The.Slaughterhouse.(2016).rar" - 254,61 MB yEnc (1/3)]]></subject>
+
+        </message>
+        <message number="3">
+            <id>3@testPoster.abc</id>
+            <date>28 Feb 2016 17:13:27 GMT</date>
+            <subject><![CDATA[*MetalFreak@Outlaws*>>>Best Metal Ever and SSL-News.info<<< [02/02] - "Onslaught.-.Live.At.The.Slaughterhouse.(2016).rar" - 254,61 MB yEnc (2/3)]]></subject>
+
+        </message>
+        <message number="4">
+            <id>4@testPoster.abc</id>
+            <date>28 Feb 2016 17:13:31 GMT</date>
+            <subject><![CDATA[*MetalFreak@Outlaws*>>>Best Metal Ever and SSL-News.info<<< [02/02] - "Onslaught.-.Live.At.The.Slaughterhouse.(2016).rar" - 254,61 MB yEnc (3/3)]]></subject>
+
+        </message>
+    </group>
+    <group name="alt.binaries.test.movie">
+        <message number="1">
+            <subject>test file</subject>
+        </message>
+    </group>
+</news>

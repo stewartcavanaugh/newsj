@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015. Sten Martinez
+ * Copyright (c) 2016. Sten Martinez
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,48 +16,31 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package net.longfalcon.newsj.model;
+package net.longfalcon.newsj.mock.news;
+
+import net.longfalcon.newsj.nntp.NntpConnectionFactory;
+import net.longfalcon.newsj.nntp.client.MockNewsClient;
+import net.longfalcon.newsj.nntp.client.MockNewsServer;
+import net.longfalcon.newsj.nntp.client.NewsClient;
 
 /**
  * User: Sten Martinez
- * Date: 10/8/15
- * Time: 8:07 AM
+ * Date: 3/7/16
+ * Time: 4:59 PM
  */
-public class PartRepair {
-    private long id;
-    private long numberId;
-    private long groupId;
-    private int attempts;
+public class MockNntpConnectionFactory extends NntpConnectionFactory {
+    private MockNewsServer newsServer;
 
-    public long getId() {
-        return id;
+    @Override
+    public NewsClient getNntpClient() {
+        return new MockNewsClient(newsServer);
     }
 
-    public void setId(long id) {
-        this.id = id;
+    public MockNewsServer getNewsServer() {
+        return newsServer;
     }
 
-    public long getNumberId() {
-        return numberId;
-    }
-
-    public void setNumberId(long numberId) {
-        this.numberId = numberId;
-    }
-
-    public long getGroupId() {
-        return groupId;
-    }
-
-    public void setGroupId(long groupId) {
-        this.groupId = groupId;
-    }
-
-    public int getAttempts() {
-        return attempts;
-    }
-
-    public void setAttempts(int attempts) {
-        this.attempts = attempts;
+    public void setNewsServer(MockNewsServer newsServer) {
+        this.newsServer = newsServer;
     }
 }

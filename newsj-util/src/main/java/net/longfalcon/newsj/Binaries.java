@@ -19,6 +19,7 @@
 package net.longfalcon.newsj;
 
 import net.longfalcon.newsj.model.Group;
+import net.longfalcon.newsj.model.Part;
 import net.longfalcon.newsj.model.PartRepair;
 import net.longfalcon.newsj.model.Site;
 import net.longfalcon.newsj.nntp.NntpConnectionFactory;
@@ -264,10 +265,6 @@ public class Binaries {
 
     }
 
-
-
-
-
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     private void partRepair(NewsClient nntpClient, Group group) throws IOException {
         List<PartRepair> partRepairList = partRepairDAO.findByGroupIdAndAttempts(group.getId(), 5, true);
@@ -307,10 +304,14 @@ public class Binaries {
 
                 //check if the articles were added
                 List<Long> articlesRange = ArrayUtil.rangeList(partFrom, partTo);
-                // This might fail. may have to do two queries, one for the partrepairs and the other from parts
+                // This complete clusterf*ck is due to the Part table lacking a groupId column.
+                // TODO: add a groupId column to Part table!!!!
                 List<PartRepair> partRepairs = partRepairDAO.findByGroupIdAndNumbers(group.getId(), articlesRange);
+                List<Long> groupBinaryIds = binaryDAO.findBinaryIdsByGroupId(group.getId());
                 for (PartRepair partRepair : partRepairs) {
-                    if (partRepair.getPart() != null && partRepair.getNumberId() == partRepair.getPart().getNumber()) {
+                    List<Part> partList = partDAO.findByNumberAndBinaryIds(partRepair.getNumberId(), groupBinaryIds);
+                    Part part = partList.isEmpty() ? null : partList.get(0);
+                    if (part != null && partRepair.getNumberId() == part.getNumber()) {
                         partsRepaired++;
 
                         //article was added, delete from partrepair

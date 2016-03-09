@@ -256,7 +256,6 @@
             <property name="groupId" column="groupID"/>
         </natural-id>
         <property name="attempts" column="attempts"/>
-        <one-to-one name="part" property-ref="number" foreign-key="numberId" class="net.longfalcon.newsj.model.Part" fetch="join" constrained="false" outer-join="true" cascade="none"/>
     </class>
     <class name="Part" table="parts">
         <!--<cache usage="read-write"/>-->

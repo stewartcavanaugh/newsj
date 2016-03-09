@@ -63,4 +63,6 @@ public interface BinaryDAO {
     List<Binary> findBinariesByReleaseId(long releaseId);
 
     void deleteByGroupId(long groupId);
+
+    List<Long> findBinaryIdsByGroupId(long groupId);
 }
