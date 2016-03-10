@@ -58,4 +58,23 @@ public class MenuItemDAOImpl extends HibernateDAOImpl implements net.longfalcon.
 
         return criteria.list();
     }
+
+    @Override
+    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
+    public List<MenuItem> getMenuItems() {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(MenuItem.class);
+        criteria.addOrder(Order.asc("role"));
+        criteria.addOrder(Order.asc("ordinal"));
+
+        return criteria.list();
+    }
+
+    @Override
+    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
+    public MenuItem findByMenuItemId(long id) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(MenuItem.class);
+        criteria.add(Restrictions.eq("id", id));
+
+        return (MenuItem) criteria.uniqueResult();
+    }
 }

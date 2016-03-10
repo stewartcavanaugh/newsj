@@ -58,6 +58,7 @@ public class AdminCommentsController extends BaseController {
         return "admin/comments-list";
     }
 
+    // TODO: move to POST
     @RequestMapping("/admin/comments-delete")
     public View deleteCommentPost(@RequestParam(value = "id") Long id, Model model) throws NoSuchResourceException {
         ReleaseComment release = releaseCommentDAO.findByReleaseCommentId(id);

@@ -19,7 +19,6 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="date" uri="http://java.longfalcon.net/jsp/jstl/date" %>
 <%@ taglib prefix="text" uri="http://java.longfalcon.net/jsp/jstl/text" %>
-<%@ taglib prefix="tags" tagdir="/WEB-INF/tags" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -56,43 +55,51 @@
             <h1>${title}</h1>
 
             <c:choose>
-                <c:when test="${releaseList.size() > 0}">
-                    <tags:pager pagerTotalItems="${pagerTotalItems}" pagerItemsPerPage="${pagerItemsPerPage}"
-                                pagerOffset="${pagerOffset}" pagerQueryBase="${pageContext.request.contextPath}/admin/release-list?offset="/>
-
+                <c:when test="${menuItemList.size() > 0}">
                     <table style="margin-top:10px;" class="data Sortable highlight">
 
                         <tr>
                             <th>name</th>
-                            <th>category</th>
-                            <th>size</th>
-                            <th>files</th>
-                            <th>postdate</th>
-                            <th>adddate</th>
-                            <th>grabs</th>
+                            <th>href</th>
+                            <th>tooltip</th>
+                            <th>role</th>
+                            <th>ordinal</th>
                             <th>options</th>
                         </tr>
 
-                        <c:forEach items="${releaseList}" var="release" varStatus="status">
-                            <tr class='${(status.count % 2 == 0) ? "" : "alt"}'>
-                                <td title="{$release.name}"><a href="${pageContext.request.contextPath}/admin/release-edit?id=${release.id}">${text:wordWrap(text:escapeHtml(release.searchName), 75)}</a></td>
-                                <td class="less">${release.category.title}</td>
-                                <td class="less">${text:formatFileSize(release.size, true)}</td>
-                                <td class="less"><a href="${pageContext.request.contextPath}/admin/release-files?guid=${release.guid}">${release.totalpart}</a></td>
-                                <td class="less">${date:formatDate(release.postDate)}</td>
-                                <td class="less">${date:formatDate(release.addDate)}</td>
-                                <td class="less">${release.grabs}</td>
+                        <c:forEach items="${menuItemList}" var="menuItem" varStatus="rowNum">
+                            <tr class='${(rowNum.count % 2 == 0) ? "" : "alt"}'>
+                                <td title="Edit ${menuItem.title}">
+                                    <a href="${pageContext.request.contextPath}/admin/menu-edit?id=${menuItem.id}">${text:escapeHtml(menuItem.title)}</a>
+                                </td>
+                                <td>${menuItem.href}</td>
+                                <td>${menuItem.tooltip}</td>
                                 <td>
-                                    <%--TODO: Move to post--%>
-                                    <a href="${pageContext.request.contextPath}/admin/release-delete?id=${release.id}">delete</a>
+                                    <c:choose>
+                                        <c:when test="${menuItem.role == 0}">
+                                            Guests
+                                        </c:when>
+                                        <c:when test="${menuItem.role == 1}">
+                                            Users
+                                        </c:when>
+                                        <c:when test="${menuItem.role == 2}">
+                                            Admin
+                                        </c:when>
+                                    </c:choose>
+                                </td>
+                                <td>${menuItem.ordinal}</td>
+                                <td>
+                                    <form id="form-delete-menuitem-${menuItem.id}" action="${pageContext.request.contextPath}/admin/menu-delete?id=${menuItem.id}" method="post">
+                                        <input type="submit" value="Delete"/>
+                                    </form>
                                 </td>
                             </tr>
                         </c:forEach>
 
-                    </table>
+                    </table>    
                 </c:when>
                 <c:otherwise>
-                    <p>No releases available.</p>
+                    <p>No menus available.</p>    
                 </c:otherwise>
             </c:choose>
         <%--END PAGE CONTENT--%>
