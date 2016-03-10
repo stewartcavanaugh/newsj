@@ -85,7 +85,7 @@ public class AdminReleaseController extends BaseController {
             throw new NoSuchResourceException();
         }
 
-        List<Category> categories = categoryService.getCategories();
+        List<Category> categories = categoryService.getChildCategories();
         Map<Integer,String> categoriesMap = new HashMap<>();
         for (Category category : categories) {
             // TODO: replace with hbm mapping for parentCategory

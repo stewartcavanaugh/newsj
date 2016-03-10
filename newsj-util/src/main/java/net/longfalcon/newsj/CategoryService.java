@@ -109,8 +109,8 @@ public class CategoryService {
         return categoryList;
     }
 
-    public List<Category> getCategories() {
-        return categoryDAO.getCategories();
+    public List<Category> getChildCategories() {
+        return categoryDAO.getChildCategories();
     }
 
     public Category getCategory(int categoryId) {

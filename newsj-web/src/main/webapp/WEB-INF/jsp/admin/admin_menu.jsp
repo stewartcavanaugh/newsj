@@ -38,7 +38,7 @@
         Menu Items
     </li>
     <li>
-        <a href="${pageContext.request.contextPath}/admin/category-list?action=add">Edit</a>
+        <a href="${pageContext.request.contextPath}/admin/category-list">Edit</a>
         Categories
     </li>
     <li>
