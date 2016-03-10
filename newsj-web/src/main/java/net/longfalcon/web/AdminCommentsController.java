@@ -26,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.View;
 
@@ -58,8 +59,7 @@ public class AdminCommentsController extends BaseController {
         return "admin/comments-list";
     }
 
-    // TODO: move to POST
-    @RequestMapping("/admin/comments-delete")
+    @RequestMapping(value = "/admin/comments-delete", method = RequestMethod.POST)
     public View deleteCommentPost(@RequestParam(value = "id") Long id, Model model) throws NoSuchResourceException {
         ReleaseComment release = releaseCommentDAO.findByReleaseCommentId(id);
         if (release == null) {

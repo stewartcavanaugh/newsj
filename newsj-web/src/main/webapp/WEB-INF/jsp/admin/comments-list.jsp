@@ -77,7 +77,8 @@
                                 <td>${comment.host}</td>
                                 <td>
                                     <a href="${pageContext.request.contextPath}/details/${comment.release.guid}#comments">view</a> |
-                                    <a href="${pageContext.request.contextPath}/admin/comments-delete?id=${comment.id}">delete</a>
+                                    <a href='javascript:$("#form-delete-releasecomment-${comment.id}").submit()'>delete</a>
+                                    <form id="form-delete-releasecomment-${comment.id}" action="${pageContext.request.contextPath}/admin/comments-delete?id=${comment.id}" method="post"></form>
                                 </td>
                             </tr>
                         </c:forEach>

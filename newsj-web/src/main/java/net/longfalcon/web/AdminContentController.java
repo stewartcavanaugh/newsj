@@ -115,8 +115,7 @@ public class AdminContentController extends BaseController {
         return safeRedirect("/admin/content-add?id="+content.getId());
     }
 
-    // TODO: move to post
-    @RequestMapping(value = "/admin/content-delete")
+    @RequestMapping(value = "/admin/content-delete", method = RequestMethod.POST)
     public View deleteContent(@RequestParam(value = "id", required = true)long id, Model model) {
         contentService.delete(id);
 

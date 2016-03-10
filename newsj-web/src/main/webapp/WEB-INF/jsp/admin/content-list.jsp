@@ -124,7 +124,10 @@
                     <td title="${text:escapeHtml(content.body)}">${text:truncate(text:escapeHtml(content.body), 100)}</td>
                     <td>
                         <c:if test="${content.contentType != 3}">
-                            <a class="confirm_action" href="${pageContext.request.contextPath}/admin/content-delete?id=${content.id}">delete</a>
+                            <form action="${pageContext.request.contextPath}/admin/content-delete?id=${content.id}" method="post">
+                                <input class="confirm_action" type="submit" value="Delete"/>
+                            </form>
+
                         </c:if>
                     </td>
                 </tr>
