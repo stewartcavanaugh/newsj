@@ -283,9 +283,9 @@
                 <param name="increment_size">100</param>
             </generator>
         </id>
-        <property name="releaseId" column="releaseID"/>
+        <many-to-one name="release" column="releaseID" not-null="true"/>
         <property name="text" column="text"/>
-        <property name="userId" column="userID"/>
+        <many-to-one name="user" column="userID" not-null="true"/>
         <property name="createDate" column="createddate"/>
         <property name="host" column="host"/>
     </class>

@@ -35,6 +35,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.servlet.View;
 
 import javax.servlet.http.HttpSession;
 import java.util.List;
@@ -118,8 +119,8 @@ public class AdminGroupController extends BaseController {
     }
 
     @RequestMapping(value = "/admin/group-edit", method = RequestMethod.POST)
-    public String editGroupPost(@ModelAttribute("group")Group group, Model model, HttpSession httpSession) {
+    public View editGroupPost(@ModelAttribute("group")Group group, Model model, HttpSession httpSession) {
         groupService.update(group);
-        return editGroupView(group.getId(), model, httpSession);
+        return safeRedirect("/admin/group-edit?id="+group.getId());
     }
 }

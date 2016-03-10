@@ -34,6 +34,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.servlet.View;
 
 import java.util.HashMap;
 import java.util.List;
@@ -99,14 +100,14 @@ public class AdminReleaseController extends BaseController {
     }
 
     @RequestMapping(value = "/admin/release-edit", method = RequestMethod.POST)
-    public String editReleasePost(@ModelAttribute("release")Release release, Model model) throws NoSuchResourceException {
+    public View editReleasePost(@ModelAttribute("release")Release release, Model model) throws NoSuchResourceException {
         releases.updateRelease(release);
 
-        return editReleaseView(release.getId(), model);
+        return safeRedirect("/admin/release-edit?offset="+release.getId());
     }
 
     @RequestMapping(value = "/admin/release-delete", method = RequestMethod.POST)
-    public String deleteReleasePost(@RequestParam(value = "id")Long id, Model model) throws NoSuchResourceException {
+    public View deleteReleasePost(@RequestParam(value = "id")Long id, Model model) throws NoSuchResourceException {
         Release release = releases.findByReleaseId(id);
         if (release == null) {
             throw new NoSuchResourceException();
@@ -116,9 +117,8 @@ public class AdminReleaseController extends BaseController {
         if (!ValidatorUtil.isNotNull(offset)) {
             offset = 0;
         }
-        model.asMap().clear();
 
-        return listReleaseView(offset, model);
+        return safeRedirect("/admin/release-list?offset="+offset);
     }
 
     @RequestMapping("/admin/release-files")

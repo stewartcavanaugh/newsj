@@ -49,4 +49,11 @@ public class TextFunctions {
         String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp-1) + (si ? "" : "i");
         return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
     }
+
+    public static String nl2br(String s) {
+        s = s.replace("\r\n", "<br/>");
+        s = s.replace("\r", "<br/>");
+        s = s.replace("\n", "<br/>");
+        return s;
+    }
 }

@@ -52,4 +52,10 @@
         <function-class>net.longfalcon.taglib.TextFunctions</function-class>
         <function-signature>java.lang.String wordWrap(java.lang.String,int)</function-signature>
     </function>
+
+    <function>
+        <name>nl2br</name>
+        <function-class>net.longfalcon.taglib.TextFunctions</function-class>
+        <function-signature>java.lang.String nl2br(java.lang.String)</function-signature>
+    </function>
 </taglib>

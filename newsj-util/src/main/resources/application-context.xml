@@ -117,6 +117,10 @@
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
 
+    <bean id="releaseCommentDAO" class="net.longfalcon.newsj.persistence.hibernate.ReleaseCommentDAOImpl">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+
     <bean id="releaseRegexDAO" class="net.longfalcon.newsj.persistence.hibernate.ReleaseRegexDAOImpl">
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>

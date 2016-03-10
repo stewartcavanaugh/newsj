@@ -27,9 +27,9 @@ import java.util.Date;
  */
 public class ReleaseComment {
     private long id;
-    private long releaseId;
+    private Release release;
     private String text;
-    private long userId;
+    private User user;
     private Date createDate;
     private String host;
 
@@ -41,28 +41,12 @@ public class ReleaseComment {
         this.id = id;
     }
 
-    public long getReleaseId() {
-        return releaseId;
-    }
-
-    public void setReleaseId(long releaseId) {
-        this.releaseId = releaseId;
-    }
-
     public String getText() {
         return text;
     }
 
     public void setText(String text) {
         this.text = text;
-    }
-
-    public long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(long userId) {
-        this.userId = userId;
     }
 
     public Date getCreateDate() {
@@ -79,5 +63,21 @@ public class ReleaseComment {
 
     public void setHost(String host) {
         this.host = host;
+    }
+
+    public Release getRelease() {
+        return release;
+    }
+
+    public void setRelease(Release release) {
+        this.release = release;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }
