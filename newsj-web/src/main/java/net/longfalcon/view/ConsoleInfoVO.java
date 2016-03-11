@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015. Sten Martinez
+ * Copyright (c) 2016. Sten Martinez
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,16 +16,20 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package net.longfalcon.newsj.model;
+package net.longfalcon.view;
+
+import net.longfalcon.newsj.model.ConsoleInfo;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Date;
 
 /**
  * User: Sten Martinez
- * Date: 11/6/15
- * Time: 3:42 PM
+ * Date: 3/10/16
+ * Time: 9:34 PM
  */
-public class ConsoleInfo {
+public class ConsoleInfoVO {
     private long id;
     private String title;
     private String asin;
@@ -35,11 +39,33 @@ public class ConsoleInfo {
     private String publisher;
     private Long genreId;
     private String esrb;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date releaseDate;
     private String review;
     private boolean cover;
     private Date createDate;
     private Date updateDate;
+    private MultipartFile multipartFile;
+
+    public ConsoleInfoVO() {
+    }
+
+    public ConsoleInfoVO(ConsoleInfo consoleInfo) {
+        this.id = consoleInfo.getId();
+        this.title = consoleInfo.getTitle();
+        this.asin = consoleInfo.getAsin();
+        this.url = consoleInfo.getUrl();
+        this.salesRank = consoleInfo.getSalesRank();
+        this.platform = consoleInfo.getPlatform();
+        this.publisher = consoleInfo.getPublisher();
+        this.genreId = consoleInfo.getGenreId();
+        this.esrb = consoleInfo.getEsrb();
+        this.releaseDate = consoleInfo.getReleaseDate();
+        this.review = consoleInfo.getReview();
+        this.cover = consoleInfo.isCover();
+        this.createDate = consoleInfo.getCreateDate();
+        this.updateDate = consoleInfo.getUpdateDate();
+    }
 
     public long getId() {
         return id;
@@ -151,5 +177,13 @@ public class ConsoleInfo {
 
     public void setUpdateDate(Date updateDate) {
         this.updateDate = updateDate;
+    }
+
+    public MultipartFile getMultipartFile() {
+        return multipartFile;
+    }
+
+    public void setMultipartFile(MultipartFile multipartFile) {
+        this.multipartFile = multipartFile;
     }
 }

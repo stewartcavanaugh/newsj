@@ -165,6 +165,14 @@
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
 
+    <bean id="consoleInfoDAO" class="net.longfalcon.newsj.persistence.hibernate.ConsoleInfoDAOImpl">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+
+    <bean id="genreDAO" class="net.longfalcon.newsj.persistence.hibernate.GenreDAOImpl">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+
     <!-- Services -->
 
     <bean id="config" class="net.longfalcon.newsj.Config" init-method="init">
@@ -216,7 +224,7 @@
         <property name="nzb" ref="nzb"/>
         <property name="tvRageService" ref="tvRage"/>
         <property name="music" ref="music"/>
-        <property name="games" ref="games"/>
+        <property name="gameService" ref="games"/>
         <property name="movieService" ref="movie"/>
         <property name="groupDAO" ref="groupDAO"/>
         <property name="siteDAO" ref="siteDAO"/>
@@ -263,7 +271,11 @@
         <property name="categoryDAO" ref="categoryDAO"/>
         <property name="releaseDAO" ref="releaseDAO"/>
     </bean>
-    <bean id="games" class="net.longfalcon.newsj.Games"></bean>
+    <bean id="games" class="net.longfalcon.newsj.service.GameService">
+        <property name="genreDAO" ref="genreDAO"/>
+        <property name="consoleInfoDAO" ref="consoleInfoDAO"/>
+        <property name="fileSystemService" ref="fileSystemService"/>
+    </bean>
     <bean id="music" class="net.longfalcon.newsj.Music"></bean>
     <bean id="tvRage" class="net.longfalcon.newsj.TVRageService">
         <property name="categoryDAO" ref="categoryDAO"/>

@@ -180,7 +180,7 @@ public class AdminUserController extends BaseController {
         }
         Integer offset = (Integer) model.asMap().get("pagerOffset");
         String orderBy = (String) model.asMap().get("orderBy");
-        model.asMap().clear();
+
         return safeRedirect("/admin/user-list?ob="+orderBy+"&offset="+offset);
     }
 

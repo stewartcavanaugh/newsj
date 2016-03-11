@@ -34,6 +34,7 @@ import net.longfalcon.newsj.persistence.PartDAO;
 import net.longfalcon.newsj.persistence.ReleaseDAO;
 import net.longfalcon.newsj.persistence.ReleaseRegexDAO;
 import net.longfalcon.newsj.persistence.SiteDAO;
+import net.longfalcon.newsj.service.GameService;
 import net.longfalcon.newsj.service.MovieService;
 import net.longfalcon.newsj.util.DateUtil;
 import net.longfalcon.newsj.util.Defaults;
@@ -82,7 +83,7 @@ public class Releases {
     private Nzb nzb;
 
     private MovieService movieService;
-    private Games games;
+    private GameService gameService;
     private Music music;
     private TVRageService tvRageService;
 
@@ -597,7 +598,7 @@ public class Releases {
         //
         if (site.getLookupGames() == 1)
         {
-            games.processConsoleReleases();
+            gameService.processConsoleReleases();
         }
 
         //
@@ -817,12 +818,12 @@ public class Releases {
         this.movieService = movieService;
     }
 
-    public Games getGames() {
-        return games;
+    public GameService getGameService() {
+        return gameService;
     }
 
-    public void setGames(Games games) {
-        this.games = games;
+    public void setGameService(GameService gameService) {
+        this.gameService = gameService;
     }
 
     public Music getMusic() {

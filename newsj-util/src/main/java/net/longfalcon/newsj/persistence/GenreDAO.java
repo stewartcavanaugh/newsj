@@ -16,16 +16,19 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package net.longfalcon.web.exception;
+package net.longfalcon.newsj.persistence;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import net.longfalcon.newsj.model.Genre;
+
+import java.util.List;
 
 /**
  * User: Sten Martinez
- * Date: 3/4/16
- * Time: 6:13 PM
+ * Date: 3/10/16
+ * Time: 5:22 PM
  */
-@ResponseStatus(value = HttpStatus.NOT_FOUND)   // TODO: enable better documentation of what was not found
-public class NoSuchResourceException extends Exception {
+public interface GenreDAO {
+    public void updateGenre(Genre genre);
+    public void deleteGenre(Genre genre);
+    public List<Genre> getGenres(int type);
 }
