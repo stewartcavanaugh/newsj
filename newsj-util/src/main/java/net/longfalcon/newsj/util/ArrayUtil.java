@@ -142,4 +142,18 @@ public class ArrayUtil {
         }
         return sb.toString();
     }
+
+    public static <T> List<T> paginate(List<T> list, int offset, int pageSize) {
+        int arraySize = list.size();
+        if (offset > arraySize) {
+            return list;
+        }
+
+        int endIndex = offset + pageSize;
+        if (endIndex >= arraySize) {
+            return list.subList(offset, arraySize);
+        } else {
+            return list.subList(offset, endIndex);
+        }
+    }
 }

@@ -118,6 +118,13 @@ public class CategoryService {
 
     }
 
+    public String getCategoryDisplayName(int categoryId) {
+        Category category = categoryDAO.findByCategoryId(categoryId);
+        // TODO: replace with hbm mapping for parentCategory
+        Category parentCategory = categoryDAO.findByCategoryId(category.getParentId());
+        return parentCategory.getTitle() + " > " + category.getTitle();
+    }
+
     private List<Category> getSubCategories(Set<Integer> userExcludedCategoryIds, int parentId) {
         List<Category> categoryList = categoryDAO.getForMenu(userExcludedCategoryIds, parentId);
         for (Category category : categoryList) {

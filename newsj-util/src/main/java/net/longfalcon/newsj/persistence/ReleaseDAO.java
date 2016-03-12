@@ -31,19 +31,19 @@ import java.util.List;
  */
 public interface ReleaseDAO {
 
-    List<Release> findTopCommentedReleases();
+    Long countByGroupId(long groupId);
 
-    List<Release> findTopDownloads();
+    Long countReleasesByRegexId(long regexId);
 
-    List<Object[]> findRecentlyAddedReleaseCategories();
-
-    void updateRelease(Release release);
+    void deleteByGroupId(long groupId);
 
     void deleteRelease(Release release);
 
+    Release findByGuid(String guid);
+
     Release findByReleaseId(long releaseId);
 
-    Release findByGuid(String guid);
+    List<Object[]> findRecentlyAddedReleaseCategories();
 
     List<Release> findReleasesBeforeDate(Date before);
 
@@ -53,11 +53,15 @@ public interface ReleaseDAO {
 
     List<Release> findReleasesByRageIdAndCategoryId(long rageId, Collection<Integer> categoryIds);
 
-    Long countByGroupId(long groupId);
+    List<Release> findTopCommentedReleases();
 
-    void deleteByGroupId(long groupId);
+    List<Release> findTopDownloads();
+
+    Date getLastReleaseDateByRegexId(long regexId);
+
+    List<Release> getReleases(int offset, int pageSize);
 
     Long getReleasesCount();
 
-    List<Release> getReleases(int offset, int pageSize);
+    void updateRelease(Release release);
 }

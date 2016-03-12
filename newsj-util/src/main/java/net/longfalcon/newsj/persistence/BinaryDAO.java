@@ -65,4 +65,6 @@ public interface BinaryDAO {
     void deleteByGroupId(long groupId);
 
     List<Long> findBinaryIdsByGroupId(long groupId);
+
+    List<Binary> findByGroupIdProcStatsReleaseId(long groupId, List<Integer> procStats, Long releaseId);
 }

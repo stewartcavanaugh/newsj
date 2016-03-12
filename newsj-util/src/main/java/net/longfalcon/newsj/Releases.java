@@ -102,6 +102,19 @@ public class Releases {
         return releaseDAO.findTopCommentedReleases();
     }
 
+    public List<ReleaseRegex> getRegexesWithStatistics(boolean activeOnly, String groupName, boolean userReleaseRegexes) {
+        List<ReleaseRegex> releaseRegexList = releaseRegexDAO.getRegexes(activeOnly, groupName, userReleaseRegexes);
+
+        for (ReleaseRegex releaseRegex : releaseRegexList) {
+            long releaseRegexId = releaseRegex.getId();
+            int releaseCount = Math.toIntExact(releaseDAO.countReleasesByRegexId(releaseRegexId));
+            releaseRegex.setNumberReleases(releaseCount);
+            releaseRegex.setLastReleaseDate(releaseDAO.getLastReleaseDateByRegexId(releaseRegexId));
+        }
+
+        return releaseRegexList;
+    }
+
     public Release findByReleaseId(long releaseId) {
         Release release = releaseDAO.findByReleaseId(releaseId);
         if (release != null && release.getCategory() != null) {

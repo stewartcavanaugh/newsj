@@ -179,7 +179,7 @@ $('.siteeditstyle').change(function() {
 $('.confirm_action').click(function(){ return confirm('Are you sure?'); });
 
 $('.compress_headers_warning').change(function(){
-	alert('Compressed headers only work reliably with astraweb.');
+	alert('Compressed headers are currently disabled.');
 });
 
 });

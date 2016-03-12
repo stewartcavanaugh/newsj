@@ -679,6 +679,11 @@ CREATE INDEX "IX_PARTS_NUMBER" ON "PARTS" ("NUMBER_");
 
 CREATE INDEX "IX_RELEASES_ADDDATE" ON "RELEASES" ("ADDDATE");
 --------------------------------------------------------
+--  DDL for Index IX_RELEASES_REGEXID
+--------------------------------------------------------
+
+CREATE INDEX "IX_RELEASES_REGEXID" ON "RELEASES" ("REGEXID");
+--------------------------------------------------------
 --  Constraints for Table FORUMPOST
 --------------------------------------------------------
 

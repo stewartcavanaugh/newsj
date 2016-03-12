@@ -23,6 +23,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="date" uri="http://java.longfalcon.net/jsp/jstl/date" %>
 <%@ taglib prefix="tags" tagdir="/WEB-INF/tags" %>
+<%@ taglib prefix="text" uri="http://java.longfalcon.net/jsp/jstl/text" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -99,7 +100,7 @@
                             <c:forEach items="${groupList}" var="group" varStatus="rowNum">
                                 <tr id="grouprow-${group.id}" class='${(rowNum.count % 2 == 0) ? "" : "alt"}'>
                                 <td>
-                                    <a href="${pageContext.request.contextPath}/admin/group-edit?id=${group.id}">${group.name.replace('alt.binaries','a.b')}</a>
+                                    <a href="${pageContext.request.contextPath}/admin/group-edit?id=${group.id}">${text:replace(group.name,'alt.binaries','a.b')}</a>
                                     <div class="hint">${group.description}</div>
                                 </td>
                                 <td class="less">${date:timeAgo(group.firstRecordPostdate)}</td>

@@ -18,6 +18,7 @@
 
 package net.longfalcon.newsj.model;
 
+import javax.persistence.Transient;
 import java.util.Date;
 
 /**
@@ -45,6 +46,7 @@ public class Binary {
     private String importName;
     private Long releaseId;
     private Date dateAdded;
+    private String categoryName;
 
     public long getId() {
         return id;
@@ -196,5 +198,14 @@ public class Binary {
 
     public void setCategoryId(Integer categoryId) {
         this.categoryId = categoryId;
+    }
+
+    @Transient
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
     }
 }
