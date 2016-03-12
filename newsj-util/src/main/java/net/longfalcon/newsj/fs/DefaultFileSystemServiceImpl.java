@@ -22,6 +22,7 @@ import net.longfalcon.newsj.Config;
 import net.longfalcon.newsj.fs.model.Directory;
 import net.longfalcon.newsj.fs.model.DirectoryImpl;
 import net.longfalcon.newsj.util.ValidatorUtil;
+import org.apache.commons.lang3.SystemUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -43,7 +44,10 @@ public class DefaultFileSystemServiceImpl implements FileSystemService {
     public void init() {
         baseDir = config.getNzbFileLocation();
 
-        if (ValidatorUtil.isNull(baseDir)) {
+        if (SystemUtils.IS_OS_WINDOWS) {  // windows is a pain
+            String userHome = System.getenv("USERPROFILE");
+            baseDir = userHome + File.separator + ".newsj";
+        } else if (ValidatorUtil.isNull(baseDir)) {
             String userHome = System.getenv("HOME");
             baseDir = userHome + File.separator + ".newsj";
         }
