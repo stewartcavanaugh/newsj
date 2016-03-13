@@ -44,11 +44,13 @@ public class DefaultFileSystemServiceImpl implements FileSystemService {
     public void init() {
         baseDir = config.getNzbFileLocation();
 
-        if (SystemUtils.IS_OS_WINDOWS) {  // windows is a pain
-            String userHome = System.getenv("USERPROFILE");
-            baseDir = userHome + File.separator + ".newsj";
-        } else if (ValidatorUtil.isNull(baseDir)) {
-            String userHome = System.getenv("HOME");
+        if (ValidatorUtil.isNull(baseDir)) {
+            String userHome;
+            if (SystemUtils.IS_OS_WINDOWS) {  // windows is a pain
+                userHome = System.getenv("USERPROFILE");
+            } else {
+                userHome = System.getenv("HOME");
+            }
             baseDir = userHome + File.separator + ".newsj";
         }
 
