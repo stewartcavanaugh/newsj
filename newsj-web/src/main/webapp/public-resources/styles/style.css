@@ -1241,5 +1241,6 @@ div.icon_check {
     background-position: -75px -25px;
 }
 
-
-
+.monospace {
+    font-family: courier, monospace;
+}
