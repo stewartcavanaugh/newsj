@@ -24,6 +24,9 @@ import org.hibernate.NullPrecedence;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -36,6 +39,19 @@ import java.util.List;
 public class BinaryBlacklistDAOImpl extends HibernateDAOImpl implements net.longfalcon.newsj.persistence.BinaryBlacklistDAO {
 
     @Override
+    @Transactional
+    public void update(BinaryBlacklistEntry binaryBlacklistEntry) {
+        sessionFactory.getCurrentSession().saveOrUpdate(binaryBlacklistEntry);
+    }
+
+    @Override
+    @Transactional
+    public void delete(BinaryBlacklistEntry binaryBlacklistEntry) {
+        sessionFactory.getCurrentSession().delete(binaryBlacklistEntry);
+    }
+
+    @Override
+    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
     public List<BinaryBlacklistEntry> findAllBinaryBlacklistEntries(boolean activeOnly) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(BinaryBlacklistEntry.class);
         if (activeOnly) {
@@ -44,5 +60,14 @@ public class BinaryBlacklistDAOImpl extends HibernateDAOImpl implements net.long
         criteria.addOrder(Order.asc("groupName").nulls(NullPrecedence.LAST));
 
         return criteria.list();
+    }
+
+    @Override
+    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
+    public BinaryBlacklistEntry findByBinaryBlacklistId(long id) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(BinaryBlacklistEntry.class);
+        criteria.add(Restrictions.eq("id",id));
+
+        return (BinaryBlacklistEntry) criteria.uniqueResult();
     }
 }
