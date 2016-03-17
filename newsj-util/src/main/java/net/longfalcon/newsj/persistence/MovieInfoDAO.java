@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015. Sten Martinez
+ * Copyright (c) 2016. Sten Martinez
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,28 +16,24 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package net.longfalcon.newsj.fs.model;
+package net.longfalcon.newsj.persistence;
 
-import java.io.File;
-import java.io.IOException;
+import net.longfalcon.newsj.model.MovieInfo;
+
+import java.util.List;
 
 /**
  * User: Sten Martinez
- * Date: 10/9/15
- * Time: 8:56 AM
+ * Date: 3/16/16
+ * Time: 1:51 PM
  */
-public interface Directory {
-    Directory getDirectory(String relativePath);
+public interface MovieInfoDAO {
+    public void update(MovieInfo movieInfo);
+    public void delete(MovieInfo movieInfo);
+    public Long countMovieInfos();
+    public List<MovieInfo> getMovieInfos(int offset, int pageSize);
 
-    Directory getDirectory(String relativePath, boolean create);
+    MovieInfo findByMovieInfoId(long id);
 
-    FsFile getFile(String fileName) throws IOException;
-
-    File getTempFile(String name) throws IOException;
-
-    boolean fileExists(String fileName);
-
-    String getName();
-
-    void setName(String name);
+    MovieInfo findByImdbId(long imdbId);
 }

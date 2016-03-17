@@ -173,6 +173,10 @@
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
 
+    <bean id="movieInfoDAO" class="net.longfalcon.newsj.persistence.hibernate.MovieInfoDAOImpl">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+
     <!-- Services -->
 
     <bean id="config" class="net.longfalcon.newsj.Config" init-method="init">
@@ -270,6 +274,8 @@
         <property name="googleSearchService" ref="googleSearchService"/>
         <property name="categoryDAO" ref="categoryDAO"/>
         <property name="releaseDAO" ref="releaseDAO"/>
+        <property name="movieInfoDAO" ref="movieInfoDAO"/>
+        <property name="fileSystemService" ref="fileSystemService"/>
     </bean>
     <bean id="games" class="net.longfalcon.newsj.service.GameService">
         <property name="genreDAO" ref="genreDAO"/>

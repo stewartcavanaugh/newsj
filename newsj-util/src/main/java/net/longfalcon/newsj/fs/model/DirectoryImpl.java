@@ -63,6 +63,11 @@ public class DirectoryImpl implements Directory {
 
     @Override
     public Directory getDirectory(String relativePath) {
+        return getDirectory(relativePath, true);
+    }
+
+    @Override
+    public Directory getDirectory(String relativePath, boolean create) {
         if (ValidatorUtil.isNull(relativePath)) {
             return this;
         }
@@ -85,13 +90,17 @@ public class DirectoryImpl implements Directory {
                 return child.getDirectory(subPath.toString());
             }
 
-            String newDirectoryName = file.getAbsolutePath() + File.separator + pathElement;
-            File newFile = new File(newDirectoryName);
-            newFile.mkdirs();
-            DirectoryImpl directory = new DirectoryImpl(newFile);
-            directory.setParent(this);
-            childDirs.put(newFile.getName(), directory);
-            return directory.getDirectory(subPath.toString());
+            if (create) {
+                String newDirectoryName = file.getAbsolutePath() + File.separator + pathElement;
+                File newFile = new File(newDirectoryName);
+                newFile.mkdirs();
+                DirectoryImpl directory = new DirectoryImpl(newFile);
+                directory.setParent(this);
+                childDirs.put(newFile.getName(), directory);
+                return directory.getDirectory(subPath.toString());
+            } else {
+                return null;
+            }
         }
         return this;
     }
@@ -117,6 +126,15 @@ public class DirectoryImpl implements Directory {
                 throw new RuntimeException("Something went wrong. File " + newFileName + " may already exist or is unwritable");
             }
 
+        }
+    }
+
+    @Override
+    public boolean fileExists(String fileName) {
+        if (fileName.contains("/")) {
+            throw new IllegalArgumentException("File name argument must be a relative file name");
+        } else {
+            return childFiles.containsKey(fileName);
         }
     }
 
