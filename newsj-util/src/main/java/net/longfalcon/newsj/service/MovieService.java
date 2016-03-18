@@ -19,11 +19,17 @@
 package net.longfalcon.newsj.service;
 
 import net.longfalcon.newsj.CategoryService;
+import net.longfalcon.newsj.fs.FileSystemService;
+import net.longfalcon.newsj.fs.model.Directory;
+import net.longfalcon.newsj.fs.model.FsFile;
 import net.longfalcon.newsj.model.Category;
+import net.longfalcon.newsj.model.MovieInfo;
 import net.longfalcon.newsj.model.Release;
 import net.longfalcon.newsj.persistence.CategoryDAO;
+import net.longfalcon.newsj.persistence.MovieInfoDAO;
 import net.longfalcon.newsj.persistence.ReleaseDAO;
 import net.longfalcon.newsj.util.ParseUtil;
+import net.longfalcon.newsj.util.StreamUtil;
 import net.longfalcon.newsj.util.ValidatorUtil;
 import net.longfalcon.newsj.ws.GoogleSearchResponse;
 import net.longfalcon.newsj.ws.GoogleSearchResult;
@@ -32,6 +38,8 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -49,6 +57,36 @@ public class MovieService {
     private ReleaseDAO releaseDAO;
     private CategoryDAO categoryDAO;
     private GoogleSearchService googleSearchService;
+    private FileSystemService fileSystemService;
+    private MovieInfoDAO movieInfoDAO;
+
+    @Transactional
+    public void updateMovieInfo(MovieInfo movieInfo, InputStream coverStream, InputStream backdropStream) throws IOException {
+        Directory movieCoverDirectory = fileSystemService.getDirectory("/images/covers/movies");
+        boolean coverImageExists = movieCoverDirectory.fileExists(movieInfo.getId() + "-cover.jpg");
+        boolean backdropImageExists = movieCoverDirectory.fileExists(movieInfo.getId() + "-backdrop.jpg");
+        movieInfo.setCover(coverImageExists);
+        movieInfo.setBackdrop(backdropImageExists);
+
+        if (coverStream != null) {
+            FsFile fsFile = movieCoverDirectory.getFile(movieInfo.getId() + "-cover.jpg");
+            StreamUtil.transferByteArray(coverStream, fsFile.getOutputStream(), 1024);
+            movieInfo.setCover(true);
+        }
+
+        if (backdropStream != null) {
+            FsFile fsFile = movieCoverDirectory.getFile(movieInfo.getId() + "-backdrop.jpg");
+            StreamUtil.transferByteArray(backdropStream, fsFile.getOutputStream(), 1024);
+            movieInfo.setBackdrop(true);
+        }
+
+        movieInfoDAO.update(movieInfo);
+    }
+
+    @Transactional
+    public void addMovieInfo(int imdbId) {
+        //TODO: IMDB and TMDB services
+    }
 
     @Transactional
     public void processMovieReleases() {
@@ -165,5 +203,21 @@ public class MovieService {
 
     public void setGoogleSearchService(GoogleSearchService googleSearchService) {
         this.googleSearchService = googleSearchService;
+    }
+
+    public FileSystemService getFileSystemService() {
+        return fileSystemService;
+    }
+
+    public void setFileSystemService(FileSystemService fileSystemService) {
+        this.fileSystemService = fileSystemService;
+    }
+
+    public MovieInfoDAO getMovieInfoDAO() {
+        return movieInfoDAO;
+    }
+
+    public void setMovieInfoDAO(MovieInfoDAO movieInfoDAO) {
+        this.movieInfoDAO = movieInfoDAO;
     }
 }

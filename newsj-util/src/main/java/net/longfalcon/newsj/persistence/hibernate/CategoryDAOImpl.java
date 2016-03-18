@@ -18,9 +18,11 @@
 
 package net.longfalcon.newsj.persistence.hibernate;
 
+import net.longfalcon.newsj.CategoryService;
 import net.longfalcon.newsj.model.Category;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Isolation;
@@ -76,9 +78,27 @@ public class CategoryDAOImpl extends HibernateDAOImpl implements net.longfalcon.
 
     @Override
     @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
-    public List<Category> getCategories() {
+    public List<Category> getChildCategories() {
         Query query = sessionFactory.getCurrentSession().createQuery("from Category c where c.parentId != 0 order by c.id");
 
         return query.list();
+    }
+
+    @Override
+    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
+    public List<Category> getAllCategories(boolean activeOnly) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Category.class);
+        if (activeOnly) {
+            criteria.add(Restrictions.eq("status", CategoryService.STATUS_ACTIVE));
+        }
+        criteria.addOrder(Order.asc("id"));
+
+        return criteria.list();
+    }
+
+    @Override
+    @Transactional
+    public void updateCategory(Category category) {
+        sessionFactory.getCurrentSession().saveOrUpdate(category);
     }
 }

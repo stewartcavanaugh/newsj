@@ -29,5 +29,11 @@ import java.util.List;
  */
 public interface BinaryBlacklistDAO {
 
+    void update(BinaryBlacklistEntry binaryBlacklistEntry);
+
+    void delete(BinaryBlacklistEntry binaryBlacklistEntry);
+
     List<BinaryBlacklistEntry> findAllBinaryBlacklistEntries(boolean activeOnly);
+
+    BinaryBlacklistEntry findByBinaryBlacklistId(long id);
 }

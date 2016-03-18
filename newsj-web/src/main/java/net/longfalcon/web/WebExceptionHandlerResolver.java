@@ -22,6 +22,9 @@ import net.longfalcon.web.exception.NoSuchResourceException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.core.Ordered;
+import org.springframework.validation.BindException;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -49,6 +52,8 @@ public class WebExceptionHandlerResolver implements HandlerExceptionResolver, Or
             if (ex instanceof NoSuchResourceException) {
                 return handleNoSuchResource((NoSuchResourceException) ex, request, response,
                         handler);
+            } else if (ex instanceof BindException) {
+                return handleBindException((BindException) ex, request, response, handler);
             }
 
         } catch (Exception handlerException) {
@@ -59,6 +64,25 @@ public class WebExceptionHandlerResolver implements HandlerExceptionResolver, Or
 
     private ModelAndView handleNoSuchResource(NoSuchResourceException ex, HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException {
         response.sendError(HttpServletResponse.SC_NOT_FOUND);
+        _log.error(ex, ex);
+        return new ModelAndView();
+    }
+
+    /**
+     * Handle the case where an {@linkplain ModelAttribute @ModelAttribute} method
+     * argument has binding or validation errors and is not followed by another
+     * method argument of type {@link BindingResult}.
+     * By default an HTTP 400 error is sent back to the client.
+     * @param request current HTTP request
+     * @param response current HTTP response
+     * @param handler the executed handler
+     * @return an empty ModelAndView indicating the exception was handled
+     * @throws IOException potentially thrown from response.sendError()
+     */
+    protected ModelAndView handleBindException(BindException ex, HttpServletRequest request,
+                                               HttpServletResponse response, Object handler) throws IOException {
+        response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+        _log.error(ex, ex);
         return new ModelAndView();
     }
 }

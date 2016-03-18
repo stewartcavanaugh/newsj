@@ -45,20 +45,58 @@ public class ReleaseDAOImpl extends HibernateDAOImpl implements net.longfalcon.n
 
     @Override
     @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
-    public List<Release> findTopCommentedReleases() {
-        Query query = sessionFactory.getCurrentSession().createQuery("select r from Release r where comments > 0 order by comments desc");
-        query.setMaxResults(10);
-        return query.list();
+    public Long countByGroupId(long groupId) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Release.class);
+        criteria.add(Restrictions.eq("groupId", groupId));
+        criteria.setProjection(Projections.rowCount());
+
+        return (Long) criteria.uniqueResult();
     }
 
     @Override
     @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
-    public List<Release> findTopDownloads() {
-        Query query = sessionFactory.getCurrentSession().createQuery("select r from Release r where grabs > 0 order by grabs desc");
-        query.setMaxResults(10);
-        return query.list();
+    public Long countReleasesByRegexId(long regexId) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Release.class);
+        criteria.add(Restrictions.eq("regexId", regexId));
+        criteria.setProjection(Projections.rowCount());
+
+        return (Long) criteria.uniqueResult();
     }
 
+    @Override
+    @Transactional
+    public void deleteByGroupId(long groupId) {
+        Query query = sessionFactory.getCurrentSession().createQuery("delete from Release r where r.groupId = :group_id");
+        query.setParameter("group_id", groupId);
+
+        query.executeUpdate();
+    }
+
+    @Override
+    @Transactional
+    public void deleteRelease(Release release) {
+        sessionFactory.getCurrentSession().delete(release);
+    }
+
+    @Override
+    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
+    public Release findByGuid(String guid) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Release.class);
+        criteria.add(Restrictions.eq("guid", guid));
+        criteria.setFetchMode("category", FetchMode.JOIN);
+
+        return (Release) criteria.uniqueResult();
+    }
+
+    @Override
+    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
+    public Release findByReleaseId(long releaseId) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Release.class);
+        criteria.add(Restrictions.eq("id", releaseId));
+        criteria.setFetchMode("category", FetchMode.JOIN);
+
+        return (Release) criteria.uniqueResult();
+    }
 
     /**
      *
@@ -78,38 +116,6 @@ public class ReleaseDAOImpl extends HibernateDAOImpl implements net.longfalcon.n
         criteria.setMaxResults(10);
 
         return criteria.list();
-    }
-
-    @Override
-    @Transactional
-    public void updateRelease(Release release) {
-        sessionFactory.getCurrentSession().saveOrUpdate(release);
-    }
-
-    @Override
-    @Transactional
-    public void deleteRelease(Release release) {
-        sessionFactory.getCurrentSession().delete(release);
-    }
-
-    @Override
-    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
-    public Release findByReleaseId(long releaseId) {
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Release.class);
-        criteria.add(Restrictions.eq("id", releaseId));
-        criteria.setFetchMode("category", FetchMode.JOIN);
-
-        return (Release) criteria.uniqueResult();
-    }
-
-    @Override
-    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
-    public Release findByGuid(String guid) {
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Release.class);
-        criteria.add(Restrictions.eq("guid", guid));
-        criteria.setFetchMode("category", FetchMode.JOIN);
-
-        return (Release) criteria.uniqueResult();
     }
 
     @Override
@@ -155,21 +161,38 @@ public class ReleaseDAOImpl extends HibernateDAOImpl implements net.longfalcon.n
 
     @Override
     @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
-    public Long countByGroupId(long groupId) {
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Release.class);
-        criteria.add(Restrictions.eq("groupId", groupId));
-        criteria.setProjection(Projections.rowCount());
-
-        return (Long) criteria.uniqueResult();
+    public List<Release> findTopCommentedReleases() {
+        Query query = sessionFactory.getCurrentSession().createQuery("select r from Release r where comments > 0 order by comments desc");
+        query.setMaxResults(10);
+        return query.list();
     }
 
     @Override
-    @Transactional
-    public void deleteByGroupId(long groupId) {
-        Query query = sessionFactory.getCurrentSession().createQuery("delete from Release r where r.groupId = :group_id");
-        query.setParameter("group_id", groupId);
+    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
+    public List<Release> findTopDownloads() {
+        Query query = sessionFactory.getCurrentSession().createQuery("select r from Release r where grabs > 0 order by grabs desc");
+        query.setMaxResults(10);
+        return query.list();
+    }
 
-        query.executeUpdate();
+    @Override
+    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
+    public Date getLastReleaseDateByRegexId(long regexId) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Release.class);
+        criteria.add(Restrictions.eq("regexId", regexId));
+        criteria.setProjection(Projections.max("addDate"));
+
+        return (Date) criteria.uniqueResult();
+    }
+
+    @Override
+    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
+    public List<Release> getReleases(int offset, int pageSize) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Release.class);
+        criteria.setFirstResult(offset).setMaxResults(pageSize);
+        criteria.setFetchMode("category", FetchMode.JOIN);
+
+        return criteria.list();
     }
 
     @Override
@@ -182,12 +205,17 @@ public class ReleaseDAOImpl extends HibernateDAOImpl implements net.longfalcon.n
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
-    public List<Release> getReleases(int offset, int pageSize) {
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Release.class);
-        criteria.setFirstResult(offset).setMaxResults(pageSize);
-        criteria.setFetchMode("category", FetchMode.JOIN);
+    @Transactional
+    public void resetReleaseTvRageId(long tvRageId) {
+        Query query = sessionFactory.getCurrentSession().createQuery("update Release r set r.rageId = -1 where r.rageId = :tvRageId");
+        query.setParameter("tvRageId", tvRageId);
 
-        return criteria.list();
+        query.executeUpdate();
+    }
+
+    @Override
+    @Transactional
+    public void updateRelease(Release release) {
+        sessionFactory.getCurrentSession().saveOrUpdate(release);
     }
 }

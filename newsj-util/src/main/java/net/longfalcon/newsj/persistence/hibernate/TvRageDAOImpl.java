@@ -20,10 +20,13 @@ package net.longfalcon.newsj.persistence.hibernate;
 
 import net.longfalcon.newsj.model.TvRage;
 import org.hibernate.Criteria;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * User: Sten Martinez
@@ -60,5 +63,33 @@ public class TvRageDAOImpl extends HibernateDAOImpl implements net.longfalcon.ne
         criteria.add(Restrictions.eq("releaseTitle", title.toLowerCase()));
 
         return (TvRage) criteria.uniqueResult();
+    }
+
+    @Override
+    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
+    public Long countTvRage() {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(TvRage.class);
+        criteria.setProjection(Projections.rowCount());
+
+        return (Long) criteria.uniqueResult();
+    }
+
+    @Override
+    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
+    public List<TvRage> getTvRage(int offset, int pageSize) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(TvRage.class);
+        criteria.setFirstResult(offset).setMaxResults(pageSize);
+
+        return criteria.list();
+    }
+
+    @Override
+    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
+    public List<TvRage> searchTvRage(int offset, int pageSize, String titleSearch) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(TvRage.class);
+        criteria.add(Restrictions.like("releaseTitle", "%" + titleSearch + "%"));
+        criteria.setFirstResult(offset).setMaxResults(pageSize);
+
+        return criteria.list();
     }
 }

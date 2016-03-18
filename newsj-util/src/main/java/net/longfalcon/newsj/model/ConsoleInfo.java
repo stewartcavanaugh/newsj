@@ -33,7 +33,7 @@ public class ConsoleInfo {
     private Integer salesRank;
     private String platform;
     private String publisher;
-    private Integer genreId;
+    private Long genreId;
     private String esrb;
     private Date releaseDate;
     private String review;
@@ -97,11 +97,11 @@ public class ConsoleInfo {
         this.publisher = publisher;
     }
 
-    public Integer getGenreId() {
+    public Long getGenreId() {
         return genreId;
     }
 
-    public void setGenreId(Integer genreId) {
+    public void setGenreId(Long genreId) {
         this.genreId = genreId;
     }
 

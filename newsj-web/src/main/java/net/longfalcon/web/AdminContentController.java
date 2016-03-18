@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.servlet.View;
 
 import java.util.HashMap;
 import java.util.List;
@@ -108,16 +109,16 @@ public class AdminContentController extends BaseController {
     }
 
     @RequestMapping(value = "/admin/content-add", method = RequestMethod.POST)
-    public String addContentPost(@ModelAttribute("content")Content content, Model model) {
+    public View addContentPost(@ModelAttribute("content")Content content, Model model) {
         contentService.update(content);
 
-        return addContentView("view", content.getId(), model);
+        return safeRedirect("/admin/content-add?id="+content.getId());
     }
 
-    @RequestMapping(value = "/admin/content-delete")
-    public String deleteContent(@RequestParam(value = "id", required = true)long id, Model model) {
+    @RequestMapping(value = "/admin/content-delete", method = RequestMethod.POST)
+    public View deleteContent(@RequestParam(value = "id", required = true)long id, Model model) {
         contentService.delete(id);
 
-        return "redirect:/admin/content-list";
+        return safeRedirect("/admin/content-list");
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015. Sten Martinez
+ * Copyright (c) 2016. Sten Martinez
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,15 +16,27 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package net.longfalcon.newsj;
+package net.longfalcon.newsj.persistence;
+
+import net.longfalcon.newsj.model.ReleaseComment;
+
+import java.util.List;
 
 /**
  * User: Sten Martinez
- * Date: 10/14/15
- * Time: 2:18 PM
+ * Date: 3/9/16
+ * Time: 2:58 PM
  */
-public class Games {
-    public void processConsoleReleases() {
+public interface ReleaseCommentDAO {
+    Long countReleaseComments();
 
-    }
+    void deleteReleaseComment(ReleaseComment releaseComment);
+
+    ReleaseComment findByReleaseCommentId(long id);
+
+    List<ReleaseComment> findByReleaseId(long releaseId);
+
+    List<ReleaseComment> getReleaseComments(int start, int pageSize);
+
+    void updateReleaseComment(ReleaseComment releaseComment);
 }

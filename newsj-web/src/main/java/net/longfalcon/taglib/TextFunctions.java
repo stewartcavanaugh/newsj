@@ -18,9 +18,13 @@
 
 package net.longfalcon.taglib;
 
+import net.longfalcon.newsj.util.EncodingUtil;
+import net.longfalcon.newsj.util.ValidatorUtil;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
+
+import javax.servlet.jsp.jstl.core.LoopTagStatus;
 
 /**
  * User: Sten Martinez
@@ -29,16 +33,18 @@ import org.apache.commons.lang3.text.WordUtils;
  */
 public class TextFunctions {
 
-    public static String truncate(String s, int length) {
-        return StringUtils.abbreviate(s, length);
+    public static String cycle(LoopTagStatus loopTagStatus, String s1, String s2) {
+        String[] strings = new String[] {s1,s2};
+        return cycle(loopTagStatus, strings);
+    }
+
+    public static String cycle(LoopTagStatus loopTagStatus, String ... strings) {
+        int cycle = loopTagStatus.getCount() % strings.length;
+        return (strings[cycle]);
     }
 
     public static String escapeHtml(String s) {
         return StringEscapeUtils.escapeHtml4(s);
-    }
-
-    public static String wordWrap(String s, int width) {
-        return WordUtils.wrap(s,width);
     }
 
     public static String formatFileSize(long bytes, boolean si) {
@@ -48,5 +54,32 @@ public class TextFunctions {
         int exp = (int) (Math.log(bytes) / Math.log(unit));
         String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp-1) + (si ? "" : "i");
         return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
+    }
+
+    public static boolean isNull(String s) {
+        return ValidatorUtil.isNull(s);
+    }
+
+    public static String nl2br(String s) {
+        s = s.replace("\r\n", "<br/>");
+        s = s.replace("\r", "<br/>");
+        s = s.replace("\n", "<br/>");
+        return s;
+    }
+
+    public static String replace(String s, String oldStr, String newStr) {
+        return StringUtils.replace(s, oldStr, newStr);
+    }
+
+    public static String truncate(String s, int length) {
+        return StringUtils.abbreviate(s, length);
+    }
+
+    public static String urlEncode(String s) {
+        return EncodingUtil.urlEncode(s);
+    }
+
+    public static String wordWrap(String s, int width) {
+        return WordUtils.wrap(s, width);
     }
 }

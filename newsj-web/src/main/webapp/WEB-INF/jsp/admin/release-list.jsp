@@ -82,7 +82,11 @@
                                 <td class="less">${date:formatDate(release.postDate)}</td>
                                 <td class="less">${date:formatDate(release.addDate)}</td>
                                 <td class="less">${release.grabs}</td>
-                                <td><a href="${pageContext.request.contextPath}/admin/release-delete?id=${release.id}">delete</a></td>
+                                <td>
+                                    <form action="${pageContext.request.contextPath}/admin/release-delete?id=${release.id}" method="post">
+                                        <input type="submit" value="Delete"/>
+                                    </form>
+                                </td>
                             </tr>
                         </c:forEach>
 

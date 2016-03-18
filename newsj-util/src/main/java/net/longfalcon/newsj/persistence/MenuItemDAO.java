@@ -33,4 +33,8 @@ public interface MenuItemDAO {
     void delete(MenuItem menuItem);
 
     List<MenuItem> getMenuItemsByRole(int roleId, boolean noGuestRole);
+
+    List<MenuItem> getMenuItems();
+
+    MenuItem findByMenuItemId(long id);
 }

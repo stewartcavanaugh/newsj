@@ -33,8 +33,9 @@ public class TvRage {
     private String description;
     private String genre;
     private String country;
-    //private byte[] imgData;
+    private byte[] imgData;
     private Date createDate;
+    private boolean hasImage;
 
     public long getId() {
         return id;
@@ -98,5 +99,21 @@ public class TvRage {
 
     public void setCreateDate(Date createDate) {
         this.createDate = createDate;
+    }
+
+    public byte[] getImgData() {
+        return imgData;
+    }
+
+    public void setImgData(byte[] imgData) {
+        this.imgData = imgData;
+    }
+
+    public boolean isHasImage() {
+        return hasImage;
+    }
+
+    public void setHasImage(boolean hasImage) {
+        this.hasImage = hasImage;
     }
 }

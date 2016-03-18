@@ -96,7 +96,7 @@ public class DateUtil {
         if (date == null) {
             return "Never";
         }
-        return defaultDateFormat.print(new DateTime(date));
+        return displayDateFormatter.print(new DateTime(date));
     }
 
     public static String formatNNTPDate(Date date) {

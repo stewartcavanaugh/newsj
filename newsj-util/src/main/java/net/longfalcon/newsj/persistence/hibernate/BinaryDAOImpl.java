@@ -250,4 +250,29 @@ public class BinaryDAOImpl extends HibernateDAOImpl implements net.longfalcon.ne
 
         return criteria.list();
     }
+
+    /**
+     * Find groups based on groupid, optional list of procstats and a required release id
+     * @param groupId required group id
+     * @param procStats optional procstats that the binary could have, leave null for all
+     * @param releaseId required releaseid, null means the releaseid must be null!, 0 for all
+     * @return
+     */
+    @Override
+    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
+    public List<Binary> findByGroupIdProcStatsReleaseId(long groupId, List<Integer> procStats, Long releaseId) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Binary.class);
+        criteria.add(Restrictions.eq("groupId", groupId));
+        if (procStats != null && !procStats.isEmpty()) {
+            criteria.add(Restrictions.in("procStat", procStats));
+        }
+        if (releaseId == null) {
+            criteria.add(Restrictions.isNull("releaseId"));
+        } else if (releaseId > 0) {
+            criteria.add(Restrictions.eq("releaseId", releaseId));
+        }
+        criteria.addOrder(Order.asc("date"));
+
+        return criteria.list();
+    }
 }

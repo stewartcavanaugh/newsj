@@ -27,4 +27,6 @@ import net.longfalcon.newsj.fs.model.Directory;
  */
 public interface FileSystemService {
     Directory getDirectory(String path);
+
+    Directory getDirectory(String relativePath, boolean create);
 }

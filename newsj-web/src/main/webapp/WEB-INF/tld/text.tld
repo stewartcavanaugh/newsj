@@ -18,8 +18,8 @@
   ~ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
   -->
 
-<taglib xmlns="http://java.sun.com/xml/ns/j2ee"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<taglib xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://java.sun.com/xml/ns/j2ee"
         xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd"
         version="2.0">
 
@@ -28,11 +28,12 @@
     <tlib-version>1.1</tlib-version>
     <short-name>text</short-name>
     <uri>http://java.longfalcon.net/jsp/jstl/text</uri>
-    
+
     <function>
-        <name>truncate</name>
+        <name>cycle</name>
         <function-class>net.longfalcon.taglib.TextFunctions</function-class>
-        <function-signature>java.lang.String truncate(java.lang.String,int)</function-signature>
+        <function-signature>java.lang.String cycle(javax.servlet.jsp.jstl.core.LoopTagStatus,java.lang.String,java.lang.String)
+        </function-signature>
     </function>
 
     <function>
@@ -48,8 +49,39 @@
     </function>
 
     <function>
+        <name>isNull</name>
+        <function-class>net.longfalcon.taglib.TextFunctions</function-class>
+        <function-signature>boolean isNull(java.lang.String)</function-signature>
+    </function>
+
+    <function>
         <name>wordWrap</name>
         <function-class>net.longfalcon.taglib.TextFunctions</function-class>
         <function-signature>java.lang.String wordWrap(java.lang.String,int)</function-signature>
     </function>
+
+    <function>
+        <name>nl2br</name>
+        <function-class>net.longfalcon.taglib.TextFunctions</function-class>
+        <function-signature>java.lang.String nl2br(java.lang.String)</function-signature>
+    </function>
+
+    <function>
+        <name>replace</name>
+        <function-class>net.longfalcon.taglib.TextFunctions</function-class>
+        <function-signature>java.lang.String replace(java.lang.String,java.lang.String,java.lang.String)</function-signature>
+    </function>
+
+    <function>
+        <name>truncate</name>
+        <function-class>net.longfalcon.taglib.TextFunctions</function-class>
+        <function-signature>java.lang.String truncate(java.lang.String,int)</function-signature>
+    </function>
+
+    <function>
+        <name>urlEncode</name>
+        <function-class>net.longfalcon.taglib.TextFunctions</function-class>
+        <function-signature>java.lang.String urlEncode(java.lang.String)</function-signature>
+    </function>
+
 </taglib>

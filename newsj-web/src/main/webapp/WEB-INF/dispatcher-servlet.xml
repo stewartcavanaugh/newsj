@@ -36,9 +36,10 @@
     </bean>
 
     <bean id="webExceptionHandlerResolver" class="net.longfalcon.web.WebExceptionHandlerResolver"/>
+    <bean id="multipartResolver" class="org.springframework.web.multipart.support.StandardServletMultipartResolver">
+        <property name="resolveLazily" value="false"/>
+    </bean>
 
     <mvc:annotation-driven/>
     <mvc:resources mapping="/resources/**" location="/public-resources/"/>
-
-
 </beans>

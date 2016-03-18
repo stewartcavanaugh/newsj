@@ -18,6 +18,9 @@
 
 package net.longfalcon.newsj.model;
 
+import javax.persistence.Transient;
+import java.util.Date;
+
 /**
  * User: Sten Martinez
  * Date: 10/9/15
@@ -31,6 +34,10 @@ public class ReleaseRegex {
     private int status;
     private String description;
     private Integer categoryId;
+    // these two fields are transient and computed JIT, but will be potentially added
+    // to the schema and computed either as statistics after the fact or during release processing
+    private int numberReleases;
+    private Date lastReleaseDate;
 
     public long getId() {
         return id;
@@ -86,5 +93,23 @@ public class ReleaseRegex {
 
     public void setCategoryId(Integer categoryId) {
         this.categoryId = categoryId;
+    }
+
+    @Transient
+    public int getNumberReleases() {
+        return numberReleases;
+    }
+
+    public void setNumberReleases(int numberReleases) {
+        this.numberReleases = numberReleases;
+    }
+
+    @Transient
+    public Date getLastReleaseDate() {
+        return lastReleaseDate;
+    }
+
+    public void setLastReleaseDate(Date lastReleaseDate) {
+        this.lastReleaseDate = lastReleaseDate;
     }
 }

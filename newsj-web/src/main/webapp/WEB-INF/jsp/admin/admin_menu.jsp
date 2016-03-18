@@ -38,7 +38,7 @@
         Menu Items
     </li>
     <li>
-        <a href="${pageContext.request.contextPath}/admin/category-list?action=add">Edit</a>
+        <a href="${pageContext.request.contextPath}/admin/category-list">Edit</a>
         Categories
     </li>
     <li>
@@ -51,7 +51,7 @@
         <a href="${pageContext.request.contextPath}/admin/regex-list">View</a>
         <a style="padding:0;" href="${pageContext.request.contextPath}/admin/regex-edit?action=add">Add</a>
         <a style="padding:0;" href="${pageContext.request.contextPath}/admin/regex-test">Test</a>
-        <a style="padding:0;" href="${pageContext.request.contextPath}/admin/regex-submit">Send</a>
+        <%--<a style="padding:0;" href="${pageContext.request.contextPath}/admin/regex-submit">Send</a>--%>
         Regex
     </li>
     <li>
@@ -83,10 +83,10 @@
         <a style="padding:0;" href="${pageContext.request.contextPath}/admin/nzb-export">Export</a>
         Nzb's
     </li>
-    <li>
+   <%-- <li>
         <a href="${pageContext.request.contextPath}/admin/db-optimise">Optimise</a>
         Tables
-    </li>
+    </li>--%>
     <li>
         <a href="${pageContext.request.contextPath}/admin/comments-list">View Comments</a>
     </li>

@@ -34,7 +34,9 @@ import net.longfalcon.newsj.persistence.PartDAO;
 import net.longfalcon.newsj.persistence.ReleaseDAO;
 import net.longfalcon.newsj.persistence.ReleaseRegexDAO;
 import net.longfalcon.newsj.persistence.SiteDAO;
+import net.longfalcon.newsj.service.GameService;
 import net.longfalcon.newsj.service.MovieService;
+import net.longfalcon.newsj.service.MusicService;
 import net.longfalcon.newsj.util.DateUtil;
 import net.longfalcon.newsj.util.Defaults;
 import net.longfalcon.newsj.util.ValidatorUtil;
@@ -82,8 +84,8 @@ public class Releases {
     private Nzb nzb;
 
     private MovieService movieService;
-    private Games games;
-    private Music music;
+    private GameService gameService;
+    private MusicService musicService;
     private TVRageService tvRageService;
 
     private SiteDAO siteDAO;
@@ -99,6 +101,19 @@ public class Releases {
 
     public List<Release> getTopComments() {
         return releaseDAO.findTopCommentedReleases();
+    }
+
+    public List<ReleaseRegex> getRegexesWithStatistics(boolean activeOnly, String groupName, boolean userReleaseRegexes) {
+        List<ReleaseRegex> releaseRegexList = releaseRegexDAO.getRegexes(activeOnly, groupName, userReleaseRegexes);
+
+        for (ReleaseRegex releaseRegex : releaseRegexList) {
+            long releaseRegexId = releaseRegex.getId();
+            int releaseCount = Math.toIntExact(releaseDAO.countReleasesByRegexId(releaseRegexId));
+            releaseRegex.setNumberReleases(releaseCount);
+            releaseRegex.setLastReleaseDate(releaseDAO.getLastReleaseDateByRegexId(releaseRegexId));
+        }
+
+        return releaseRegexList;
     }
 
     public Release findByReleaseId(long releaseId) {
@@ -589,7 +604,7 @@ public class Releases {
         //
         if (site.getLookupMusic() == 1)
         {
-            music.processMusicReleases();
+            musicService.processMusicReleases();
         }
 
         //
@@ -597,7 +612,7 @@ public class Releases {
         //
         if (site.getLookupGames() == 1)
         {
-            games.processConsoleReleases();
+            gameService.processConsoleReleases();
         }
 
         //
@@ -817,20 +832,20 @@ public class Releases {
         this.movieService = movieService;
     }
 
-    public Games getGames() {
-        return games;
+    public GameService getGameService() {
+        return gameService;
     }
 
-    public void setGames(Games games) {
-        this.games = games;
+    public void setGameService(GameService gameService) {
+        this.gameService = gameService;
     }
 
-    public Music getMusic() {
-        return music;
+    public MusicService getMusicService() {
+        return musicService;
     }
 
-    public void setMusic(Music music) {
-        this.music = music;
+    public void setMusicService(MusicService musicService) {
+        this.musicService = musicService;
     }
 
     public TVRageService getTvRageService() {

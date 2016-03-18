@@ -56,8 +56,8 @@ public class ReleaseRegexDAOImpl extends HibernateDAOImpl implements net.longfal
             }
         }
 
-        if (userReleaseRegexes) {
-            criteria.add(Restrictions.ge("id", 100000));
+        if (!userReleaseRegexes) {
+            criteria.add(Restrictions.lt("id", 100000L));
         }
 
         // rough approximation of original order by:

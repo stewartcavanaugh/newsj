@@ -117,6 +117,10 @@
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
 
+    <bean id="releaseCommentDAO" class="net.longfalcon.newsj.persistence.hibernate.ReleaseCommentDAOImpl">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+
     <bean id="releaseRegexDAO" class="net.longfalcon.newsj.persistence.hibernate.ReleaseRegexDAOImpl">
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
@@ -158,6 +162,22 @@
     </bean>
 
     <bean id="userInviteDAO" class="net.longfalcon.newsj.persistence.hibernate.UserInviteDAOImpl">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+
+    <bean id="consoleInfoDAO" class="net.longfalcon.newsj.persistence.hibernate.ConsoleInfoDAOImpl">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+
+    <bean id="genreDAO" class="net.longfalcon.newsj.persistence.hibernate.GenreDAOImpl">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+
+    <bean id="movieInfoDAO" class="net.longfalcon.newsj.persistence.hibernate.MovieInfoDAOImpl">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+
+    <bean id="musicInfoDAO" class="net.longfalcon.newsj.persistence.hibernate.MusicInfoDAOImpl">
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
 
@@ -211,8 +231,8 @@
         <property name="nfo" ref="nfo"/>
         <property name="nzb" ref="nzb"/>
         <property name="tvRageService" ref="tvRage"/>
-        <property name="music" ref="music"/>
-        <property name="games" ref="games"/>
+        <property name="musicService" ref="music"/>
+        <property name="gameService" ref="games"/>
         <property name="movieService" ref="movie"/>
         <property name="groupDAO" ref="groupDAO"/>
         <property name="siteDAO" ref="siteDAO"/>
@@ -258,9 +278,18 @@
         <property name="googleSearchService" ref="googleSearchService"/>
         <property name="categoryDAO" ref="categoryDAO"/>
         <property name="releaseDAO" ref="releaseDAO"/>
+        <property name="movieInfoDAO" ref="movieInfoDAO"/>
+        <property name="fileSystemService" ref="fileSystemService"/>
     </bean>
-    <bean id="games" class="net.longfalcon.newsj.Games"></bean>
-    <bean id="music" class="net.longfalcon.newsj.Music"></bean>
+    <bean id="games" class="net.longfalcon.newsj.service.GameService">
+        <property name="genreDAO" ref="genreDAO"/>
+        <property name="consoleInfoDAO" ref="consoleInfoDAO"/>
+        <property name="fileSystemService" ref="fileSystemService"/>
+    </bean>
+    <bean id="music" class="net.longfalcon.newsj.service.MusicService">
+        <property name="musicInfoDAO" ref="musicInfoDAO"/>
+        <property name="fileSystemService" ref="fileSystemService"/>
+    </bean>
     <bean id="tvRage" class="net.longfalcon.newsj.TVRageService">
         <property name="categoryDAO" ref="categoryDAO"/>
         <property name="releaseDAO" ref="releaseDAO"/>

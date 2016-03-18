@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.servlet.View;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -133,7 +134,7 @@ public class AdminUserController extends BaseController {
     }
 
     @RequestMapping(value = "/admin/user-edit", method = RequestMethod.POST)
-    public String userEditPost(@ModelAttribute("user")User user, Model model) {
+    public View userEditPost(@ModelAttribute("user")User user, Model model) {
         long returnCode = 0;
         if (user.getId() > 0) {
             returnCode = userService.update(user);
@@ -166,11 +167,11 @@ public class AdminUserController extends BaseController {
         } else {
             user = userDAO.findByUserId(returnCode);
         }
-        return userEditView(user.getId(), model);
+        return safeRedirect("/admin/user-edit?id="+user.getId());
     }
 
     @RequestMapping(value = "/admin/user-delete", method = RequestMethod.POST)
-    public String userDeletePost(@RequestParam(value = "id")Long id, Model model) {
+    public View userDeletePost(@RequestParam(value = "id")Long id, Model model) {
         User user = userDAO.findByUserId(id);
         if (user == null) {
             _log.error("userId="+id+" does not exist.");
@@ -179,8 +180,8 @@ public class AdminUserController extends BaseController {
         }
         Integer offset = (Integer) model.asMap().get("pagerOffset");
         String orderBy = (String) model.asMap().get("orderBy");
-        model.asMap().clear();
-        return userListView(offset, orderBy, model);
+
+        return safeRedirect("/admin/user-list?ob="+orderBy+"&offset="+offset);
     }
 
     private String getOrderByProperty(String orderByParam) {

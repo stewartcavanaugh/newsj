@@ -18,6 +18,8 @@
 
 package net.longfalcon.newsj.model;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import java.util.Date;
 
 /**
@@ -33,6 +35,7 @@ public class MusicInfo {
     private Integer salesRank;
     private String artist;
     private String publisher;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date releaseDate;
     private String review;
     private String year;

@@ -48,7 +48,7 @@ public class DefaultFileSystemServiceImpl implements FileSystemService {
             baseDir = userHome + File.separator + ".newsj";
         }
 
-        _log.info("Initializing NZB storage in " + baseDir);
+        _log.info("Initializing storage in " + baseDir);
         File baseDirFile = new File(baseDir);
 
         if (!baseDirFile.exists() ) {
@@ -61,6 +61,11 @@ public class DefaultFileSystemServiceImpl implements FileSystemService {
     @Override
     public Directory getDirectory(String relativePath) {
         return baseDirectory.getDirectory(relativePath);
+    }
+
+    @Override
+    public Directory getDirectory(String relativePath, boolean create) {
+        return baseDirectory.getDirectory(relativePath, create);
     }
 
     public String getBaseDir() {

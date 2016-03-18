@@ -26,6 +26,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  * Date: 3/4/16
  * Time: 6:13 PM
  */
-@ResponseStatus(value = HttpStatus.NOT_FOUND)
+@ResponseStatus(value = HttpStatus.NOT_FOUND)   // TODO: enable better documentation of what was not found
 public class NoSuchResourceException extends Exception {
 }

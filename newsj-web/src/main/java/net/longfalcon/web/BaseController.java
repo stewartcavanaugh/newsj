@@ -36,6 +36,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.NativeWebRequest;
+import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -180,6 +181,12 @@ public class BaseController {
             user.setHost(host);
         }
         userDAO.update(user);
+    }
+
+    protected RedirectView safeRedirect(String url) {
+        RedirectView rv = new RedirectView(url, true);
+        rv.setExposeModelAttributes(false);
+        return rv;
     }
 
     private UserData _getUserData(User user) {

@@ -20,6 +20,8 @@ package net.longfalcon.newsj.persistence;
 
 import net.longfalcon.newsj.model.TvRage;
 
+import java.util.List;
+
 /**
  * User: Sten Martinez
  * Date: 11/5/15
@@ -33,4 +35,10 @@ public interface TvRageDAO {
     TvRage findByTvRageId(long id);
 
     TvRage findByReleaseTitle(String title);
+
+    Long countTvRage();
+
+    List<TvRage> getTvRage(int offset, int pageSize);
+
+    List<TvRage> searchTvRage(int offset, int pageSize, String titleSearch);
 }

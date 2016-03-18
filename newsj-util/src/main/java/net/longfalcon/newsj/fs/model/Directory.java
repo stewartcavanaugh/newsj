@@ -29,9 +29,13 @@ import java.io.IOException;
 public interface Directory {
     Directory getDirectory(String relativePath);
 
+    Directory getDirectory(String relativePath, boolean create);
+
     FsFile getFile(String fileName) throws IOException;
 
     File getTempFile(String name) throws IOException;
+
+    boolean fileExists(String fileName);
 
     String getName();
 
