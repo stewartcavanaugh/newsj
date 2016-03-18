@@ -206,6 +206,15 @@ public class ReleaseDAOImpl extends HibernateDAOImpl implements net.longfalcon.n
 
     @Override
     @Transactional
+    public void resetReleaseTvRageId(long tvRageId) {
+        Query query = sessionFactory.getCurrentSession().createQuery("update Release r set r.rageId = -1 where r.rageId = :tvRageId");
+        query.setParameter("tvRageId", tvRageId);
+
+        query.executeUpdate();
+    }
+
+    @Override
+    @Transactional
     public void updateRelease(Release release) {
         sessionFactory.getCurrentSession().saveOrUpdate(release);
     }

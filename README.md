@@ -15,3 +15,10 @@ DO NOT USE. NON-FUNCTIONAL
 * regex submission
 * ReqId
 * remove TvRage support and replace with TVDB, etc.
+* move to templates/Tiles
+
+### ToDo list
+* IMDB/TMDB data fetch/add movie info
+* refactor "Rage" to "TVData" or similar
+* better image hosting/storage
+* manage release data integrity when deleting movie/music/game/tv infos

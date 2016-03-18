@@ -426,6 +426,8 @@
         <property name="genre" column="genre"/>
         <property name="country" column="country"/>
         <property name="createDate" column="createddate" type="date"/>
+        <property name="imgData" column="imgdata" lazy="true" not-null="false" type="materialized_blob"/>
+        <property name="hasImage" formula="imgdata is not null"/>
     </class>
     <class name="UserCart" table="usercart">
         <id name="id" column="ID">

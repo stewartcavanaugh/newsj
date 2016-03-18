@@ -63,5 +63,7 @@ public interface ReleaseDAO {
 
     Long getReleasesCount();
 
+    void resetReleaseTvRageId(long tvRageId);
+
     void updateRelease(Release release);
 }
