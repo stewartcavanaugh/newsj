@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015. Sten Martinez
+ * Copyright (c) 2016. Sten Martinez
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,15 +16,22 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package net.longfalcon.newsj;
+package net.longfalcon.newsj.persistence;
+
+import net.longfalcon.newsj.model.MusicInfo;
+
+import java.util.List;
 
 /**
  * User: Sten Martinez
- * Date: 10/14/15
- * Time: 2:18 PM
+ * Date: 3/18/16
+ * Time: 2:39 PM
  */
-public class Music {
-    public void processMusicReleases() {
+public interface MusicInfoDAO {
+    public void update(MusicInfo musicInfo);
+    public void delete(MusicInfo musicInfo);
+    public Long countMusicInfos();
+    public List<MusicInfo> getMusicInfos(int offset, int pageSize);
 
-    }
+    MusicInfo findByMusicInfoId(long id);
 }

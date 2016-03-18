@@ -21,11 +21,9 @@ package net.longfalcon.newsj.service;
 import net.longfalcon.newsj.fs.FileSystemService;
 import net.longfalcon.newsj.fs.model.Directory;
 import net.longfalcon.newsj.fs.model.FsFile;
-import net.longfalcon.newsj.model.ConsoleInfo;
-import net.longfalcon.newsj.persistence.ConsoleInfoDAO;
-import net.longfalcon.newsj.persistence.GenreDAO;
+import net.longfalcon.newsj.model.MusicInfo;
+import net.longfalcon.newsj.persistence.MusicInfoDAO;
 import net.longfalcon.newsj.util.StreamUtil;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,45 +33,27 @@ import java.io.InputStream;
  * Date: 10/14/15
  * Time: 2:18 PM
  */
-public class GameService {
+public class MusicService {
 
-    ConsoleInfoDAO consoleInfoDAO;
-
-    GenreDAO genreDAO;
+    MusicInfoDAO musicInfoDAO;
 
     FileSystemService fileSystemService;
 
-    public void processConsoleReleases() {
-        //TODO
+    public void processMusicReleases() {
+        // TODO
     }
 
-    @Transactional
-    public void updateConsoleInfo(ConsoleInfo consoleInfo, InputStream coverStream) throws IOException {
-        consoleInfoDAO.updateConsoleInfo(consoleInfo);
+    public void updateMusicInfo(MusicInfo musicInfo, InputStream coverInputStream) throws IOException {
 
-        if (coverStream != null) {
-            Directory directory = fileSystemService.getDirectory("/images/covers/console", true);
-            FsFile fsFile = directory.getFile(consoleInfo.getId() + ".jpg");
-            StreamUtil.transferByteArray(coverStream, fsFile.getOutputStream(), 1024);
-            consoleInfo.setCover(true);
-            consoleInfoDAO.updateConsoleInfo(consoleInfo);
+        musicInfoDAO.update(musicInfo);
+
+        if (coverInputStream != null) {
+            Directory directory = fileSystemService.getDirectory("/images/covers/console");
+            FsFile fsFile = directory.getFile(musicInfo.getId() + ".jpg");
+            StreamUtil.transferByteArray(coverInputStream, fsFile.getOutputStream(), 1024);
+            musicInfo.setCover(true);
+            musicInfoDAO.update(musicInfo);
         }
-    }
-
-    public ConsoleInfoDAO getConsoleInfoDAO() {
-        return consoleInfoDAO;
-    }
-
-    public void setConsoleInfoDAO(ConsoleInfoDAO consoleInfoDAO) {
-        this.consoleInfoDAO = consoleInfoDAO;
-    }
-
-    public GenreDAO getGenreDAO() {
-        return genreDAO;
-    }
-
-    public void setGenreDAO(GenreDAO genreDAO) {
-        this.genreDAO = genreDAO;
     }
 
     public FileSystemService getFileSystemService() {
@@ -82,5 +62,13 @@ public class GameService {
 
     public void setFileSystemService(FileSystemService fileSystemService) {
         this.fileSystemService = fileSystemService;
+    }
+
+    public MusicInfoDAO getMusicInfoDAO() {
+        return musicInfoDAO;
+    }
+
+    public void setMusicInfoDAO(MusicInfoDAO musicInfoDAO) {
+        this.musicInfoDAO = musicInfoDAO;
     }
 }

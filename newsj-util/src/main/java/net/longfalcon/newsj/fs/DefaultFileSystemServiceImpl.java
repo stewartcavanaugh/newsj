@@ -63,6 +63,11 @@ public class DefaultFileSystemServiceImpl implements FileSystemService {
         return baseDirectory.getDirectory(relativePath);
     }
 
+    @Override
+    public Directory getDirectory(String relativePath, boolean create) {
+        return baseDirectory.getDirectory(relativePath, create);
+    }
+
     public String getBaseDir() {
         return baseDir;
     }
