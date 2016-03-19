@@ -64,6 +64,59 @@ public class ReleaseDAOImpl extends HibernateDAOImpl implements net.longfalcon.n
     }
 
     @Override
+    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
+    public Long countByCategoriesMaxAgeAndGroup(Collection<Integer> categoryIds, Date maxAge,
+                                                Collection<Integer> excludedCategoryIds, Long groupId) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Release.class);
+        if (!categoryIds.isEmpty()) {
+            criteria.add(Restrictions.in("category.id", categoryIds));
+        }
+        if (maxAge != null) {
+            criteria.add(Restrictions.gt("postDate", maxAge));
+        }
+        if (excludedCategoryIds != null && !excludedCategoryIds.isEmpty()) {
+            criteria.add(Restrictions.not(Restrictions.in("category.id", categoryIds)));
+        }
+        if (groupId != null) {
+            criteria.add(Restrictions.eq("groupId",groupId));
+        }
+        criteria.setProjection(Projections.rowCount());
+
+
+        return (Long) criteria.uniqueResult();
+    }
+
+    @Override
+    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
+    public List<Release> findByCategoriesMaxAgeAndGroup(Collection<Integer> categoryIds, Date maxAge,
+                                                        Collection<Integer> excludedCategoryIds, Long groupId,
+                                                        String orderByField, boolean descending,
+                                                        int offset, int pageSize) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Release.class);
+        if (!categoryIds.isEmpty()) {
+            criteria.add(Restrictions.in("category.id", categoryIds));
+        }
+        if (maxAge != null) {
+            criteria.add(Restrictions.gt("postDate", maxAge));
+        }
+        if (excludedCategoryIds != null && !excludedCategoryIds.isEmpty()) {
+            criteria.add(Restrictions.not(Restrictions.in("category.id", categoryIds)));
+        }
+        if (groupId != null) {
+            criteria.add(Restrictions.eq("groupId",groupId));
+        }
+        if (descending) {
+            criteria.addOrder(Order.desc(orderByField));
+        } else {
+            criteria.addOrder(Order.asc(orderByField));
+        }
+        criteria.setFetchMode("category", FetchMode.JOIN);
+        criteria.setFirstResult(offset).setMaxResults(pageSize);
+
+        return criteria.list();
+    }
+
+    @Override
     @Transactional
     public void deleteByGroupId(long groupId) {
         Query query = sessionFactory.getCurrentSession().createQuery("delete from Release r where r.groupId = :group_id");

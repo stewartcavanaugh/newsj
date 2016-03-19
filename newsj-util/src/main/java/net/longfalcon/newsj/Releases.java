@@ -54,6 +54,7 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -101,6 +102,48 @@ public class Releases {
 
     public List<Release> getTopComments() {
         return releaseDAO.findTopCommentedReleases();
+    }
+
+    public Long getBrowseCount(Collection<Integer> categoryIds, int maxAgeDays, List<Integer> excludedCategoryIds, long groupId) {
+        Date maxAge = null;
+        if (maxAgeDays > 0) {
+            maxAge = DateTime.now().minusDays(maxAgeDays).toDate();
+        }
+
+        Long groupIdObj = null;
+        if (groupId > 0) {
+            groupIdObj = groupId;
+        }
+
+        return releaseDAO.countByCategoriesMaxAgeAndGroup(categoryIds, maxAge, excludedCategoryIds, groupIdObj);
+    }
+
+    public List<Release> getBrowseReleases(Collection<Integer> categoryIds, int maxAgeDays, List<Integer> excludedCategoryIds,
+                                           long groupId, String orderByField, boolean descending,
+                                           int offset, int pageSize) {
+        Date maxAge = null;
+        if (maxAgeDays > 0) {
+            maxAge = DateTime.now().minusDays(maxAgeDays).toDate();
+        }
+
+        Long groupIdObj = null;
+        if (groupId > 0) {
+            groupIdObj = groupId;
+        }
+
+        List<Release> releases = releaseDAO.findByCategoriesMaxAgeAndGroup(categoryIds, maxAge, excludedCategoryIds, groupIdObj,
+                orderByField, descending, offset, pageSize);
+        for (Release release : releases) {
+            Group group = groupDAO.findGroupByGroupId(release.getGroupId());
+            if (group != null) {
+                release.setGroupName(group.getName());
+            }
+            Category category = release.getCategory();
+            if (category != null) {
+                release.setCategoryDisplayName(categoryService.getCategoryDisplayName(category.getId()));
+            }
+        }
+        return releases;
     }
 
     public List<ReleaseRegex> getRegexesWithStatistics(boolean activeOnly, String groupName, boolean userReleaseRegexes) {

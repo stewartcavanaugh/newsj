@@ -340,7 +340,7 @@
         <property name="guid" column="guid" not-null="true"/>
         <property name="fromName" column="fromname"/>
         <property name="completion" column="completion"/>
-        <many-to-one name="category" class="Category" not-null="true" unique="false" column="categoryID"/>
+        <many-to-one name="category" class="Category" not-null="false" unique="false" column="categoryID"/>
         <property name="regexId" column="regexID"/>
         <property name="rageId" column="rageID"/>
         <property name="seriesFull" column="seriesfull"/>
@@ -355,6 +355,7 @@
         <property name="grabs" column="grabs"/>
         <property name="comments" column="comments"/>
         <property name="passwordStatus" column="passwordstatus"/>
+        <one-to-one name="releaseNfo" property-ref="release"/>
     </class>
     <class name="Site" table="site">
         <!--<cache usage="read-write"/>-->

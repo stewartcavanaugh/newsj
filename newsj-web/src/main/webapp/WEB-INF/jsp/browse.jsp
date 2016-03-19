@@ -1,4 +1,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="text" uri="http://java.longfalcon.net/jsp/jstl/text" %>
+<%@ taglib prefix="tags" tagdir="/WEB-INF/tags" %>
+<%@ taglib prefix="date" uri="http://java.longfalcon.net/jsp/jstl/date" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -30,104 +33,208 @@
 
     <div id="content">
         <%--START PAGE CONTENT--%>
-            <h1>Browse {$catname|escape:"htmlall"}</h1>
+            <h1>Browse ${text:escapeHtml(catName)}</h1>
 
-            {if $results|@count > 0}
+            <c:if test="${releaseList.size() > 0}">
+                <form id="nzb_multi_operations_form" action="${pageContext.request.contextPath}/browse">
 
-            <form id="nzb_multi_operations_form" action="get">
+                    <div class="nzb_multi_operations">
+                        <c:if test="${!text:isNull(section)}">
+                            View: <a href="${pageContext.request.contextPath}/${section}?t=${category}">Covers</a> | <strong>List</strong><br />
+                        </c:if>
+                        <small>With Selected:</small>
+                        <input type="button" class="nzb_multi_operations_download" value="Download NZBs" />
+                        <input type="button" class="nzb_multi_operations_cart" value="Add to Cart" />
+                        <input type="button" class="nzb_multi_operations_sab" value="Send to SAB" />
+                        <c:if test="${isAdmin}">
+                            &nbsp;&nbsp;
+                            <input type="button" class="nzb_multi_operations_edit" value="Edit" />
+                            <input type="button" class="nzb_multi_operations_delete" value="Del" />
+                            <input type="button" class="nzb_multi_operations_rebuild" value="Reb" />
+                        </c:if>
+                    </div>
 
-                <div class="nzb_multi_operations">
-                    {if $section != ''}View: <a href="${pageContext.request.contextPath}/{$section}?t={$category}">Covers</a> | <b>List</b><br />{/if}
-                    <small>With Selected:</small>
-                    <input type="button" class="nzb_multi_operations_download" value="Download NZBs" />
-                    <input type="button" class="nzb_multi_operations_cart" value="Add to Cart" />
-                    <input type="button" class="nzb_multi_operations_sab" value="Send to SAB" />
-                    {if $isadmin}
-                    &nbsp;&nbsp;
-                    <input type="button" class="nzb_multi_operations_edit" value="Edit" />
-                    <input type="button" class="nzb_multi_operations_delete" value="Del" />
-                    <input type="button" class="nzb_multi_operations_rebuild" value="Reb" />
-                    {/if}
-                </div>
+                    <tags:pager pagerTotalItems="${pagerTotalItems}" pagerItemsPerPage="${pagerItemsPerPage}"
+                                pagerOffset="${pagerOffset}"
+                                pagerQueryBase="${pageContext.request.contextPath}/browse?t=${categoryId}&g=${groupName}&ob=${orderBy}&offset=" />
 
-                {$pager}
+                    <table style="width:100%;" class="data highlight icons" id="browsetable">
+                        <tr>
+                            <th>
+                                <input id="chkSelectAll" type="checkbox" class="nzb_check_all" />
+                                <label for="chkSelectAll" style="display:none;">Select All</label>
+                            </th>
+                            <th>
+                                name<br/>
+                                <a title="Sort Descending" href="${pageContext.request.contextPath}/browse?t=${categoryId}&g=${groupName}&ob=searchName_desc&offset=${pagerOffset}">
+                                    <img src="${pageContext.request.contextPath}/resources/images/sorting/arrow_down.gif" alt="Sort Descending" />
+                                </a>
+                                <a title="Sort Ascending" href="${pageContext.request.contextPath}/browse?t=${categoryId}&g=${groupName}&ob=searchName_asc&offset=${pagerOffset}">
+                                    <img src="${pageContext.request.contextPath}/resources/images/sorting/arrow_up.gif" alt="Sort Ascending" />
+                                </a>
+                            </th>
+                            <th>
+                                category<br/>
+                                <a title="Sort Descending" href="${pageContext.request.contextPath}/browse?t=${categoryId}&g=${groupName}&ob=category_desc&offset=${pagerOffset}">
+                                    <img src="${pageContext.request.contextPath}/resources/images/sorting/arrow_down.gif" alt="Sort Descending" />
+                                </a>
+                                <a title="Sort Ascending" href="${pageContext.request.contextPath}/browse?t=${categoryId}&g=${groupName}&ob=category_asc&offset=${pagerOffset}">
+                                    <img src="${pageContext.request.contextPath}/resources/images/sorting/arrow_up.gif" alt="Sort Ascending" />
+                                </a>
+                            </th>
+                            <th>
+                                posted<br/>
+                                <a title="Sort Descending" href="${pageContext.request.contextPath}/browse?t=${categoryId}&g=${groupName}&ob=postDate_desc&offset=${pagerOffset}">
+                                    <img src="${pageContext.request.contextPath}/resources/images/sorting/arrow_down.gif" alt="Sort Descending" />
+                                </a>
+                                <a title="Sort Ascending" href="${pageContext.request.contextPath}/browse?t=${categoryId}&g=${groupName}&ob=postDate_asc&offset=${pagerOffset}">
+                                    <img src="${pageContext.request.contextPath}/resources/images/sorting/arrow_up.gif" alt="Sort Ascending" />
+                                </a>
+                            </th>
+                            <th>
+                                size<br/>
+                                <a title="Sort Descending" href="${pageContext.request.contextPath}/browse?t=${categoryId}&g=${groupName}&ob=size_desc&offset=${pagerOffset}">
+                                    <img src="${pageContext.request.contextPath}/resources/images/sorting/arrow_down.gif" alt="Sort Descending" />
+                                </a>
+                                <a title="Sort Ascending" href="${pageContext.request.contextPath}/browse?t=${categoryId}&g=${groupName}&ob=size_asc&offset=${pagerOffset}">
+                                    <img src="${pageContext.request.contextPath}/resources/images/sorting/arrow_up.gif" alt="Sort Ascending" />
+                                </a>
+                            </th>
+                            <th>
+                                files<br/>
+                                <a title="Sort Descending" href="${pageContext.request.contextPath}/browse?t=${categoryId}&g=${groupName}&ob=totalpart_desc&offset=${pagerOffset}">
+                                    <img src="${pageContext.request.contextPath}/resources/images/sorting/arrow_down.gif" alt="Sort Descending" />
+                                </a>
+                                <a title="Sort Ascending" href="${pageContext.request.contextPath}/browse?t=${categoryId}&g=${groupName}&ob=totalpart_asc&offset=${pagerOffset}">
+                                    <img src="${pageContext.request.contextPath}/resources/images/sorting/arrow_up.gif" alt="Sort Ascending" />
+                                </a>
+                            </th>
+                            <th>
+                                stats<br/>
+                                <a title="Sort Descending" href="${pageContext.request.contextPath}/browse?t=${categoryId}&g=${groupName}&ob=grabs_desc&offset=${pagerOffset}">
+                                    <img src="${pageContext.request.contextPath}/resources/images/sorting/arrow_down.gif" alt="Sort Descending" />
+                                </a>
+                                <a title="Sort Ascending" href="${pageContext.request.contextPath}/browse?t=${categoryId}&g=${groupName}&ob=grabs_asc&offset=${pagerOffset}">
+                                    <img src="${pageContext.request.contextPath}/resources/images/sorting/arrow_up.gif" alt="Sort Ascending" />
+                                </a>
+                            </th>
+                            <th></th>
+                        </tr>
 
-                <table style="width:100%;" class="data highlight icons" id="browsetable">
-                    <tr>
-                        <th><input id="chkSelectAll" type="checkbox" class="nzb_check_all" /><label for="chkSelectAll" style="display:none;">Select All</label></th>
-                        <th>name<br/><a title="Sort Descending" href="{$orderbyname_desc}"><img src="${pageContext.request.contextPath}/resources/images/sorting/arrow_down.gif" alt="Sort Descending" /></a><a title="Sort Ascending" href="{$orderbyname_asc}"><img src="${pageContext.request.contextPath}/resources/images/sorting/arrow_up.gif" alt="Sort Ascending" /></a></th>
-                        <th>category<br/><a title="Sort Descending" href="{$orderbycat_desc}"><img src="${pageContext.request.contextPath}/resources/images/sorting/arrow_down.gif" alt="Sort Descending" /></a><a title="Sort Ascending" href="{$orderbycat_asc}"><img src="${pageContext.request.contextPath}/resources/images/sorting/arrow_up.gif" alt="Sort Ascending" /></a></th>
-                        <th>posted<br/><a title="Sort Descending" href="{$orderbyposted_desc}"><img src="${pageContext.request.contextPath}/resources/images/sorting/arrow_down.gif" alt="Sort Descending" /></a><a title="Sort Ascending" href="{$orderbyposted_asc}"><img src="${pageContext.request.contextPath}/resources/images/sorting/arrow_up.gif" alt="Sort Ascending" /></a></th>
-                        <th>size<br/><a title="Sort Descending" href="{$orderbysize_desc}"><img src="${pageContext.request.contextPath}/resources/images/sorting/arrow_down.gif" alt="Sort Descending" /></a><a title="Sort Ascending" href="{$orderbysize_asc}"><img src="${pageContext.request.contextPath}/resources/images/sorting/arrow_up.gif" alt="Sort Ascending" /></a></th>
-                        <th>files<br/><a title="Sort Descending" href="{$orderbyfiles_desc}"><img src="${pageContext.request.contextPath}/resources/images/sorting/arrow_down.gif" alt="Sort Descending" /></a><a title="Sort Ascending" href="{$orderbyfiles_asc}"><img src="${pageContext.request.contextPath}/resources/images/sorting/arrow_up.gif" alt="Sort Ascending" /></a></th>
-                        <th>stats<br/><a title="Sort Descending" href="{$orderbystats_desc}"><img src="${pageContext.request.contextPath}/resources/images/sorting/arrow_down.gif" alt="Sort Descending" /></a><a title="Sort Ascending" href="{$orderbystats_asc}"><img src="${pageContext.request.contextPath}/resources/images/sorting/arrow_up.gif" alt="Sort Ascending" /></a></th>
-                        <th></th>
-                    </tr>
+                        <c:forEach items="${releaseList}" var="release" varStatus="rowNum">
+                            <tr class="${text:cycle(rowNum, "", "alt")}<c:if test="${lastVisit < release.addDate}"> new</c:if>" id="guid${release.guid}">
+                            <td class="check"><input id="chk${release.guid.substring(0,7)}" type="checkbox" class="nzb_check" value="${release.guid}" /></td>
+                            <td class="item">
+                                <label for="chk${release.guid.substring(0,7)}">
+                                    <a class="title" title="View details" href="${pageContext.request.contextPath}/details/${release.guid}/${text:urlEncode(release.searchName)}">
+                                    ${text:replace(text:escapeHtml(release.searchName), ".", " ")}
+                                    </a>
+                                </label>
 
-                    {foreach from=$results item=result}
-                    <tr class="{cycle values=",alt"}{if $lastvisit|strtotime<$result.adddate|strtotime} new{/if}" id="guid{$result.guid}">
-                    <td class="check"><input id="chk{$result.guid|substr:0:7}" type="checkbox" class="nzb_check" value="{$result.guid}" /></td>
-                    <td class="item">
-                        <label for="chk{$result.guid|substr:0:7}"><a class="title" title="View details" href="${pageContext.request.contextPath}/details/{$result.guid}/{$result.searchname|escape:"htmlall"}">{$result.searchname|escape:"htmlall"|replace:".":" "}</a></label>
+                                <c:choose>
+                                    <c:when test="${release.passwordStatus == 1}">
+                                        <img title="Passworded Rar Archive" src="${pageContext.request.contextPath}/resources/images/icons/lock.gif" alt="Passworded Rar Archive" />
+                                    </c:when>
+                                    <c:when test="${release.passwordStatus == 2}">
+                                        <img title="Contains .cab/ace Archive" src="${pageContext.request.contextPath}/resources/images/icons/lock.gif" alt="Contains .cab/ace Archive" />
+                                    </c:when>
+                                </c:choose>
 
-                        {if $result.passwordstatus == 1}
-                        <img title="Passworded Rar Archive" src="${pageContext.request.contextPath}/resources/images/icons/lock.gif" alt="Passworded Rar Archive" />
-                        {elseif $result.passwordstatus == 2}
-                        <img title="Contains .cab/ace Archive" src="${pageContext.request.contextPath}/resources/images/icons/lock.gif" alt="Contains .cab/ace Archive" />
-                        {/if}
+                                <div class="resextra">
+                                    <div class="btns">
+                                        <c:if test="${release.releaseNfo != null}">
+                                            <a href="${pageContext.request.contextPath}/nfo/${release.guid}" title="View Nfo" class="modal_nfo rndbtn" rel="nfo">Nfo</a>
+                                        </c:if>
+                                        <c:if test="${release.imdbId > 0}">
+                                            <a href="#" name="name${release.imdbId}" title="View movie info" class="modal_imdb rndbtn" rel="movie" >Cover</a>
+                                        </c:if>
+                                        <c:if test="${release.musicInfoId > 0}">
+                                            <a href="#" name="name${release.musicInfoId}" title="View music info" class="modal_music rndbtn" rel="music" >Cover</a>
+                                        </c:if>
+                                        <c:if test="${release.consoleInfoId > 0}">
+                                            <a href="#" name="name${release.consoleInfoId}" title="View console info" class="modal_console rndbtn" rel="console" >Cover</a>
+                                        </c:if>
+                                        <c:if test="${release.rageId > 0}">
+                                            <a class="rndbtn" href="${pageContext.request.contextPath}/series/${release.rageId}" title="View all episodes">View Series</a>
+                                        </c:if>
+                                        <c:if test="${release.tvAirDate != null}">
+                                            <span class="rndbtn" title="${release.tvTitle} Aired on ${date:formatDate(release.tvAirDate)}">
+                                                Aired
+                                                <c:choose>
+                                                    <c:when test="${release.tvAirDate > now}">
+                                                        in future
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        ${date:timeAgo(release.tvAirDate)}
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </span>
+                                        </c:if>
+                                        <a class="rndbtn" href="${pageContext.request.contextPath}/browse?g=${release.groupName}" title="Browse releases in ${text:replace(release.groupName, "alt.binaries", "a.b")}">Grp</a>
+                                    </div>
+                                    <c:if test="${isAdmin}">
+                                        <div class="admin">
+                                            <a class="rndbtn" href="${pageContext.request.contextPath}/admin/release-edit?id=${release.id}&amp;from=${text:urlEncode(pageContext.request.requestURI.concat("?").concat(pageContext.request.queryString))}" title="Edit Release">Edit</a>
+                                            <a class="rndbtn confirm_action" href="${pageContext.request.contextPath}/admin/release-delete?id=${release.id}&amp;from=${text:urlEncode(pageContext.request.requestURI.concat("?").concat(pageContext.request.queryString))}" title="Delete Release">Del</a>
+                                            <a class="rndbtn confirm_action" href="${pageContext.request.contextPath}/admin/release-rebuild?id=${release.id}&amp;from=${text:urlEncode(pageContext.request.requestURI.concat("?").concat(pageContext.request.queryString))}" title="Rebuild Release - Delete and reset for reprocessing if binaries still exist.">Reb</a>
+                                        </div>
+                                    </c:if>
+                                </div>
+                            </td>
+                            <td class="less"><a title="Browse {$result.category_name}" href="${pageContext.request.contextPath}/browse?t=${release.category.id}">${release.categoryDisplayName}</a></td>
+                            <td class="less mid" title="{$result.postdate}">${date:timeAgo(release.postDate)}</td>
+                            <td class="less right">
+                                ${text:formatFileSize(release.size, true)}
+                                <c:if test="${release.completion > 0}" >
+                                    <br />
+                                    <c:choose>
+                                        <c:when test="${release.completion < 100}">
+                                            <span class="warning">${release.completion}%</span>
+                                        </c:when>
+                                        <c:otherwise>
+                                            ${release.completion}%
+                                        </c:otherwise>
+                                    </c:choose>
+                                </c:if>
+                            </td>
+                            <td class="less mid"><a title="View file list" href="${pageContext.request.contextPath}/filelist/${release.guid}">${release.totalpart}</a></td>
+                            <td class="less" nowrap="nowrap">
+                                <a title="View comments" href="${pageContext.request.contextPath}/details/${release.guid}/#comments">
+                                    ${release.comments} cmt<c:if test="${release.comments != 1}">s</c:if>
+                                </a>
+                                <br/>${release.grabs} grab<c:if test="${release.grabs != 1}">s</c:if>
+                            </td>
+                            <td class="icons">
+                                <div class="icon icon_nzb"><a title="Download Nzb" href="${pageContext.request.contextPath}/getnzb/${release.guid}/${text:escapeHtml(release.searchName)}">&nbsp;</a></div>
+                                <div class="icon icon_cart" title="Add to Cart"></div>
+                                <div class="icon icon_sab" title="Send to my Sabnzbd"></div>
+                            </td>
+                            </tr>
+                        </c:forEach>
 
-                        <div class="resextra">
-                            <div class="btns">
-                                {if $result.nfoID > 0}<a href="${pageContext.request.contextPath}/nfo/{$result.guid}" title="View Nfo" class="modal_nfo rndbtn" rel="nfo">Nfo</a>{/if}
-                                {if $result.imdbID > 0}<a href="#" name="name{$result.imdbID}" title="View movie info" class="modal_imdb rndbtn" rel="movie" >Cover</a>{/if}
-                                {if $result.musicinfoID > 0}<a href="#" name="name{$result.musicinfoID}" title="View music info" class="modal_music rndbtn" rel="music" >Cover</a>{/if}
-                                {if $result.consoleinfoID > 0}<a href="#" name="name{$result.consoleinfoID}" title="View console info" class="modal_console rndbtn" rel="console" >Cover</a>{/if}
-                                {if $result.rageID > 0}<a class="rndbtn" href="${pageContext.request.contextPath}/series/{$result.rageID}" title="View all episodes">View Series</a>{/if}
-                                {if $result.tvairdate != ""}<span class="rndbtn" title="{$result.tvtitle} Aired on {$result.tvairdate|date_format}">Aired {if $result.tvairdate|strtotime > $smarty.now}in future{else}{$result.tvairdate|daysago}{/if}</span>{/if}
-                                <a class="rndbtn" href="${pageContext.request.contextPath}/browse?g={$result.group_name}" title="Browse releases in {$result.group_name|replace:"alt.binaries":"a.b"}">Grp</a>
-                            </div>
-                            {if $isadmin}
-                            <div class="admin">
-                                <a class="rndbtn" href="${pageContext.request.contextPath}/admin/release-edit.php?id={$result.ID}&amp;from={$smarty.server.REQUEST_URI|escape:"url"}" title="Edit Release">Edit</a> <a class="rndbtn confirm_action" href="${pageContext.request.contextPath}/admin/release-delete.php?id={$result.ID}&amp;from={$smarty.server.REQUEST_URI|escape:"url"}" title="Delete Release">Del</a> <a class="rndbtn confirm_action" href="${pageContext.request.contextPath}/admin/release-rebuild.php?id={$result.ID}&amp;from={$smarty.server.REQUEST_URI|escape:"url"}" title="Rebuild Release - Delete and reset for reprocessing if binaries still exist.">Reb</a>
-                            </div>
-                            {/if}
-                        </div>
-                    </td>
-                    <td class="less"><a title="Browse {$result.category_name}" href="${pageContext.request.contextPath}/browse?t={$result.categoryID}">{$result.category_name}</a></td>
-                    <td class="less mid" title="{$result.postdate}">{$result.postdate|timeago}</td>
-                    <td class="less right">{$result.size|fsize_format:"MB"}{if $result.completion > 0}<br />{if $result.completion < 100}<span class="warning">{$result.completion}%</span>{else}{$result.completion}%{/if}{/if}</td>
-                    <td class="less mid"><a title="View file list" href="${pageContext.request.contextPath}/filelist/{$result.guid}">{$result.totalpart}</a></td>
-                    <td class="less" nowrap="nowrap"><a title="View comments" href="${pageContext.request.contextPath}/details/{$result.guid}/#comments">{$result.comments} cmt{if $result.comments != 1}s{/if}</a><br/>{$result.grabs} grab{if $result.grabs != 1}s{/if}</td>
-                    <td class="icons">
-                        <div class="icon icon_nzb"><a title="Download Nzb" href="${pageContext.request.contextPath}/getnzb/{$result.guid}/{$result.searchname|escape:"htmlall"}">&nbsp;</a></div>
-                        <div class="icon icon_cart" title="Add to Cart"></div>
-                        <div class="icon icon_sab" title="Send to my Sabnzbd"></div>
-                    </td>
-                    </tr>
-                    {/foreach}
+                    </table>
 
-                </table>
+                    <br/>
 
-                <br/>
+                    <tags:pager pagerTotalItems="${pagerTotalItems}" pagerItemsPerPage="${pagerItemsPerPage}"
+                                pagerOffset="${pagerOffset}"
+                                pagerQueryBase="${pageContext.request.contextPath}/browse?t=${categoryId}&g=${groupName}&ob=${orderBy}&offset=" />
 
-                {$pager}
+                    <div class="nzb_multi_operations">
+                        <small>With Selected:</small>
+                        <input type="button" class="nzb_multi_operations_download" value="Download NZBs" />
+                        <input type="button" class="nzb_multi_operations_cart" value="Add to Cart" />
+                        <input type="button" class="nzb_multi_operations_sab" value="Send to SAB" />
+                        <c:if test="${isAdmin}">
+                            &nbsp;&nbsp;
+                            <input type="button" class="nzb_multi_operations_edit" value="Edit" />
+                            <input type="button" class="nzb_multi_operations_delete" value="Del" />
+                            <input type="button" class="nzb_multi_operations_rebuild" value="Reb" />
+                        </c:if>
+                    </div>
 
-                <div class="nzb_multi_operations">
-                    <small>With Selected:</small>
-                    <input type="button" class="nzb_multi_operations_download" value="Download NZBs" />
-                    <input type="button" class="nzb_multi_operations_cart" value="Add to Cart" />
-                    <input type="button" class="nzb_multi_operations_sab" value="Send to SAB" />
-                    {if $isadmin}
-                    &nbsp;&nbsp;
-                    <input type="button" class="nzb_multi_operations_edit" value="Edit" />
-                    <input type="button" class="nzb_multi_operations_delete" value="Del" />
-                    <input type="button" class="nzb_multi_operations_rebuild" value="Reb" />
-                    {/if}
-                </div>
-
-            </form>
-
-            {/if}
+                </form>
+            </c:if>
 
             <br/><br/><br/>
 
