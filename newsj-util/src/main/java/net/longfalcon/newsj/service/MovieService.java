@@ -31,8 +31,10 @@ import net.longfalcon.newsj.persistence.ReleaseDAO;
 import net.longfalcon.newsj.util.ParseUtil;
 import net.longfalcon.newsj.util.StreamUtil;
 import net.longfalcon.newsj.util.ValidatorUtil;
-import net.longfalcon.newsj.ws.GoogleSearchResponse;
-import net.longfalcon.newsj.ws.GoogleSearchResult;
+import net.longfalcon.newsj.ws.google.GoogleSearchResponse;
+import net.longfalcon.newsj.ws.google.GoogleSearchResult;
+import net.longfalcon.newsj.ws.tmdb.TmdbFindResults;
+import net.longfalcon.newsj.ws.tmdb.TmdbMovieResults;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
@@ -59,6 +61,7 @@ public class MovieService {
     private GoogleSearchService googleSearchService;
     private FileSystemService fileSystemService;
     private MovieInfoDAO movieInfoDAO;
+    private TmdbService tmdbService;
 
     @Transactional
     public void updateMovieInfo(MovieInfo movieInfo, InputStream coverStream, InputStream backdropStream) throws IOException {
@@ -85,7 +88,15 @@ public class MovieService {
 
     @Transactional
     public void addMovieInfo(int imdbId) {
-        //TODO: IMDB and TMDB services
+        _log.info("fetching movie info from tmdb - " + imdbId);
+
+        // check themoviedb for movie info
+        TmdbFindResults tmdbFindResults = tmdbService.findResultsByImdbId(imdbId);
+        List<TmdbMovieResults> tmdbMovieResults = tmdbFindResults.getMovieResults();
+        if (tmdbMovieResults != null && !tmdbMovieResults.isEmpty()) {
+            TmdbMovieResults tmdbMovieResult = tmdbMovieResults.get(0);
+
+        }
     }
 
     @Transactional

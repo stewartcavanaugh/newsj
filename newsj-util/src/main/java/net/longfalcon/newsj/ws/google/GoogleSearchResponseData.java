@@ -16,30 +16,32 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package net.longfalcon.newsj.ws;
+package net.longfalcon.newsj.ws.google;
+
+import java.util.List;
 
 /**
  * User: Sten Martinez
  * Date: 10/21/15
- * Time: 12:27 PM
+ * Time: 12:16 PM
  */
-public class GoogleSearchResultPage {
-    private Integer start;
-    private String label;
+public class GoogleSearchResponseData {
+    private List<GoogleSearchResult> results;
+    private GoogleSearchCursor cursor;
 
-    public Integer getStart() {
-        return start;
+    public List<GoogleSearchResult> getResults() {
+        return results;
     }
 
-    public void setStart(Integer start) {
-        this.start = start;
+    public void setResults(List<GoogleSearchResult> results) {
+        this.results = results;
     }
 
-    public String getLabel() {
-        return label;
+    public GoogleSearchCursor getCursor() {
+        return cursor;
     }
 
-    public void setLabel(String label) {
-        this.label = label;
+    public void setCursor(GoogleSearchCursor cursor) {
+        this.cursor = cursor;
     }
 }

@@ -22,7 +22,7 @@
         <dependency>
             <groupId>net.longfalcon.newsj</groupId>
             <artifactId>newsj-util</artifactId>
-            <version>0.1</version>
+            <version>0.2</version>
         </dependency>
         <dependency>
             <groupId>javax</groupId>

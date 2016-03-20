@@ -184,7 +184,7 @@
     <!-- Services -->
 
     <bean id="config" class="net.longfalcon.newsj.Config" init-method="init">
-        <property name="propertyLocations" value="classpath:config.properties"/>
+        <property name="propertyLocations" value="classpath:config.api.properties,classpath:config.properties"/>
         <property name="siteDAO" ref="siteDAO"/>
     </bean>
 
@@ -318,5 +318,9 @@
     <bean id="groupService" class="net.longfalcon.newsj.service.GroupService">
         <property name="groupDAO" ref="groupDAO"/>
         <property name="releaseDAO" ref="releaseDAO"/>
+    </bean>
+    <bean class="net.longfalcon.newsj.service.TmdbService">
+        <property name="config" ref="config"/>
+        <property name="restTemplate" ref="restTemplate"/>
     </bean>
 </beans>

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015. Sten Martinez
+ * Copyright (c) 2016. Sten Martinez
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,25 +19,29 @@
 package net.longfalcon.newsj.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import net.longfalcon.newsj.ws.google.GoogleSearchResponse;
+import net.longfalcon.newsj.ws.tmdb.TmdbFindResults;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.InputStream;
+import java.util.Date;
 
 /**
  * User: Sten Martinez
- * Date: 10/21/15
- * Time: 11:43 AM
+ * Date: 3/18/16
+ * Time: 6:04 PM
  */
-public class GoogleSearchServiceTest {
-    private GoogleSearchService googleSearchService;
+public class TmdbSearchServiceTest {
 
     @Test
     public void testGetResultsObject() throws Exception {
-        InputStream testJsonFileStream = this.getClass().getClassLoader().getResourceAsStream("google-search-results.json");
+        InputStream testJsonFileStream = this.getClass().getClassLoader().getResourceAsStream("tmdb-movie-find-results.json");
         ObjectMapper mapper = new ObjectMapper();
-        GoogleSearchResponse response = mapper.readValue(testJsonFileStream, GoogleSearchResponse.class);
-        Assert.assertEquals("http://en.wikipedia.org/wiki/Paris_Hilton" ,response.getResponseData().getResults().get(0).getUrl());
+        TmdbFindResults response = mapper.readValue(testJsonFileStream, TmdbFindResults.class);
+        Assert.assertEquals("Finding Nemo", response.getMovieResults().get(0).getTitle());
+        Date releaseDate = new DateTime(2003,5,30,0,0, DateTimeZone.UTC).toDate();
+        Assert.assertEquals(releaseDate, response.getMovieResults().get(0).getReleaseDate() );
     }
 }

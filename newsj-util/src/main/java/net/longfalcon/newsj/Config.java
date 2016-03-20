@@ -99,6 +99,10 @@ public class Config {
         return fileLocation;
     }
 
+    public String getTmdbApiUrl() {
+        return properties.getProperty(PropsKeys.TMDB_API_KEY);
+    }
+
     public int getYear() {
         DateTime dateTime = DateTime.now();
         return dateTime.getYear();

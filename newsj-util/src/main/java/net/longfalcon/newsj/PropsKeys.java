@@ -29,4 +29,6 @@ public class PropsKeys {
     public static final String NNTP_SERVER = "newsj.nntp.server";
     public static final String NNTP_PORT = "newsj.nntp.port";
     public static final String NNTP_SSLENABLED = "newsj.nntp.ssl.enabled";
+    public static final String TMDB_API_KEY = "newsj.tmdb.url";
+    public static final String IMDB_API_KEY = "newsj.imdb.url";
 }
