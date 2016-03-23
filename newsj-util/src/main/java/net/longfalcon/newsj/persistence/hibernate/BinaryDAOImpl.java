@@ -80,8 +80,8 @@ public class BinaryDAOImpl extends HibernateDAOImpl implements net.longfalcon.ne
         criteria.add(Restrictions.eq("procStat", procstat));
         criteria.setProjection(Projections.projectionList()
                         .add(Projections.rowCount(), "numberOfBinaries")
-                        .add(Projections.property("groupId").as("group"))
-                        .add(Projections.property("reqId").as("reqId"))
+                        .add(Projections.groupProperty("groupId").as("group"))
+                        .add(Projections.groupProperty("reqId").as("reqId"))
                         .add(Projections.groupProperty("relName").as("releaseName"))
                         .add(Projections.groupProperty("relTotalPart").as("releaseTotalParts"))
                         .add(Projections.groupProperty("fromName").as("fromName"))

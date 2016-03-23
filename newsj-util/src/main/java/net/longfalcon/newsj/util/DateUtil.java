@@ -102,4 +102,12 @@ public class DateUtil {
     public static String formatNNTPDate(Date date) {
         return RFC_dateFormatter.print(date.getTime());
     }
+
+    public static String formatDate(Date date, String format) {
+        if (date == null) {
+            return "Never";
+        }
+        DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern(format);
+        return dateTimeFormatter.print(new DateTime(date));
+    }
 }

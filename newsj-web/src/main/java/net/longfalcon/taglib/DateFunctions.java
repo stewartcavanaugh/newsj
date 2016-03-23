@@ -92,4 +92,8 @@ public class DateFunctions {
 
         return DateUtil.formatDefaultDate(date);
     }
+
+    public static String dateFormat(Date date, String format) {
+        return DateUtil.formatDate(date, format);
+    }
 }

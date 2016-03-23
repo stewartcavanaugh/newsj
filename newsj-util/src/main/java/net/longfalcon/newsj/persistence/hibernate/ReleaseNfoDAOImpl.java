@@ -57,4 +57,13 @@ public class ReleaseNfoDAOImpl extends HibernateDAOImpl implements net.longfalco
 
         return criteria.list();
     }
+
+    @Override
+    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
+    public ReleaseNfo findByReleaseId(long releaseId) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ReleaseNfo.class);
+        criteria.add(Restrictions.eq("release.id", releaseId));
+
+        return (ReleaseNfo) criteria.uniqueResult();
+    }
 }

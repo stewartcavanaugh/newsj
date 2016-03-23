@@ -33,4 +33,6 @@ public interface ReleaseNfoDAO {
     void deleteReleaseNfo(ReleaseNfo releaseNfo);
 
     List<ReleaseNfo> findReleaseNfoWithNullNfoByAttempts(int attempts);
+
+    ReleaseNfo findByReleaseId(long releaseId);
 }

@@ -39,7 +39,8 @@ public class MenuService {
         if (!isSabEnabled) {
             for (Iterator<MenuItem> iterator = menuItems.iterator(); iterator.hasNext(); ) {
                 MenuItem menuItem = iterator.next();
-                if (menuItem.getMenuEval().contains("sabintegrated")) {
+                String menuEval = menuItem.getMenuEval();
+                if (menuEval != null && menuEval.contains("sabintegrated")) {
                     iterator.remove();
                 }
             }

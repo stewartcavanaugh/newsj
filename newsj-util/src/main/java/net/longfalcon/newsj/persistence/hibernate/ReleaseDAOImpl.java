@@ -22,6 +22,8 @@ import net.longfalcon.newsj.model.Release;
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
 import org.hibernate.Query;
+import org.hibernate.criterion.Disjunction;
+import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -61,6 +63,59 @@ public class ReleaseDAOImpl extends HibernateDAOImpl implements net.longfalcon.n
         criteria.setProjection(Projections.rowCount());
 
         return (Long) criteria.uniqueResult();
+    }
+
+    @Override
+    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
+    public Long countByCategoriesMaxAgeAndGroup(Collection<Integer> categoryIds, Date maxAge,
+                                                Collection<Integer> excludedCategoryIds, Long groupId) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Release.class);
+        if (!categoryIds.isEmpty()) {
+            criteria.add(Restrictions.in("category.id", categoryIds));
+        }
+        if (maxAge != null) {
+            criteria.add(Restrictions.gt("postDate", maxAge));
+        }
+        if (excludedCategoryIds != null && !excludedCategoryIds.isEmpty()) {
+            criteria.add(Restrictions.not(Restrictions.in("category.id", categoryIds)));
+        }
+        if (groupId != null) {
+            criteria.add(Restrictions.eq("groupId",groupId));
+        }
+        criteria.setProjection(Projections.rowCount());
+
+
+        return (Long) criteria.uniqueResult();
+    }
+
+    @Override
+    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
+    public List<Release> findByCategoriesMaxAgeAndGroup(Collection<Integer> categoryIds, Date maxAge,
+                                                        Collection<Integer> excludedCategoryIds, Long groupId,
+                                                        String orderByField, boolean descending,
+                                                        int offset, int pageSize) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Release.class);
+        if (!categoryIds.isEmpty()) {
+            criteria.add(Restrictions.in("category.id", categoryIds));
+        }
+        if (maxAge != null) {
+            criteria.add(Restrictions.gt("postDate", maxAge));
+        }
+        if (excludedCategoryIds != null && !excludedCategoryIds.isEmpty()) {
+            criteria.add(Restrictions.not(Restrictions.in("category.id", categoryIds)));
+        }
+        if (groupId != null) {
+            criteria.add(Restrictions.eq("groupId",groupId));
+        }
+        if (descending) {
+            criteria.addOrder(Order.desc(orderByField));
+        } else {
+            criteria.addOrder(Order.asc(orderByField));
+        }
+        criteria.setFetchMode("category", FetchMode.JOIN);
+        criteria.setFirstResult(offset).setMaxResults(pageSize);
+
+        return criteria.list();
     }
 
     @Override
@@ -217,5 +272,26 @@ public class ReleaseDAOImpl extends HibernateDAOImpl implements net.longfalcon.n
     @Transactional
     public void updateRelease(Release release) {
         sessionFactory.getCurrentSession().saveOrUpdate(release);
+    }
+
+    @Override
+    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
+    public List<Release> searchReleasesByNameExludingCats(List<String> searchTokens, int limit, Collection<Integer> excludedCategoryIds) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Release.class);
+        if (!searchTokens.isEmpty()) {
+            Disjunction searchOr = Restrictions.disjunction();
+            for (String searchToken : searchTokens) {
+                searchOr.add(Restrictions.like("searchName", searchToken, MatchMode.ANYWHERE));
+            }
+            criteria.add(searchOr);
+        }
+
+        if (!excludedCategoryIds.isEmpty()) {
+            criteria.add(Restrictions.not(Restrictions.in("category.id", excludedCategoryIds)));
+        }
+
+        criteria.setMaxResults(limit);
+
+        return criteria.list();
     }
 }

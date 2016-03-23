@@ -35,6 +35,14 @@ public interface ReleaseDAO {
 
     Long countReleasesByRegexId(long regexId);
 
+    Long countByCategoriesMaxAgeAndGroup(Collection<Integer> categoryIds, Date maxAge,
+                                         Collection<Integer> excludedCategoryIds, Long groupId);
+
+    List<Release> findByCategoriesMaxAgeAndGroup(Collection<Integer> categoryIds, Date maxAge,
+                                                 Collection<Integer> excludedCategoryIds, Long groupId,
+                                                 String orderByField, boolean descending,
+                                                 int offset, int pageSize);
+
     void deleteByGroupId(long groupId);
 
     void deleteRelease(Release release);
@@ -66,4 +74,6 @@ public interface ReleaseDAO {
     void resetReleaseTvRageId(long tvRageId);
 
     void updateRelease(Release release);
+
+    List<Release> searchReleasesByNameExludingCats(List<String> searchTokens, int limit, Collection<Integer> excludedCategoryIds);
 }
