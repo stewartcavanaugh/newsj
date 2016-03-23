@@ -22,6 +22,7 @@ import net.longfalcon.newsj.model.ReleaseComment;
 import net.longfalcon.newsj.persistence.ReleaseCommentDAO;
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.transaction.annotation.Isolation;
@@ -57,6 +58,8 @@ public class ReleaseCommentDAOImpl extends HibernateDAOImpl implements ReleaseCo
     public ReleaseComment findByReleaseCommentId(long id) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ReleaseComment.class);
         criteria.add(Restrictions.eq("id", id));
+        criteria.setFetchMode("user", FetchMode.JOIN);
+        criteria.setFetchMode("release", FetchMode.JOIN);
 
         return (ReleaseComment) criteria.uniqueResult();
     }
@@ -66,6 +69,9 @@ public class ReleaseCommentDAOImpl extends HibernateDAOImpl implements ReleaseCo
     public List<ReleaseComment> findByReleaseId(long releaseId) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ReleaseComment.class);
         criteria.add(Restrictions.eq("release.id", releaseId));
+        criteria.setFetchMode("user", FetchMode.JOIN);
+        criteria.setFetchMode("release", FetchMode.JOIN);
+        criteria.addOrder(Order.desc("createDate"));
 
         return criteria.list();
     }

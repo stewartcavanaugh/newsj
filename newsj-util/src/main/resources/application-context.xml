@@ -319,8 +319,12 @@
         <property name="groupDAO" ref="groupDAO"/>
         <property name="releaseDAO" ref="releaseDAO"/>
     </bean>
-    <bean class="net.longfalcon.newsj.service.TmdbService">
+    <bean id="tmdbService" class="net.longfalcon.newsj.service.TmdbService">
         <property name="config" ref="config"/>
         <property name="restTemplate" ref="restTemplate"/>
+    </bean>
+    <bean id="releaseCommentService" class="net.longfalcon.newsj.service.ReleaseCommentService">
+        <property name="releaseDAO" ref="releaseDAO"/>
+        <property name="releaseCommentDAO" ref="releaseCommentDAO"/>
     </bean>
 </beans>

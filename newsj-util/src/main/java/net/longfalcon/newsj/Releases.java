@@ -40,6 +40,8 @@ import net.longfalcon.newsj.service.MusicService;
 import net.longfalcon.newsj.util.DateUtil;
 import net.longfalcon.newsj.util.Defaults;
 import net.longfalcon.newsj.util.ValidatorUtil;
+import org.apache.commons.lang3.text.StrMatcher;
+import org.apache.commons.lang3.text.StrTokenizer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.joda.time.DateTime;
@@ -65,6 +67,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * User: Sten Martinez
@@ -95,6 +98,28 @@ public class Releases {
     private BinaryDAO binaryDAO;
     private PartDAO partDAO;
     private ReleaseDAO releaseDAO;
+
+    public List<Release> searchSimilar(Release release, int limit, List<Integer> excludedCategoryIds) {
+        String releaseName = release.getName();
+        List<String> searchTokens = getReleaseNameSearchTokens(releaseName);
+
+        return releaseDAO.searchReleasesByNameExludingCats(searchTokens, limit, excludedCategoryIds);
+    }
+
+    public List<String> getReleaseNameSearchTokens(String releaseName) {
+        StrTokenizer strTokenizer = new StrTokenizer(releaseName, StrMatcher.charSetMatcher('.', '_'));
+        List<String> tokenList = strTokenizer.getTokenList();
+
+        return tokenList.stream()
+                .sorted((o1, o2) -> {
+                    int o1length = o1.length();
+                    int o2length = o2.length();
+                    return o2length - o1length;
+                })
+                .filter(s -> s.length() > 2)
+                .limit(2)
+                .collect(Collectors.toList());
+    }
 
     public List<Release> getTopDownloads() {
         return releaseDAO.findTopDownloads();
@@ -161,24 +186,26 @@ public class Releases {
 
     public Release findByReleaseId(long releaseId) {
         Release release = releaseDAO.findByReleaseId(releaseId);
-        if (release != null && release.getCategory() != null) {
-            release.setCategoryId(release.getCategory().getId());
-            Group group = groupDAO.findGroupByGroupId(release.getGroupId());
-            release.setGroupName(group.getName());
-        }
+        populateTransientFields(release);
 
         return release;
     }
 
     public Release findByGuid(String guid) {
         Release release = releaseDAO.findByGuid(guid);
-        if (release != null && release.getCategory() != null) {
-            release.setCategoryId(release.getCategory().getId());
-            Group group = groupDAO.findGroupByGroupId(release.getGroupId());
-            release.setGroupName(group.getName());
-        }
+        populateTransientFields(release);
 
         return release;
+    }
+
+    private void populateTransientFields(Release release) {
+        if (release != null && release.getCategory() != null) {
+            int categoryId = release.getCategory().getId();
+            release.setCategoryId(categoryId);
+            Group group = groupDAO.findGroupByGroupId(release.getGroupId());
+            release.setGroupName(group.getName());
+            release.setCategoryDisplayName(categoryService.getCategoryDisplayName(categoryId));
+        }
     }
 
     @Transactional

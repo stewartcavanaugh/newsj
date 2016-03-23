@@ -22,6 +22,8 @@ import net.longfalcon.newsj.model.Release;
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
 import org.hibernate.Query;
+import org.hibernate.criterion.Disjunction;
+import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -270,5 +272,26 @@ public class ReleaseDAOImpl extends HibernateDAOImpl implements net.longfalcon.n
     @Transactional
     public void updateRelease(Release release) {
         sessionFactory.getCurrentSession().saveOrUpdate(release);
+    }
+
+    @Override
+    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
+    public List<Release> searchReleasesByNameExludingCats(List<String> searchTokens, int limit, Collection<Integer> excludedCategoryIds) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Release.class);
+        if (!searchTokens.isEmpty()) {
+            Disjunction searchOr = Restrictions.disjunction();
+            for (String searchToken : searchTokens) {
+                searchOr.add(Restrictions.like("searchName", searchToken, MatchMode.ANYWHERE));
+            }
+            criteria.add(searchOr);
+        }
+
+        if (!excludedCategoryIds.isEmpty()) {
+            criteria.add(Restrictions.not(Restrictions.in("category.id", excludedCategoryIds)));
+        }
+
+        criteria.setMaxResults(limit);
+
+        return criteria.list();
     }
 }

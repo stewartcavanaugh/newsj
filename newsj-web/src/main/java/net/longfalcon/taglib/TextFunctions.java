@@ -82,4 +82,8 @@ public class TextFunctions {
     public static String wordWrap(String s, int width) {
         return WordUtils.wrap(s, width);
     }
+
+    public static String formatImdbId(Integer imdbId) {
+        return String.format("%07d", imdbId);
+    }
 }

@@ -74,4 +74,6 @@ public interface ReleaseDAO {
     void resetReleaseTvRageId(long tvRageId);
 
     void updateRelease(Release release);
+
+    List<Release> searchReleasesByNameExludingCats(List<String> searchTokens, int limit, Collection<Integer> excludedCategoryIds);
 }

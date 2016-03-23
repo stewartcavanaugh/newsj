@@ -19,6 +19,7 @@
 package net.longfalcon.web;
 
 import net.longfalcon.web.exception.NoSuchResourceException;
+import net.longfalcon.web.exception.PermissionDeniedException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.core.Ordered;
@@ -52,6 +53,8 @@ public class WebExceptionHandlerResolver implements HandlerExceptionResolver, Or
             if (ex instanceof NoSuchResourceException) {
                 return handleNoSuchResource((NoSuchResourceException) ex, request, response,
                         handler);
+            } else if (ex instanceof PermissionDeniedException) {
+                return handlePermissionDenied((PermissionDeniedException) ex, request, response, handler);
             } else if (ex instanceof BindException) {
                 return handleBindException((BindException) ex, request, response, handler);
             }
@@ -64,6 +67,12 @@ public class WebExceptionHandlerResolver implements HandlerExceptionResolver, Or
 
     private ModelAndView handleNoSuchResource(NoSuchResourceException ex, HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException {
         response.sendError(HttpServletResponse.SC_NOT_FOUND);
+        _log.error(ex, ex);
+        return new ModelAndView();
+    }
+
+    private ModelAndView handlePermissionDenied(PermissionDeniedException ex, HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException {
+        response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
         _log.error(ex, ex);
         return new ModelAndView();
     }

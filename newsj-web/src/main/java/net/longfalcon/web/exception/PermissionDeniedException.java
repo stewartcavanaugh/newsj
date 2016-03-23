@@ -1,6 +1,5 @@
 /*
- * Copyright (c) 2015. Sten Martinez
- *
+ * Copyright (c) ${year}. Sten Martinez
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -16,23 +15,12 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package net.longfalcon.newsj.persistence;
-
-import net.longfalcon.newsj.model.ReleaseNfo;
-
-import java.util.List;
+package net.longfalcon.web.exception;
 
 /**
- * User: Sten Martinez
- * Date: 10/15/15
- * Time: 5:01 PM
+ * User: longfalcon
+ * Date: 3/23/2016
+ * Time: 11:44 AM
  */
-public interface ReleaseNfoDAO {
-    void updateReleaseNfo(ReleaseNfo releaseNfo);
-
-    void deleteReleaseNfo(ReleaseNfo releaseNfo);
-
-    List<ReleaseNfo> findReleaseNfoWithNullNfoByAttempts(int attempts);
-
-    ReleaseNfo findByReleaseId(long releaseId);
+public class PermissionDeniedException extends Exception {
 }

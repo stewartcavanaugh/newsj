@@ -84,4 +84,9 @@
         <function-signature>java.lang.String urlEncode(java.lang.String)</function-signature>
     </function>
 
+    <function>
+        <name>formatImdbId</name>
+        <function-class>net.longfalcon.taglib.TextFunctions</function-class>
+        <function-signature>java.lang.String formatImdbId(java.lang.Integer)</function-signature>
+    </function>
 </taglib>
