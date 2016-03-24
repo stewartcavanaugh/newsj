@@ -37,6 +37,7 @@ public class Group {
     private Integer minFilesToFormRelease;
     private boolean active;
     private String description;
+    private int releaseCount;
 
     public long getId() {
         return id;
@@ -124,6 +125,14 @@ public class Group {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public int getReleaseCount() {
+        return releaseCount;
+    }
+
+    public void setReleaseCount(int releaseCount) {
+        this.releaseCount = releaseCount;
     }
 
     @Override

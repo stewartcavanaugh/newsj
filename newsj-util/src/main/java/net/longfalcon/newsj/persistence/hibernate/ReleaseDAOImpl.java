@@ -294,4 +294,13 @@ public class ReleaseDAOImpl extends HibernateDAOImpl implements net.longfalcon.n
 
         return criteria.list();
     }
+
+    @Override
+    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
+    public List<Long> findReleaseGroupIds() {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Release.class);
+        criteria.setProjection(Projections.distinct(Projections.property("groupId")));
+
+        return criteria.list();
+    }
 }

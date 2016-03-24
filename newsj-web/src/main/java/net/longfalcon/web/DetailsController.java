@@ -123,7 +123,7 @@ public class DetailsController extends BaseController {
         List<Release> similars = releases.searchSimilar(release, 6, categoryIds);
 
         // TODO: change this if we change search impl
-        String searchTokens = releases.getReleaseNameSearchTokens(releaseName).stream().collect(Collectors.joining(" "));
+        String searchTokens = releases.getReleaseNameSearchTokens(releaseName).stream().collect(Collectors.joining(" ")).trim();
 
         model.addAttribute("release", release);
         model.addAttribute("nfo", releaseNfo);

@@ -55,36 +55,12 @@ import java.util.regex.Pattern;
 @Service
 public class MovieService {
     private static final Log _log = LogFactory.getLog(MovieService.class);
-
-    private ReleaseDAO releaseDAO;
     private CategoryDAO categoryDAO;
-    private GoogleSearchService googleSearchService;
     private FileSystemService fileSystemService;
+    private GoogleSearchService googleSearchService;
     private MovieInfoDAO movieInfoDAO;
+    private ReleaseDAO releaseDAO;
     private TmdbService tmdbService;
-
-    @Transactional
-    public void updateMovieInfo(MovieInfo movieInfo, InputStream coverStream, InputStream backdropStream) throws IOException {
-        Directory movieCoverDirectory = fileSystemService.getDirectory("/images/covers/movies");
-        boolean coverImageExists = movieCoverDirectory.fileExists(movieInfo.getId() + "-cover.jpg");
-        boolean backdropImageExists = movieCoverDirectory.fileExists(movieInfo.getId() + "-backdrop.jpg");
-        movieInfo.setCover(coverImageExists);
-        movieInfo.setBackdrop(backdropImageExists);
-
-        if (coverStream != null) {
-            FsFile fsFile = movieCoverDirectory.getFile(movieInfo.getId() + "-cover.jpg");
-            StreamUtil.transferByteArray(coverStream, fsFile.getOutputStream(), 1024);
-            movieInfo.setCover(true);
-        }
-
-        if (backdropStream != null) {
-            FsFile fsFile = movieCoverDirectory.getFile(movieInfo.getId() + "-backdrop.jpg");
-            StreamUtil.transferByteArray(backdropStream, fsFile.getOutputStream(), 1024);
-            movieInfo.setBackdrop(true);
-        }
-
-        movieInfoDAO.update(movieInfo);
-    }
 
     @Transactional
     public void addMovieInfo(int imdbId) {
@@ -145,21 +121,6 @@ public class MovieService {
         }
     }
 
-    private int getImdbId(GoogleSearchResponse googleSearchResponse) {
-        List<GoogleSearchResult> results = googleSearchResponse.getResponseData().getResults();
-        if (results != null) {
-            for (GoogleSearchResult result : results) {
-                if (result.getVisibleUrl().equals("www.imdb.com")) {
-                    String imdbIdString = ParseUtil.parseImdb(result.getUnescapedUrl());
-                    if (ValidatorUtil.isNotNull(imdbIdString)) {
-                        return Integer.parseInt(imdbIdString);
-                    }
-                }
-            }
-        }
-        return 0;
-    }
-
     private String parseMovieName(Release release) {
         int categoryId = 0;
         Category category = release.getCategory();
@@ -190,6 +151,44 @@ public class MovieService {
             }
         }
         return null;
+    }
+
+    private int getImdbId(GoogleSearchResponse googleSearchResponse) {
+        List<GoogleSearchResult> results = googleSearchResponse.getResponseData().getResults();
+        if (results != null) {
+            for (GoogleSearchResult result : results) {
+                if (result.getVisibleUrl().equals("www.imdb.com")) {
+                    String imdbIdString = ParseUtil.parseImdb(result.getUnescapedUrl());
+                    if (ValidatorUtil.isNotNull(imdbIdString)) {
+                        return Integer.parseInt(imdbIdString);
+                    }
+                }
+            }
+        }
+        return 0;
+    }
+
+    @Transactional
+    public void updateMovieInfo(MovieInfo movieInfo, InputStream coverStream, InputStream backdropStream) throws IOException {
+        Directory movieCoverDirectory = fileSystemService.getDirectory("/images/covers/movies");
+        boolean coverImageExists = movieCoverDirectory.fileExists(movieInfo.getId() + "-cover.jpg");
+        boolean backdropImageExists = movieCoverDirectory.fileExists(movieInfo.getId() + "-backdrop.jpg");
+        movieInfo.setCover(coverImageExists);
+        movieInfo.setBackdrop(backdropImageExists);
+
+        if (coverStream != null) {
+            FsFile fsFile = movieCoverDirectory.getFile(movieInfo.getId() + "-cover.jpg");
+            StreamUtil.transferByteArray(coverStream, fsFile.getOutputStream(), 1024);
+            movieInfo.setCover(true);
+        }
+
+        if (backdropStream != null) {
+            FsFile fsFile = movieCoverDirectory.getFile(movieInfo.getId() + "-backdrop.jpg");
+            StreamUtil.transferByteArray(backdropStream, fsFile.getOutputStream(), 1024);
+            movieInfo.setBackdrop(true);
+        }
+
+        movieInfoDAO.update(movieInfo);
     }
 
     public ReleaseDAO getReleaseDAO() {

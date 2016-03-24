@@ -76,4 +76,6 @@ public interface ReleaseDAO {
     void updateRelease(Release release);
 
     List<Release> searchReleasesByNameExludingCats(List<String> searchTokens, int limit, Collection<Integer> excludedCategoryIds);
+
+    List<Long> findReleaseGroupIds();
 }

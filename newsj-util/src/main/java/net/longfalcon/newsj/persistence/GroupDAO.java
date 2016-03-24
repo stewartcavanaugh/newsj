@@ -20,6 +20,7 @@ package net.longfalcon.newsj.persistence;
 
 import net.longfalcon.newsj.model.Group;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -47,6 +48,8 @@ public interface GroupDAO {
     List<Group> findGroupsByName(String name);
 
     Group findGroupByGroupId(long groupId);
+
+    List<Group> findGroupsByIds(Collection<Long> ids);
 
     public List<String> getGroupsForSelect();
 }

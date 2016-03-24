@@ -116,7 +116,7 @@ public class BrowseController extends BaseController {
             String propertyName = getOrderByProperty(orderBy);
             boolean descending = getOrderByOrder(orderBy);
             if (ValidatorUtil.isNotNull(propertyName)) {
-                releaseList = releases.getBrowseReleases(categoryIds, -1, userExCats, groupId, propertyName, descending, offset, PAGE_SIZE);;
+                releaseList = releases.getBrowseReleases(categoryIds, -1, userExCats, groupId, propertyName, descending, offset, PAGE_SIZE);
             }
         }
 
@@ -131,6 +131,20 @@ public class BrowseController extends BaseController {
         model.addAttribute("orderBy", orderBy);
         model.addAttribute("now", new Date());
         return "browse";
+    }
+
+    @RequestMapping("/browsegroup")
+    public String browseGroupsView(Model model) {
+        title = "Browse Groups";
+
+        List<Long> groupIds = releaseDAO.findReleaseGroupIds();
+        List<Group> groupList = groupDAO.findGroupsByIds(groupIds);
+
+        setPageMetaDescription("Browse groups");
+        setPageMetaKeywords("browse,groups,description,details");
+        model.addAttribute("title", title);
+        model.addAttribute("groupList", groupList);
+        return "browse-groups";
     }
 
     private String getOrderByProperty(String orderByParam) {
