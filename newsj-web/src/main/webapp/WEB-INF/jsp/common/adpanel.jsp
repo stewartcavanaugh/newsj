@@ -1,3 +1,4 @@
+<%@ page import="net.longfalcon.newsj.util.ArrayUtil" %>
 <%--
   ~ Copyright (c) 2015. Sten Martinez
   ~
@@ -37,3 +38,10 @@
         </script>
     </c:if>
 </div>
+
+<!--
+Request URI: ${pageContext.request.requestURI}
+Request URL: ${pageContext.request.requestURL}
+<c:forEach items='${headerValues.get("referer")}' var="value">referer:     ${value}</c:forEach>
+Servlet Context Path: ${pageContext.servletContext.contextPath}
+-->

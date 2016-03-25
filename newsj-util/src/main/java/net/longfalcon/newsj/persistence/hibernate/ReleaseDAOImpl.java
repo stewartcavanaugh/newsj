@@ -22,6 +22,7 @@ import net.longfalcon.newsj.model.Release;
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
 import org.hibernate.Query;
+import org.hibernate.criterion.Conjunction;
 import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
@@ -77,7 +78,7 @@ public class ReleaseDAOImpl extends HibernateDAOImpl implements net.longfalcon.n
             criteria.add(Restrictions.gt("postDate", maxAge));
         }
         if (excludedCategoryIds != null && !excludedCategoryIds.isEmpty()) {
-            criteria.add(Restrictions.not(Restrictions.in("category.id", categoryIds)));
+            criteria.add(Restrictions.not(Restrictions.in("category.id", excludedCategoryIds)));
         }
         if (groupId != null) {
             criteria.add(Restrictions.eq("groupId",groupId));
@@ -102,7 +103,78 @@ public class ReleaseDAOImpl extends HibernateDAOImpl implements net.longfalcon.n
             criteria.add(Restrictions.gt("postDate", maxAge));
         }
         if (excludedCategoryIds != null && !excludedCategoryIds.isEmpty()) {
-            criteria.add(Restrictions.not(Restrictions.in("category.id", categoryIds)));
+            criteria.add(Restrictions.not(Restrictions.in("category.id", excludedCategoryIds)));
+        }
+        if (groupId != null) {
+            criteria.add(Restrictions.eq("groupId",groupId));
+        }
+        if (descending) {
+            criteria.addOrder(Order.desc(orderByField));
+        } else {
+            criteria.addOrder(Order.asc(orderByField));
+        }
+        criteria.setFetchMode("category", FetchMode.JOIN);
+        criteria.setFirstResult(offset).setMaxResults(pageSize);
+
+        return criteria.list();
+    }
+
+    @Override
+    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
+    public Long searchCountByCategoriesMaxAgeAndGroup(String[] searchTokens, Collection<Integer> categoryIds, Date maxAge,
+                                                      Collection<Integer> excludedCategoryIds, Long groupId) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Release.class);
+
+        if (searchTokens != null && searchTokens.length > 0) {
+            Conjunction searchTokensOr = Restrictions.conjunction();
+            for (String searchToken : searchTokens) {
+                searchTokensOr.add(Restrictions.like("searchName", searchToken.trim(), MatchMode.ANYWHERE));
+            }
+            criteria.add(searchTokensOr);
+        }
+
+        if (!categoryIds.isEmpty()) {
+            criteria.add(Restrictions.in("category.id", categoryIds));
+        }
+        if (maxAge != null) {
+            criteria.add(Restrictions.gt("postDate", maxAge));
+        }
+        if (excludedCategoryIds != null && !excludedCategoryIds.isEmpty()) {
+            criteria.add(Restrictions.not(Restrictions.in("category.id", excludedCategoryIds)));
+        }
+        if (groupId != null) {
+            criteria.add(Restrictions.eq("groupId",groupId));
+        }
+        criteria.setProjection(Projections.rowCount());
+
+
+        return (Long) criteria.uniqueResult();
+    }
+
+    @Override
+    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
+    public List<Release> searchByCategoriesMaxAgeAndGroup(String[] searchTokens, Collection<Integer> categoryIds, Date maxAge,
+                                                          Collection<Integer> excludedCategoryIds, Long groupId,
+                                                          String orderByField, boolean descending,
+                                                          int offset, int pageSize) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Release.class);
+
+        if (searchTokens != null && searchTokens.length > 0) {
+            Conjunction searchTokensOr = Restrictions.conjunction();
+            for (String searchToken : searchTokens) {
+                searchTokensOr.add(Restrictions.like("searchName", searchToken.trim(), MatchMode.ANYWHERE));
+            }
+            criteria.add(searchTokensOr);
+        }
+
+        if (!categoryIds.isEmpty()) {
+            criteria.add(Restrictions.in("category.id", categoryIds));
+        }
+        if (maxAge != null) {
+            criteria.add(Restrictions.gt("postDate", maxAge));
+        }
+        if (excludedCategoryIds != null && !excludedCategoryIds.isEmpty()) {
+            criteria.add(Restrictions.not(Restrictions.in("category.id", excludedCategoryIds)));
         }
         if (groupId != null) {
             criteria.add(Restrictions.eq("groupId",groupId));

@@ -165,6 +165,48 @@ public class Releases {
         return releaseRegexList;
     }
 
+    public Long getSearchCount(String[] searchTokens, Collection<Integer> categoryIds, int maxAgeDays, List<Integer> excludedCategoryIds, long groupId) {
+        Date maxAge = null;
+        if (maxAgeDays > 0) {
+            maxAge = DateTime.now().minusDays(maxAgeDays).toDate();
+        }
+
+        Long groupIdObj = null;
+        if (groupId > 0) {
+            groupIdObj = groupId;
+        }
+
+        return releaseDAO.searchCountByCategoriesMaxAgeAndGroup(searchTokens, categoryIds, maxAge, excludedCategoryIds, groupIdObj);
+    }
+
+    public List<Release> getSearchReleases(String[] searchTokens, Collection<Integer> categoryIds, int maxAgeDays, List<Integer> excludedCategoryIds,
+                                           long groupId, String orderByField, boolean descending,
+                                           int offset, int pageSize) {
+        Date maxAge = null;
+        if (maxAgeDays > 0) {
+            maxAge = DateTime.now().minusDays(maxAgeDays).toDate();
+        }
+
+        Long groupIdObj = null;
+        if (groupId > 0) {
+            groupIdObj = groupId;
+        }
+
+        List<Release> releases = releaseDAO.searchByCategoriesMaxAgeAndGroup(searchTokens, categoryIds, maxAge, excludedCategoryIds, groupIdObj,
+                orderByField, descending, offset, pageSize);
+        for (Release release : releases) {
+            Group group = groupDAO.findGroupByGroupId(release.getGroupId());
+            if (group != null) {
+                release.setGroupName(group.getName());
+            }
+            Category category = release.getCategory();
+            if (category != null) {
+                release.setCategoryDisplayName(categoryService.getCategoryDisplayName(category.getId()));
+            }
+        }
+        return releases;
+    }
+
     public void processReleases() {
         String startDateString = DateUtil.displayDateFormatter.print(System.currentTimeMillis());
         _log.info(String.format("Starting release update process (%s)", startDateString));

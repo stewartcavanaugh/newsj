@@ -67,4 +67,6 @@ public interface BinaryDAO {
     List<Long> findBinaryIdsByGroupId(long groupId);
 
     List<Binary> findByGroupIdProcStatsReleaseId(long groupId, List<Integer> procStats, Long releaseId);
+
+    List<Binary> searchByNameAndExcludedCats(String[] searchTokens, int limit, Collection<Integer> excludedCategoryIds);
 }

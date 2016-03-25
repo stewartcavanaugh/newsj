@@ -43,6 +43,14 @@ public interface ReleaseDAO {
                                                  String orderByField, boolean descending,
                                                  int offset, int pageSize);
 
+    Long searchCountByCategoriesMaxAgeAndGroup(String[] searchTokens, Collection<Integer> categoryIds, Date maxAge,
+                                               Collection<Integer> excludedCategoryIds, Long groupId);
+
+    List<Release> searchByCategoriesMaxAgeAndGroup(String[] searchTokens, Collection<Integer> categoryIds, Date maxAge,
+                                                   Collection<Integer> excludedCategoryIds, Long groupId,
+                                                   String orderByField, boolean descending,
+                                                   int offset, int pageSize);
+
     void deleteByGroupId(long groupId);
 
     void deleteRelease(Release release);

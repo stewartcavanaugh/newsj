@@ -348,7 +348,7 @@
                                 <br/>
                             </c:forEach>
                             <br/>
-                            <a title="Search for similar Nzbs" href="${pageContext.request.contextPath}/search/${text:urlEncode(searchTokens)}}">Search for similar NZBs...</a><br/>
+                            <a title="Search for similar Nzbs" href="${pageContext.request.contextPath}/search/${text:escapeHtml(searchTokens)}">Search for similar NZBs...</a><br/>
                         </td>
                     </tr>
                 </c:if>

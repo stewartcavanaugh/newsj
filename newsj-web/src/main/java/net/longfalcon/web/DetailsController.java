@@ -89,6 +89,7 @@ public class DetailsController extends BaseController {
         }
 
         long releaseId = release.getId();
+        releaseName = release.getSearchName();
         Long rageId = release.getRageId();
         Integer imdbId = release.getImdbId();
         Integer musicInfoId = release.getMusicInfoId();
@@ -120,9 +121,8 @@ public class DetailsController extends BaseController {
 
         List<Integer> categoryIds = userExCatDAO.getUserExCatIds(getUserId());
 
-        List<Release> similars = releases.searchSimilar(release, 6, categoryIds);
-
         // TODO: change this if we change search impl
+        List<Release> similars = releases.searchSimilar(release, 6, categoryIds);
         String searchTokens = releases.getReleaseNameSearchTokens(releaseName).stream().collect(Collectors.joining(" ")).trim();
 
         model.addAttribute("release", release);

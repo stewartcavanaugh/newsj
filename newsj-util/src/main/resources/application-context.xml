@@ -327,4 +327,8 @@
         <property name="releaseDAO" ref="releaseDAO"/>
         <property name="releaseCommentDAO" ref="releaseCommentDAO"/>
     </bean>
+    <bean id="searchService" class="net.longfalcon.newsj.service.SearchService">
+        <property name="releases" ref="releases"/>
+        <property name="binaryDAO" ref="binaryDAO"/>
+    </bean>
 </beans>
