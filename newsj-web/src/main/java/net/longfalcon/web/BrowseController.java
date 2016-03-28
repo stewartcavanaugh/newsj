@@ -92,19 +92,27 @@ public class BrowseController extends BaseController {
             Category category = categoryService.getCategory(categoryId);
             if ( category != null) {
                 categoryName = category.getTitle();
-                Integer categoryParentId = category.getParentId();
+                Integer categoryParentId;
+                if (category.getParentId() == null) {
+                    categoryParentId = 0;
+                    categoryIds.addAll(categoryService.getCategoryChildrenIds(categoryId));
+                }
+                else {
+                    categoryParentId = category.getParentId();
+                    categoryIds.add(categoryId);
+                }
                 int id = category.getId();
-                if (categoryParentId == CategoryService.CAT_PARENT_GAME ||
-                        id == CategoryService.CAT_PARENT_GAME) {
+                if (id == CategoryService.CAT_PARENT_GAME ||
+                        categoryParentId == CategoryService.CAT_PARENT_GAME) {
                     section = "console";
-                } else if (categoryParentId == CategoryService.CAT_PARENT_MOVIE ||
-                        id == CategoryService.CAT_PARENT_MOVIE) {
+                } else if (id == CategoryService.CAT_PARENT_MOVIE ||
+                        categoryParentId == CategoryService.CAT_PARENT_MOVIE) {
                     section = "movies";
-                } else if (categoryParentId == CategoryService.CAT_PARENT_MUSIC ||
-                        id == CategoryService.CAT_PARENT_MUSIC) {
+                } else if (id == CategoryService.CAT_PARENT_MUSIC ||
+                        categoryParentId == CategoryService.CAT_PARENT_MUSIC) {
                     section = "music";
                 }
-                categoryIds.add(categoryId);
+
             } else {
                 throw new NoSuchResourceException();
             }

@@ -23,6 +23,7 @@ import net.longfalcon.newsj.model.Category;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Isolation;
@@ -92,6 +93,16 @@ public class CategoryDAOImpl extends HibernateDAOImpl implements net.longfalcon.
         Query query = sessionFactory.getCurrentSession().createQuery("from Category c where c.parentId != 0 order by c.id");
 
         return query.list();
+    }
+
+    @Override
+    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
+    public List<Integer> getCategoryChildrenIds(int categoryParentId) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Category.class);
+        criteria.add(Restrictions.eq("parentId", categoryParentId));
+        criteria.setProjection(Projections.property("id"));
+
+        return criteria.list();
     }
 
     @Override

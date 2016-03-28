@@ -43,5 +43,7 @@ public interface CategoryDAO {
 
     List<Category> getAllCategories(boolean activeOnly);
 
+    List<Integer> getCategoryChildrenIds(int categoryParentId);
+
     void updateCategory(Category category);
 }
