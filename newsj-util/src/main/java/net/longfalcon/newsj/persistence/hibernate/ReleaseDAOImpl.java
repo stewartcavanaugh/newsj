@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015. Sten Martinez
+ * Copyright (c) 2016. Sten Martinez
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@ import net.longfalcon.newsj.model.Release;
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
 import org.hibernate.Query;
+import org.hibernate.criterion.Conjunction;
 import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
@@ -47,6 +48,29 @@ public class ReleaseDAOImpl extends HibernateDAOImpl implements net.longfalcon.n
 
     @Override
     @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
+    public Long countByCategoriesMaxAgeAndGroup(Collection<Integer> categoryIds, Date maxAge,
+                                                Collection<Integer> excludedCategoryIds, Long groupId) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Release.class);
+        if (!categoryIds.isEmpty()) {
+            criteria.add(Restrictions.in("category.id", categoryIds));
+        }
+        if (maxAge != null) {
+            criteria.add(Restrictions.gt("postDate", maxAge));
+        }
+        if (excludedCategoryIds != null && !excludedCategoryIds.isEmpty()) {
+            criteria.add(Restrictions.not(Restrictions.in("category.id", excludedCategoryIds)));
+        }
+        if (groupId != null) {
+            criteria.add(Restrictions.eq("groupId",groupId));
+        }
+        criteria.setProjection(Projections.rowCount());
+
+
+        return (Long) criteria.uniqueResult();
+    }
+
+    @Override
+    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
     public Long countByGroupId(long groupId) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Release.class);
         criteria.add(Restrictions.eq("groupId", groupId));
@@ -66,59 +90,6 @@ public class ReleaseDAOImpl extends HibernateDAOImpl implements net.longfalcon.n
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
-    public Long countByCategoriesMaxAgeAndGroup(Collection<Integer> categoryIds, Date maxAge,
-                                                Collection<Integer> excludedCategoryIds, Long groupId) {
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Release.class);
-        if (!categoryIds.isEmpty()) {
-            criteria.add(Restrictions.in("category.id", categoryIds));
-        }
-        if (maxAge != null) {
-            criteria.add(Restrictions.gt("postDate", maxAge));
-        }
-        if (excludedCategoryIds != null && !excludedCategoryIds.isEmpty()) {
-            criteria.add(Restrictions.not(Restrictions.in("category.id", categoryIds)));
-        }
-        if (groupId != null) {
-            criteria.add(Restrictions.eq("groupId",groupId));
-        }
-        criteria.setProjection(Projections.rowCount());
-
-
-        return (Long) criteria.uniqueResult();
-    }
-
-    @Override
-    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
-    public List<Release> findByCategoriesMaxAgeAndGroup(Collection<Integer> categoryIds, Date maxAge,
-                                                        Collection<Integer> excludedCategoryIds, Long groupId,
-                                                        String orderByField, boolean descending,
-                                                        int offset, int pageSize) {
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Release.class);
-        if (!categoryIds.isEmpty()) {
-            criteria.add(Restrictions.in("category.id", categoryIds));
-        }
-        if (maxAge != null) {
-            criteria.add(Restrictions.gt("postDate", maxAge));
-        }
-        if (excludedCategoryIds != null && !excludedCategoryIds.isEmpty()) {
-            criteria.add(Restrictions.not(Restrictions.in("category.id", categoryIds)));
-        }
-        if (groupId != null) {
-            criteria.add(Restrictions.eq("groupId",groupId));
-        }
-        if (descending) {
-            criteria.addOrder(Order.desc(orderByField));
-        } else {
-            criteria.addOrder(Order.asc(orderByField));
-        }
-        criteria.setFetchMode("category", FetchMode.JOIN);
-        criteria.setFirstResult(offset).setMaxResults(pageSize);
-
-        return criteria.list();
-    }
-
-    @Override
     @Transactional
     public void deleteByGroupId(long groupId) {
         Query query = sessionFactory.getCurrentSession().createQuery("delete from Release r where r.groupId = :group_id");
@@ -135,12 +106,51 @@ public class ReleaseDAOImpl extends HibernateDAOImpl implements net.longfalcon.n
 
     @Override
     @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
+    public List<Release> findByCategoriesMaxAgeAndGroup(Collection<Integer> categoryIds, Date maxAge,
+                                                        Collection<Integer> excludedCategoryIds, Long groupId,
+                                                        String orderByField, boolean descending,
+                                                        int offset, int pageSize) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Release.class);
+        if (!categoryIds.isEmpty()) {
+            criteria.add(Restrictions.in("category.id", categoryIds));
+        }
+        if (maxAge != null) {
+            criteria.add(Restrictions.gt("postDate", maxAge));
+        }
+        if (excludedCategoryIds != null && !excludedCategoryIds.isEmpty()) {
+            criteria.add(Restrictions.not(Restrictions.in("category.id", excludedCategoryIds)));
+        }
+        if (groupId != null) {
+            criteria.add(Restrictions.eq("groupId",groupId));
+        }
+        if (descending) {
+            criteria.addOrder(Order.desc(orderByField));
+        } else {
+            criteria.addOrder(Order.asc(orderByField));
+        }
+        criteria.setFetchMode("category", FetchMode.JOIN);
+        criteria.setFirstResult(offset).setMaxResults(pageSize);
+
+        return criteria.list();
+    }
+
+    @Override
+    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
     public Release findByGuid(String guid) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Release.class);
         criteria.add(Restrictions.eq("guid", guid));
         criteria.setFetchMode("category", FetchMode.JOIN);
 
         return (Release) criteria.uniqueResult();
+    }
+
+    @Override
+    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
+    public List<Release> findByGuids(String[] guids) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Release.class);
+        criteria.add(Restrictions.in("guid", guids));
+
+        return criteria.list();
     }
 
     @Override
@@ -169,6 +179,15 @@ public class ReleaseDAOImpl extends HibernateDAOImpl implements net.longfalcon.n
         );
         criteria.addOrder(Order.desc("count"));
         criteria.setMaxResults(10);
+
+        return criteria.list();
+    }
+
+    @Override
+    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
+    public List<Long> findReleaseGroupIds() {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Release.class);
+        criteria.setProjection(Projections.distinct(Projections.property("groupId")));
 
         return criteria.list();
     }
@@ -251,15 +270,6 @@ public class ReleaseDAOImpl extends HibernateDAOImpl implements net.longfalcon.n
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
-    public Long getReleasesCount() {
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Release.class);
-        criteria.setProjection(Projections.rowCount());
-
-        return (Long) criteria.uniqueResult();
-    }
-
-    @Override
     @Transactional
     public void resetReleaseTvRageId(long tvRageId) {
         Query query = sessionFactory.getCurrentSession().createQuery("update Release r set r.rageId = -1 where r.rageId = :tvRageId");
@@ -269,9 +279,74 @@ public class ReleaseDAOImpl extends HibernateDAOImpl implements net.longfalcon.n
     }
 
     @Override
-    @Transactional
-    public void updateRelease(Release release) {
-        sessionFactory.getCurrentSession().saveOrUpdate(release);
+    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
+    public List<Release> searchByCategoriesMaxAgeAndGroup(String[] searchTokens, Collection<Integer> categoryIds, Date maxAge,
+                                                          Collection<Integer> excludedCategoryIds, Long groupId,
+                                                          String orderByField, boolean descending,
+                                                          int offset, int pageSize) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Release.class);
+
+        if (searchTokens != null && searchTokens.length > 0) {
+            Conjunction searchTokensOr = Restrictions.conjunction();
+            for (String searchToken : searchTokens) {
+                searchTokensOr.add(Restrictions.like("searchName", searchToken.trim(), MatchMode.ANYWHERE));
+            }
+            criteria.add(searchTokensOr);
+        }
+
+        if (!categoryIds.isEmpty()) {
+            criteria.add(Restrictions.in("category.id", categoryIds));
+        }
+        if (maxAge != null) {
+            criteria.add(Restrictions.gt("postDate", maxAge));
+        }
+        if (excludedCategoryIds != null && !excludedCategoryIds.isEmpty()) {
+            criteria.add(Restrictions.not(Restrictions.in("category.id", excludedCategoryIds)));
+        }
+        if (groupId != null) {
+            criteria.add(Restrictions.eq("groupId",groupId));
+        }
+        if (descending) {
+            criteria.addOrder(Order.desc(orderByField));
+        } else {
+            criteria.addOrder(Order.asc(orderByField));
+        }
+        criteria.setFetchMode("category", FetchMode.JOIN);
+        criteria.setFirstResult(offset).setMaxResults(pageSize);
+
+        return criteria.list();
+    }
+
+    @Override
+    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
+    public Long searchCountByCategoriesMaxAgeAndGroup(String[] searchTokens, Collection<Integer> categoryIds, Date maxAge,
+                                                      Collection<Integer> excludedCategoryIds, Long groupId) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Release.class);
+
+        if (searchTokens != null && searchTokens.length > 0) {
+            Conjunction searchTokensOr = Restrictions.conjunction();
+            for (String searchToken : searchTokens) {
+                searchTokensOr.add(Restrictions.like("searchName", searchToken.trim(), MatchMode.ANYWHERE));
+            }
+            criteria.add(searchTokensOr);
+        }
+
+        if (!categoryIds.isEmpty()) {
+            criteria.add(Restrictions.in("category.id", categoryIds));
+        }
+        if (maxAge != null) {
+            criteria.add(Restrictions.gt("postDate", maxAge));
+        }
+        if (excludedCategoryIds != null && !excludedCategoryIds.isEmpty()) {
+            criteria.add(Restrictions.not(Restrictions.in("category.id", excludedCategoryIds)));
+        }
+        if (groupId != null) {
+            criteria.add(Restrictions.eq("groupId",groupId));
+        }
+        criteria.setProjection(Projections.rowCount());
+
+
+        return (Long) criteria.uniqueResult();
     }
 
     @Override
@@ -291,6 +366,52 @@ public class ReleaseDAOImpl extends HibernateDAOImpl implements net.longfalcon.n
         }
 
         criteria.setMaxResults(limit);
+
+        return criteria.list();
+    }
+
+    @Override
+    @Transactional
+    public void updateRelease(Release release) {
+        sessionFactory.getCurrentSession().saveOrUpdate(release);
+    }
+
+    @Override
+    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
+    public Long getReleasesCount() {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Release.class);
+        criteria.setProjection(Projections.rowCount());
+
+        return (Long) criteria.uniqueResult();
+    }
+
+    @Override
+    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
+    public List<Long> getDistinctImdbIds(List<Integer> searchCategories, int maxAgeDays, List<Integer> userExCatIds) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Release.class);
+        if (searchCategories != null && !searchCategories.isEmpty()) {
+            criteria.add(Restrictions.in("category.id", searchCategories));
+        }
+
+        if (maxAgeDays > 0) {
+            Date maxAge = new DateTime().minusDays(maxAgeDays).toDate();
+            criteria.add(Restrictions.gt("postDate", maxAge));
+        }
+
+        if (!userExCatIds.isEmpty()) {
+            criteria.add(Restrictions.not(Restrictions.in("category.id", userExCatIds)));
+        }
+
+        criteria.setProjection(Projections.distinct(Projections.property("imdbId")));
+
+        return criteria.list();
+    }
+
+    @Override
+    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
+    public List<Release> findByImdbId(int imdbId) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Release.class);
+        criteria.add(Restrictions.eq("imdbId", imdbId));
 
         return criteria.list();
     }

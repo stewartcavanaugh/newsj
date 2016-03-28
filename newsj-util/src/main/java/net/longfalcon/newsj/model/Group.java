@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015. Sten Martinez
+ * Copyright (c) 2016. Sten Martinez
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +37,7 @@ public class Group {
     private Integer minFilesToFormRelease;
     private boolean active;
     private String description;
+    private int releaseCount;
 
     public long getId() {
         return id;
@@ -124,6 +125,14 @@ public class Group {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public int getReleaseCount() {
+        return releaseCount;
+    }
+
+    public void setReleaseCount(int releaseCount) {
+        this.releaseCount = releaseCount;
     }
 
     @Override

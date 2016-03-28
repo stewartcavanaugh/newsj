@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015. Sten Martinez
+ * Copyright (c) 2016. Sten Martinez
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -129,6 +130,15 @@ public class GroupDAOImpl extends HibernateDAOImpl implements net.longfalcon.new
         criteria.add(Restrictions.eq("id", groupId));
 
         return (Group) criteria.uniqueResult();
+    }
+
+    @Override
+    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
+    public List<Group> findGroupsByIds(Collection<Long> ids) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Group.class);
+        criteria.add(Restrictions.in("id", ids));
+
+        return criteria.list();
     }
 
     @Override

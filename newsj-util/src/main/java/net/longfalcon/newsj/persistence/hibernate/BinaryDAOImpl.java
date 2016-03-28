@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015. Sten Martinez
+ * Copyright (c) 2016. Sten Martinez
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,10 @@ package net.longfalcon.newsj.persistence.hibernate;
 import net.longfalcon.newsj.model.Binary;
 import net.longfalcon.newsj.model.MatchedReleaseQuery;
 import org.hibernate.Criteria;
+import org.hibernate.FetchMode;
 import org.hibernate.Query;
+import org.hibernate.criterion.Conjunction;
+import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -272,6 +275,31 @@ public class BinaryDAOImpl extends HibernateDAOImpl implements net.longfalcon.ne
             criteria.add(Restrictions.eq("releaseId", releaseId));
         }
         criteria.addOrder(Order.asc("date"));
+
+        return criteria.list();
+    }
+
+    @Override
+    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
+    public List<Binary> searchByNameAndExcludedCats(String[] searchTokens, int limit, Collection<Integer> excludedCategoryIds) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Binary.class);
+
+        if (searchTokens != null && searchTokens.length > 0) {
+            Conjunction searchTokensOr = Restrictions.conjunction();
+            for (String searchToken : searchTokens) {
+                searchTokensOr.add(Restrictions.like("name", searchToken.trim(), MatchMode.ANYWHERE));
+            }
+            criteria.add(searchTokensOr);
+        }
+
+        if (excludedCategoryIds != null && !excludedCategoryIds.isEmpty()) {
+            criteria.add(Restrictions.not(Restrictions.in("categoryId", excludedCategoryIds)));
+        }
+
+        criteria.setMaxResults(limit);
+        criteria.setFetchMode("releaseGuid", FetchMode.EAGER);
+        criteria.setFetchMode("numberParts", FetchMode.EAGER);
+        criteria.setFetchMode("groupName", FetchMode.EAGER);
 
         return criteria.list();
     }

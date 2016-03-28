@@ -1,3 +1,21 @@
+/*
+ * Copyright (c) 2016. Sten Martinez
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
+
 package net.longfalcon.web;
 
 import net.longfalcon.SessionKeys;
@@ -89,6 +107,7 @@ public class DetailsController extends BaseController {
         }
 
         long releaseId = release.getId();
+        releaseName = release.getSearchName();
         Long rageId = release.getRageId();
         Integer imdbId = release.getImdbId();
         Integer musicInfoId = release.getMusicInfoId();
@@ -120,10 +139,9 @@ public class DetailsController extends BaseController {
 
         List<Integer> categoryIds = userExCatDAO.getUserExCatIds(getUserId());
 
-        List<Release> similars = releases.searchSimilar(release, 6, categoryIds);
-
         // TODO: change this if we change search impl
-        String searchTokens = releases.getReleaseNameSearchTokens(releaseName).stream().collect(Collectors.joining(" "));
+        List<Release> similars = releases.searchSimilar(release, 6, categoryIds);
+        String searchTokens = releases.getReleaseNameSearchTokens(releaseName).stream().collect(Collectors.joining(" ")).trim();
 
         model.addAttribute("release", release);
         model.addAttribute("nfo", releaseNfo);

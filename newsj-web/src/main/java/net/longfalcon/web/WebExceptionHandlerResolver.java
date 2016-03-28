@@ -18,6 +18,7 @@
 
 package net.longfalcon.web;
 
+import net.longfalcon.web.exception.FlagrantSystemException;
 import net.longfalcon.web.exception.NoSuchResourceException;
 import net.longfalcon.web.exception.PermissionDeniedException;
 import org.apache.commons.logging.Log;
@@ -55,6 +56,8 @@ public class WebExceptionHandlerResolver implements HandlerExceptionResolver, Or
                         handler);
             } else if (ex instanceof PermissionDeniedException) {
                 return handlePermissionDenied((PermissionDeniedException) ex, request, response, handler);
+            } else if (ex instanceof FlagrantSystemException) {
+                return handleFlagrantSystemError((FlagrantSystemException) ex, request, response, handler);
             } else if (ex instanceof BindException) {
                 return handleBindException((BindException) ex, request, response, handler);
             }
@@ -73,6 +76,12 @@ public class WebExceptionHandlerResolver implements HandlerExceptionResolver, Or
 
     private ModelAndView handlePermissionDenied(PermissionDeniedException ex, HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException {
         response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+        _log.error(ex, ex);
+        return new ModelAndView();
+    }
+
+    private ModelAndView handleFlagrantSystemError(FlagrantSystemException ex, HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException {
+        response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         _log.error(ex, ex);
         return new ModelAndView();
     }

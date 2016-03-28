@@ -1,3 +1,21 @@
+/*
+ * Copyright (c) 2016. Sten Martinez
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
+
 package net.longfalcon.web;
 
 import net.longfalcon.newsj.CategoryService;
@@ -74,19 +92,27 @@ public class BrowseController extends BaseController {
             Category category = categoryService.getCategory(categoryId);
             if ( category != null) {
                 categoryName = category.getTitle();
-                Integer categoryParentId = category.getParentId();
+                Integer categoryParentId;
+                if (category.getParentId() == null) {
+                    categoryParentId = 0;
+                    categoryIds.addAll(categoryService.getCategoryChildrenIds(categoryId));
+                }
+                else {
+                    categoryParentId = category.getParentId();
+                    categoryIds.add(categoryId);
+                }
                 int id = category.getId();
-                if (categoryParentId == CategoryService.CAT_PARENT_GAME ||
-                        id == CategoryService.CAT_PARENT_GAME) {
+                if (id == CategoryService.CAT_PARENT_GAME ||
+                        categoryParentId == CategoryService.CAT_PARENT_GAME) {
                     section = "console";
-                } else if (categoryParentId == CategoryService.CAT_PARENT_MOVIE ||
-                        id == CategoryService.CAT_PARENT_MOVIE) {
+                } else if (id == CategoryService.CAT_PARENT_MOVIE ||
+                        categoryParentId == CategoryService.CAT_PARENT_MOVIE) {
                     section = "movies";
-                } else if (categoryParentId == CategoryService.CAT_PARENT_MUSIC ||
-                        id == CategoryService.CAT_PARENT_MUSIC) {
+                } else if (id == CategoryService.CAT_PARENT_MUSIC ||
+                        categoryParentId == CategoryService.CAT_PARENT_MUSIC) {
                     section = "music";
                 }
-                categoryIds.add(categoryId);
+
             } else {
                 throw new NoSuchResourceException();
             }
@@ -116,7 +142,7 @@ public class BrowseController extends BaseController {
             String propertyName = getOrderByProperty(orderBy);
             boolean descending = getOrderByOrder(orderBy);
             if (ValidatorUtil.isNotNull(propertyName)) {
-                releaseList = releases.getBrowseReleases(categoryIds, -1, userExCats, groupId, propertyName, descending, offset, PAGE_SIZE);;
+                releaseList = releases.getBrowseReleases(categoryIds, -1, userExCats, groupId, propertyName, descending, offset, PAGE_SIZE);
             }
         }
 
@@ -131,6 +157,20 @@ public class BrowseController extends BaseController {
         model.addAttribute("orderBy", orderBy);
         model.addAttribute("now", new Date());
         return "browse";
+    }
+
+    @RequestMapping("/browsegroup")
+    public String browseGroupsView(Model model) {
+        title = "Browse Groups";
+
+        List<Long> groupIds = releaseDAO.findReleaseGroupIds();
+        List<Group> groupList = groupDAO.findGroupsByIds(groupIds);
+
+        setPageMetaDescription("Browse groups");
+        setPageMetaKeywords("browse,groups,description,details");
+        model.addAttribute("title", title);
+        model.addAttribute("groupList", groupList);
+        return "browse-groups";
     }
 
     private String getOrderByProperty(String orderByParam) {

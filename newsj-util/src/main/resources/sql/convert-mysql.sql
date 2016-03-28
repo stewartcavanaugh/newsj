@@ -407,3 +407,8 @@ ALTER TABLE `parts` CHANGE COLUMN `number` `number_` BIGINT UNSIGNED NOT NULL DE
 ALTER TABLE `parts` CHANGE COLUMN `size` `size_` BIGINT UNSIGNED NOT NULL DEFAULT '0';
 
 CREATE INDEX ix_releases_regexId ON releases (`regexID`);
+CREATE INDEX ix_releases_groupId on releases (`groupID`);
+
+-- TODO: verify this works
+-- makes "rageId" EVERYWHERE BUT TVRAGE represent a "tvinfo" id, not a TvRage id specific to the TvRage site
+UPDATE `releases` set rageID = (select tv.ID from tvrage tv where tv.rageID = `releases`.rageID LIMIT 1) where `releases`.rageID > 0;

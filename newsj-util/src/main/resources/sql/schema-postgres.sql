@@ -684,6 +684,11 @@ CREATE INDEX "IX_RELEASES_ADDDATE" ON "RELEASES" ("ADDDATE");
 
 CREATE INDEX "IX_RELEASES_REGEXID" ON "RELEASES" ("REGEXID");
 --------------------------------------------------------
+--  DDL for Index IX_RELEASES_GROUPID
+--------------------------------------------------------
+
+CREATE INDEX "IX_RELEASES_GROUPID" ON "RELEASES" ("GROUPID");
+--------------------------------------------------------
 --  Constraints for Table FORUMPOST
 --------------------------------------------------------
 

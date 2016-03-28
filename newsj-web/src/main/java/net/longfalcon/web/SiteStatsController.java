@@ -27,6 +27,10 @@ import net.longfalcon.newsj.service.UserService;
 import net.longfalcon.view.RecentReleaseCategoryView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -50,10 +54,15 @@ public class SiteStatsController extends BaseController {
     @Autowired
     CategoryService categoryService;
 
+    @Autowired
+    private PlatformTransactionManager transactionManager;
+
     @RequestMapping("/admin/site-stats")
     public String siteStatsView(Model model) {
 
         title = "Site Stats";
+
+        TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition(TransactionDefinition.PROPAGATION_REQUIRED));
 
         List<User> topGrabbers = userService.getTopGrabbers();
         List<Release> topDownloads = releases.getTopDownloads();
@@ -70,6 +79,7 @@ public class SiteStatsController extends BaseController {
             recentReleaseCategories.add(recentReleaseCategoryView);
         }
 
+        transactionManager.commit(transaction);
 
         model.addAttribute("title", title);
         model.addAttribute("topGrabberList", topGrabbers);

@@ -181,10 +181,19 @@
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
 
+    <bean id="userCartDAO" class="net.longfalcon.newsj.persistence.hibernate.UserCartDAOImpl">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+
     <!-- Services -->
 
     <bean id="config" class="net.longfalcon.newsj.Config" init-method="init">
-        <property name="propertyLocations" value="classpath:config.api.properties,classpath:config.properties"/>
+        <property name="propertyLocations">
+            <list>
+                <value>classpath:config.api.properties</value>
+                <value>classpath:config.properties</value>
+            </list>
+        </property>
         <property name="siteDAO" ref="siteDAO"/>
     </bean>
 
@@ -326,5 +335,12 @@
     <bean id="releaseCommentService" class="net.longfalcon.newsj.service.ReleaseCommentService">
         <property name="releaseDAO" ref="releaseDAO"/>
         <property name="releaseCommentDAO" ref="releaseCommentDAO"/>
+    </bean>
+    <bean id="searchService" class="net.longfalcon.newsj.service.SearchService">
+        <property name="releases" ref="releases"/>
+        <property name="binaryDAO" ref="binaryDAO"/>
+    </bean>
+    <bean id="cartService" class="net.longfalcon.newsj.service.CartService">
+        <property name="userCartDAO" ref="userCartDAO"/>
     </bean>
 </beans>

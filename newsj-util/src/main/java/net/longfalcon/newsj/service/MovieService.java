@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015. Sten Martinez
+ * Copyright (c) 2016. Sten Martinez
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,9 +43,11 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * User: Sten Martinez
@@ -55,36 +57,12 @@ import java.util.regex.Pattern;
 @Service
 public class MovieService {
     private static final Log _log = LogFactory.getLog(MovieService.class);
-
-    private ReleaseDAO releaseDAO;
     private CategoryDAO categoryDAO;
-    private GoogleSearchService googleSearchService;
     private FileSystemService fileSystemService;
+    private GoogleSearchService googleSearchService;
     private MovieInfoDAO movieInfoDAO;
+    private ReleaseDAO releaseDAO;
     private TmdbService tmdbService;
-
-    @Transactional
-    public void updateMovieInfo(MovieInfo movieInfo, InputStream coverStream, InputStream backdropStream) throws IOException {
-        Directory movieCoverDirectory = fileSystemService.getDirectory("/images/covers/movies");
-        boolean coverImageExists = movieCoverDirectory.fileExists(movieInfo.getId() + "-cover.jpg");
-        boolean backdropImageExists = movieCoverDirectory.fileExists(movieInfo.getId() + "-backdrop.jpg");
-        movieInfo.setCover(coverImageExists);
-        movieInfo.setBackdrop(backdropImageExists);
-
-        if (coverStream != null) {
-            FsFile fsFile = movieCoverDirectory.getFile(movieInfo.getId() + "-cover.jpg");
-            StreamUtil.transferByteArray(coverStream, fsFile.getOutputStream(), 1024);
-            movieInfo.setCover(true);
-        }
-
-        if (backdropStream != null) {
-            FsFile fsFile = movieCoverDirectory.getFile(movieInfo.getId() + "-backdrop.jpg");
-            StreamUtil.transferByteArray(backdropStream, fsFile.getOutputStream(), 1024);
-            movieInfo.setBackdrop(true);
-        }
-
-        movieInfoDAO.update(movieInfo);
-    }
 
     @Transactional
     public void addMovieInfo(int imdbId) {
@@ -97,6 +75,37 @@ public class MovieService {
             TmdbMovieResults tmdbMovieResult = tmdbMovieResults.get(0);
 
         }
+    }
+
+    // TODO: move to genre table
+    public List<String> getGenres() {
+        return Arrays.asList(
+                "Action",
+                "Adventure",
+                "Animation",
+                "Biography",
+                "Comedy",
+                "Crime",
+                "Documentary",
+                "Drama",
+                "Family",
+                "Fantasy",
+                "Film-Noir",
+                "Game-Show",
+                "History",
+                "Horror",
+                "Music",
+                "Musical",
+                "Mystery",
+                "News",
+                "Reality-TV",
+                "Romance",
+                "Sci-Fi",
+                "Sport",
+                "Talk-Show",
+                "Thriller",
+                "War",
+                "Western");
     }
 
     @Transactional
@@ -145,21 +154,6 @@ public class MovieService {
         }
     }
 
-    private int getImdbId(GoogleSearchResponse googleSearchResponse) {
-        List<GoogleSearchResult> results = googleSearchResponse.getResponseData().getResults();
-        if (results != null) {
-            for (GoogleSearchResult result : results) {
-                if (result.getVisibleUrl().equals("www.imdb.com")) {
-                    String imdbIdString = ParseUtil.parseImdb(result.getUnescapedUrl());
-                    if (ValidatorUtil.isNotNull(imdbIdString)) {
-                        return Integer.parseInt(imdbIdString);
-                    }
-                }
-            }
-        }
-        return 0;
-    }
-
     private String parseMovieName(Release release) {
         int categoryId = 0;
         Category category = release.getCategory();
@@ -190,6 +184,64 @@ public class MovieService {
             }
         }
         return null;
+    }
+
+    private int getImdbId(GoogleSearchResponse googleSearchResponse) {
+        List<GoogleSearchResult> results = googleSearchResponse.getResponseData().getResults();
+        if (results != null) {
+            for (GoogleSearchResult result : results) {
+                if (result.getVisibleUrl().equals("www.imdb.com")) {
+                    String imdbIdString = ParseUtil.parseImdb(result.getUnescapedUrl());
+                    if (ValidatorUtil.isNotNull(imdbIdString)) {
+                        return Integer.parseInt(imdbIdString);
+                    }
+                }
+            }
+        }
+        return 0;
+    }
+
+    @Transactional
+    public void updateMovieInfo(MovieInfo movieInfo, InputStream coverStream, InputStream backdropStream) throws IOException {
+        Directory movieCoverDirectory = fileSystemService.getDirectory("/images/covers/movies");
+        boolean coverImageExists = movieCoverDirectory.fileExists(movieInfo.getId() + "-cover.jpg");
+        boolean backdropImageExists = movieCoverDirectory.fileExists(movieInfo.getId() + "-backdrop.jpg");
+        movieInfo.setCover(coverImageExists);
+        movieInfo.setBackdrop(backdropImageExists);
+
+        if (coverStream != null) {
+            FsFile fsFile = movieCoverDirectory.getFile(movieInfo.getId() + "-cover.jpg");
+            StreamUtil.transferByteArray(coverStream, fsFile.getOutputStream(), 1024);
+            movieInfo.setCover(true);
+        }
+
+        if (backdropStream != null) {
+            FsFile fsFile = movieCoverDirectory.getFile(movieInfo.getId() + "-backdrop.jpg");
+            StreamUtil.transferByteArray(backdropStream, fsFile.getOutputStream(), 1024);
+            movieInfo.setBackdrop(true);
+        }
+
+        movieInfoDAO.update(movieInfo);
+    }
+
+    public int getMovieCount(List<Category> searchCategories, int maxAgeDays, List<Integer> userExCatIds,
+                             String titleSearch, String genreSearch, String actorsSearch, String directorSearch, String yearSearch) {
+        List<Integer> categoryIds = searchCategories.stream().map(Category::getId).collect(Collectors.toList());
+        List<Long> imdbIds = releaseDAO.getDistinctImdbIds(categoryIds, maxAgeDays, userExCatIds);
+        long movieCount = movieInfoDAO.getMovieCount(imdbIds, titleSearch, genreSearch, actorsSearch, directorSearch, yearSearch);
+
+        return Math.toIntExact(movieCount);
+    }
+
+    public List<MovieInfo> getMovies(List<Category> searchCategories, int maxAgeDays, List<Integer> userExCatIds,
+                             String titleSearch, String genreSearch, String actorsSearch, String directorSearch, String yearSearch,
+                                     int offset, int pageSize, String orderByField, boolean descending) {
+        List<Integer> categoryIds = searchCategories.stream().map(Category::getId).collect(Collectors.toList());
+        List<Long> imdbIds = releaseDAO.getDistinctImdbIds(categoryIds, maxAgeDays, userExCatIds);
+        List<MovieInfo> movieInfoList = movieInfoDAO.getMovies(imdbIds, titleSearch, genreSearch, actorsSearch,
+                directorSearch, yearSearch, offset, pageSize, orderByField, descending);
+
+        return movieInfoList;
     }
 
     public ReleaseDAO getReleaseDAO() {

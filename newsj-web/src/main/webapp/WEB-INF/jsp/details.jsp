@@ -1,4 +1,3 @@
-<%--@elvariable id="site" type="net.longfalcon.newsj.model.Site"--%>
 <%--
   ~ Copyright (c) 2016. Sten Martinez
   ~
@@ -16,6 +15,9 @@
   ~ with this program; if not, write to the Free Software Foundation, Inc.,
   ~ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
   --%>
+
+<%--@elvariable id="site" type="net.longfalcon.newsj.model.Site"--%>
+
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="text" uri="http://java.longfalcon.net/jsp/jstl/text" %>
 <%@ taglib prefix="date" uri="http://java.longfalcon.net/jsp/jstl/date" %>
@@ -52,8 +54,8 @@
         <%--START PAGE CONTENT--%>
             <h1>${text:escapeHtml(release.searchName)}</h1>
 
-            <c:if test="${tvRage != null && tvRage.hasImage}">
-                <img class="shadow" src="${pageContext.request.contextPath}/images?type=tvrage&id=${tvRage.id}" width="180" alt="${text:escapeHtml(tvRage.releaseTitle)}" style="float:right;" />
+            <c:if test="${tvInfo != null && tvInfo.hasImage}">
+                <img class="shadow" src="${pageContext.request.contextPath}/images?type=tvrage&id=${tvInfo.id}" width="180" alt="${text:escapeHtml(tvInfo.releaseTitle)}" style="float:right;" />
             </c:if>
             <c:if test="${movieInfo != null && movieInfo.cover}">
                 <img class="shadow" src="${pageContext.request.contextPath}/images/covers/movies/${movieInfo.id}-cover.jpg" width="180" alt="${text:escapeHtml(movieInfo.title)}" style="float:right;" />
@@ -82,7 +84,7 @@
                     <td>${text:escapeHtml(release.name)}</td>
                 </tr>
 
-                <c:if test="${tvRage != null}">
+                <c:if test="${tvInfo != null}">
                     <tr>
                         <th>Tv Info:</th>
                         <td>
@@ -90,33 +92,33 @@
                                 <c:if test="${!text:isNull(release.tvTitle)}">
                                     ${text:escapeHtml(release.tvTitle)} -
                                 </c:if>
-                                ${text:replace(text:replace(release.seriesFull, "S", "Season "), "E", "Episode ")}
+                                ${text:replace(text:replace(release.seriesFull, "S", "Season "), "E", " Episode")}
                             </strong>
                             <br />
-                            <c:if test="${!text:isNull(tvRage.description)}">
+                            <c:if test="${!text:isNull(tvInfo.description)}">
                                 <span class="descinitial">
-                                    ${text:truncate(text:nl2br(text:escapeHtml(tvRage.description)), 350)}
-                                    <c:if test="${tvRage.description.length() > 350}">
+                                    ${text:truncate(text:nl2br(text:escapeHtml(tvInfo.description)), 350)}
+                                    <c:if test="${tvInfo.description.length() > 350}">
                                         <a class="descmore" href="#">more...</a>
                                     </c:if>
                                 </span>
-                                <c:if test="${tvRage.description.length() > 350}">
-                                    <span class="descfull">text:nl2br(text:escapeHtml(tvRage.description))</span>
+                                <c:if test="${tvInfo.description.length() > 350}">
+                                    <span class="descfull">text:nl2br(text:escapeHtml(tvInfo.description))</span>
                                 </c:if>
                                 <br /><br />
                             </c:if>
-                            <c:if test="${!text:isNull(tvRage.genre)}">
-                                <strong>Genre:</strong> ${text:replace(text:escapeHtml(tvRage.genre), "|", ", ")}<br />
+                            <c:if test="${!text:isNull(tvInfo.genre)}">
+                                <strong>Genre:</strong> ${text:replace(text:escapeHtml(tvInfo.genre), "|", ", ")}<br />
                             </c:if>
                             <c:if test="${release.tvAirDate != null}">
                                 <strong>Aired:</strong> ${date:formatDate(release.tvAirDate)}<br/>
                             </c:if>
-                            <c:if test="${!text:isNull(tvRage.country)}">
-                                <strong>Country:</strong> ${tvRage.country}
+                            <c:if test="${!text:isNull(tvInfo.country)}">
+                                <strong>Country:</strong> ${tvInfo.country}
                             </c:if>
                             <div style="margin-top:10px;">
                                 <a class="rndbtn" title="View all episodes from this series" href="${pageContext.request.contextPath}/series/${release.rageId}">All Episodes</a>
-                                <a class="rndbtn" target="_blank" href="${site.deReferrerLink}http://www.tvrage.com/shows/id-${release.rageId}" title="View at TV Rage">TV Rage</a>
+                                <a class="rndbtn" target="_blank" href="${site.deReferrerLink}http://www.tvrage.com/shows/id-${tvInfo.rageId}" title="View at TV Rage">TV Rage</a>
                                 <a class="rndbtn" href="${pageContext.request.contextPath}/rss?rage=${release.rageId}&dl=1&i=${userId}&r=${rssToken}" title="Rss feed for this series">Series Rss Feed</a>
                             </div>
                         </td>
@@ -157,42 +159,42 @@
                     </tr>    
                 </c:if>
 
-                <c:if test="${consoleInfo != null}">
+                <c:if test="${gameInfo != null}">
                     <tr>
                         <th>Console Info:</th>
                             <td>
-                            <strong>${text:escapeHtml(consoleInfo.title)} (${date:formatDateCustom(consoleInfo.releaseDate, "Y")})</strong>
+                            <strong>${text:escapeHtml(gameInfo.title)} (${date:formatDateCustom(gameInfo.releaseDate, "Y")})</strong>
                                 <br />
-                                <c:if test="${!text:isNull(consoleInfo.review)}">
+                                <c:if test="${!text:isNull(gameInfo.review)}">
                                     <span class="descinitial">
-                                        ${text:truncate(text:nl2br(text:escapeHtml(consoleInfo.review)), 350)}
-                                        <c:if test="${consoleInfo.review.length() > 350}">
+                                        ${text:truncate(text:nl2br(text:escapeHtml(gameInfo.review)), 350)}
+                                        <c:if test="${gameInfo.review.length() > 350}">
                                             <a class="descmore" href="#">more...</a>
                                         </c:if>
                                     </span>
-                                        <c:if test="${consoleInfo.review.length() > 350}">
-                                            <span class="descfull">text:nl2br(text:escapeHtml(consoleInfo.review))</span>
+                                        <c:if test="${gameInfo.review.length() > 350}">
+                                            <span class="descfull">text:nl2br(text:escapeHtml(gameInfo.review))</span>
                                         </c:if>
                                     <br /><br />
                                 </c:if>
-                                <c:if test="${!text:isNull(consoleInfo.esrb)}">
-                                    <strong>ESRB:</strong> ${consoleInfo.esrb}<br />
+                                <c:if test="${!text:isNull(gameInfo.esrb)}">
+                                    <strong>ESRB:</strong> ${gameInfo.esrb}<br />
                                 </c:if>
-                                <c:if test="${!text:isNull(consoleInfo.genreId)}">
-                                    <strong>Genre:</strong> ${consoleInfo.genreId}<br />
+                                <c:if test="${!text:isNull(gameInfo.genreId)}">
+                                    <strong>Genre:</strong> ${gameInfo.genreId}<br />
                                 </c:if>
-                                <c:if test="${!text:isNull(consoleInfo.publisher)}">
-                                    <strong>Publisher:</strong> ${consoleInfo.publisher}<br />
+                                <c:if test="${!text:isNull(gameInfo.publisher)}">
+                                    <strong>Publisher:</strong> ${gameInfo.publisher}<br />
                                 </c:if>
-                                <c:if test="${!text:isNull(consoleInfo.platform)}">
-                                    <strong>Platform:</strong> ${consoleInfo.platform}<br />
+                                <c:if test="${!text:isNull(gameInfo.platform)}">
+                                    <strong>Platform:</strong> ${gameInfo.platform}<br />
                                 </c:if>
-                                <c:if test="${!text:isNull(consoleInfo.releaseDate)}">
-                                    <strong>Released:</strong> ${date:formatDate(consoleInfo.releaseDate)}
+                                <c:if test="${!text:isNull(gameInfo.releaseDate)}">
+                                    <strong>Released:</strong> ${date:formatDate(gameInfo.releaseDate)}
                                 </c:if>
-                                <c:if test="${!text:isNull(consoleInfo.url)}">
+                                <c:if test="${!text:isNull(gameInfo.url)}">
                                     <div style="margin-top:10px;">
-                                        <a class="rndbtn" target="_blank" href="${site.deReferrerLink}${consoleInfo.url}/" title="View game at Amazon">Amazon</a>
+                                        <a class="rndbtn" target="_blank" href="${site.deReferrerLink}${gameInfo.url}/" title="View game at Amazon">Amazon</a>
                                     </div>
                                 </c:if>
                         </td>
@@ -348,7 +350,7 @@
                                 <br/>
                             </c:forEach>
                             <br/>
-                            <a title="Search for similar Nzbs" href="${pageContext.request.contextPath}/search/${text:urlEncode(searchTokens)}}">Search for similar NZBs...</a><br/>
+                            <a title="Search for similar Nzbs" href="${pageContext.request.contextPath}/search/${text:escapeHtml(searchTokens)}">Search for similar NZBs...</a><br/>
                         </td>
                     </tr>
                 </c:if>

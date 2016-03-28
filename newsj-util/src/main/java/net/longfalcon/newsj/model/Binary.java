@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015. Sten Martinez
+ * Copyright (c) 2016. Sten Martinez
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,6 +47,9 @@ public class Binary {
     private Long releaseId;
     private Date dateAdded;
     private String categoryName;
+    private String groupName;
+    private int numberParts;
+    private String releaseGuid;
 
     public long getId() {
         return id;
@@ -207,5 +210,32 @@ public class Binary {
 
     public void setCategoryName(String categoryName) {
         this.categoryName = categoryName;
+    }
+
+    @Transient
+    public String getGroupName() {
+        return groupName;
+    }
+
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
+    }
+
+    @Transient
+    public int getNumberParts() {
+        return numberParts;
+    }
+
+    public void setNumberParts(int numberParts) {
+        this.numberParts = numberParts;
+    }
+
+    @Transient
+    public String getReleaseGuid() {
+        return releaseGuid;
+    }
+
+    public void setReleaseGuid(String releaseGuid) {
+        this.releaseGuid = releaseGuid;
     }
 }

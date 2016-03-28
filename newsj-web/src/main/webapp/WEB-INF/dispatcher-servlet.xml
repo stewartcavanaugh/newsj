@@ -40,6 +40,10 @@
         <property name="resolveLazily" value="false"/>
     </bean>
 
-    <mvc:annotation-driven/>
+    <mvc:annotation-driven>
+        <mvc:message-converters register-defaults="true">
+            <bean class="net.longfalcon.web.http.converter.CustomByteArrayHttpMessageConverter"/>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
     <mvc:resources mapping="/resources/**" location="/public-resources/"/>
 </beans>

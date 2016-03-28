@@ -48,6 +48,9 @@
         <property name="importName" column="importname"/>
         <property name="releaseId" column="releaseID"/>
         <property name="dateAdded" column="dateadded" type="timestamp"/>
+        <property name="numberParts" lazy="true" formula="(SELECT COUNT(p.ID) FROM parts p where p.binaryID = ID)"/>
+        <property name="groupName" lazy="true" formula="(select g.name_ from groups g where g.ID = groupID)"/>
+        <property name="releaseGuid" lazy="true" formula="(select r.guid from releases r where r.ID = releaseID)"/>
     </class>
     <class name="BinaryBlacklistEntry" table="binaryblacklist">
         <!--<cache usage="read-only"/>-->
@@ -176,6 +179,7 @@
         <property name="minFilesToFormRelease" column="minfilestoformrelease" type="java.lang.Integer" />
         <property name="active" column="active" type="java.lang.Boolean"/>
         <property name="description" column="description"/>
+        <property name="releaseCount" formula="(select count(*) from releases r where r.groupID = ID)"/>
     </class>
     <class name="MenuItem" table="menu">
         <id name="id" column="ID">

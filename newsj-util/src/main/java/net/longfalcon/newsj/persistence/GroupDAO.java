@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015. Sten Martinez
+ * Copyright (c) 2016. Sten Martinez
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@ package net.longfalcon.newsj.persistence;
 
 import net.longfalcon.newsj.model.Group;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -47,6 +48,8 @@ public interface GroupDAO {
     List<Group> findGroupsByName(String name);
 
     Group findGroupByGroupId(long groupId);
+
+    List<Group> findGroupsByIds(Collection<Long> ids);
 
     public List<String> getGroupsForSelect();
 }

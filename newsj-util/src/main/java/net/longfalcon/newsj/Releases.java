@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015. Sten Martinez
+ * Copyright (c) 2016. Sten Martinez
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,54 +79,44 @@ public class Releases {
     private static final Log _log = LogFactory.getLog(Releases.class);
     private static PeriodFormatter _periodFormatter = PeriodFormat.wordBased();
     private static Pattern _wildcardPattern = Pattern.compile("(\\D)+\\*$"); // this should match bin.name.* wildcard group names
-
-    private PlatformTransactionManager transactionManager;
     private Binaries binaries;
-    private FileSystemService fileSystemService;
+    private BinaryDAO binaryDAO;
     private CategoryService categoryService;
+    private FileSystemService fileSystemService;
+    private GameService gameService;
+    private GroupDAO groupDAO;
+    private MovieService movieService;
+    private MusicService musicService;
     private Nfo nfo;
     private Nzb nzb;
-
-    private MovieService movieService;
-    private GameService gameService;
-    private MusicService musicService;
-    private TVRageService tvRageService;
-
-    private SiteDAO siteDAO;
-    private ReleaseRegexDAO releaseRegexDAO;
-    private GroupDAO groupDAO;
-    private BinaryDAO binaryDAO;
     private PartDAO partDAO;
     private ReleaseDAO releaseDAO;
+    private ReleaseRegexDAO releaseRegexDAO;
+    private SiteDAO siteDAO;
+    private PlatformTransactionManager transactionManager;
+    private TVRageService tvRageService;
 
-    public List<Release> searchSimilar(Release release, int limit, List<Integer> excludedCategoryIds) {
-        String releaseName = release.getName();
-        List<String> searchTokens = getReleaseNameSearchTokens(releaseName);
+    public Release findByGuid(String guid) {
+        Release release = releaseDAO.findByGuid(guid);
+        populateTransientFields(release);
 
-        return releaseDAO.searchReleasesByNameExludingCats(searchTokens, limit, excludedCategoryIds);
+        return release;
     }
 
-    public List<String> getReleaseNameSearchTokens(String releaseName) {
-        StrTokenizer strTokenizer = new StrTokenizer(releaseName, StrMatcher.charSetMatcher('.', '_'));
-        List<String> tokenList = strTokenizer.getTokenList();
+    public Release findByReleaseId(long releaseId) {
+        Release release = releaseDAO.findByReleaseId(releaseId);
+        populateTransientFields(release);
 
-        return tokenList.stream()
-                .sorted((o1, o2) -> {
-                    int o1length = o1.length();
-                    int o2length = o2.length();
-                    return o2length - o1length;
-                })
-                .filter(s -> s.length() > 2)
-                .limit(2)
-                .collect(Collectors.toList());
+        return release;
     }
 
-    public List<Release> getTopDownloads() {
-        return releaseDAO.findTopDownloads();
-    }
+    public List<Release> findByImdbId(int imdbId) {
+        List<Release> releases = releaseDAO.findByImdbId(imdbId);
+        for(Release release : releases) {
+            populateTransientFields(release);
+        }
 
-    public List<Release> getTopComments() {
-        return releaseDAO.findTopCommentedReleases();
+        return releases;
     }
 
     public Long getBrowseCount(Collection<Integer> categoryIds, int maxAgeDays, List<Integer> excludedCategoryIds, long groupId) {
@@ -184,51 +174,46 @@ public class Releases {
         return releaseRegexList;
     }
 
-    public Release findByReleaseId(long releaseId) {
-        Release release = releaseDAO.findByReleaseId(releaseId);
-        populateTransientFields(release);
+    public Long getSearchCount(String[] searchTokens, Collection<Integer> categoryIds, int maxAgeDays, List<Integer> excludedCategoryIds, long groupId) {
+        Date maxAge = null;
+        if (maxAgeDays > 0) {
+            maxAge = DateTime.now().minusDays(maxAgeDays).toDate();
+        }
 
-        return release;
+        Long groupIdObj = null;
+        if (groupId > 0) {
+            groupIdObj = groupId;
+        }
+
+        return releaseDAO.searchCountByCategoriesMaxAgeAndGroup(searchTokens, categoryIds, maxAge, excludedCategoryIds, groupIdObj);
     }
 
-    public Release findByGuid(String guid) {
-        Release release = releaseDAO.findByGuid(guid);
-        populateTransientFields(release);
+    public List<Release> getSearchReleases(String[] searchTokens, Collection<Integer> categoryIds, int maxAgeDays, List<Integer> excludedCategoryIds,
+                                           long groupId, String orderByField, boolean descending,
+                                           int offset, int pageSize) {
+        Date maxAge = null;
+        if (maxAgeDays > 0) {
+            maxAge = DateTime.now().minusDays(maxAgeDays).toDate();
+        }
 
-        return release;
-    }
+        Long groupIdObj = null;
+        if (groupId > 0) {
+            groupIdObj = groupId;
+        }
 
-    private void populateTransientFields(Release release) {
-        if (release != null && release.getCategory() != null) {
-            int categoryId = release.getCategory().getId();
-            release.setCategoryId(categoryId);
+        List<Release> releases = releaseDAO.searchByCategoriesMaxAgeAndGroup(searchTokens, categoryIds, maxAge, excludedCategoryIds, groupIdObj,
+                orderByField, descending, offset, pageSize);
+        for (Release release : releases) {
             Group group = groupDAO.findGroupByGroupId(release.getGroupId());
-            release.setGroupName(group.getName());
-            release.setCategoryDisplayName(categoryService.getCategoryDisplayName(categoryId));
+            if (group != null) {
+                release.setGroupName(group.getName());
+            }
+            Category category = release.getCategory();
+            if (category != null) {
+                release.setCategoryDisplayName(categoryService.getCategoryDisplayName(category.getId()));
+            }
         }
-    }
-
-    @Transactional
-    public void resetRelease(long releaseId) {
-        binaryDAO.resetReleaseBinaries(releaseId);
-    }
-
-    @Transactional
-    public void updateRelease(Release release) {
-        if (release.getCategoryId() > 0) {
-            Category newCategory = categoryService.getCategory(release.getCategoryId());
-            release.setCategory(newCategory);
-        }
-
-        releaseDAO.updateRelease(release);
-    }
-
-    /**
-     *
-     * @return List of Object[Category,Long]
-     */
-    public List<Object[]> getRecentlyAddedReleases() {
-        return releaseDAO.findRecentlyAddedReleaseCategories();
+        return releases;
     }
 
     public void processReleases() {
@@ -749,14 +734,6 @@ public class Releases {
         //return retcount;
     }
 
-    private void processPasswordedReleases(boolean debug) {
-    }
-
-    // TODO
-    private String getReleaseNameForReqId(String reqIdUrl, Group group, Integer reqId, boolean debug) {
-        return "";
-    }
-
     // TODO
     private void checkRegexesUptoDate(String latestRegexUrl, int latestRegexRevision) {
         // hook up once it works
@@ -803,6 +780,72 @@ public class Releases {
         }
 
         return new ArrayList<>(queryMap.values());
+    }
+
+    // TODO
+    private String getReleaseNameForReqId(String reqIdUrl, Group group, Integer reqId, boolean debug) {
+        return "";
+    }
+
+    private void populateTransientFields(Release release) {
+        if (release != null && release.getCategory() != null) {
+            int categoryId = release.getCategory().getId();
+            release.setCategoryId(categoryId);
+            Group group = groupDAO.findGroupByGroupId(release.getGroupId());
+            release.setGroupName(group.getName());
+            release.setCategoryDisplayName(categoryService.getCategoryDisplayName(categoryId));
+        }
+    }
+
+    private void processPasswordedReleases(boolean debug) {
+    }
+
+    @Transactional
+    public void resetRelease(long releaseId) {
+        binaryDAO.resetReleaseBinaries(releaseId);
+    }
+
+    public List<Release> searchSimilar(Release release, int limit, List<Integer> excludedCategoryIds) {
+        String releaseName = release.getName();
+        List<String> searchTokens = getReleaseNameSearchTokens(releaseName);
+
+        return releaseDAO.searchReleasesByNameExludingCats(searchTokens, limit, excludedCategoryIds);
+    }
+
+    public List<String> getReleaseNameSearchTokens(String releaseName) {
+        StrTokenizer strTokenizer = new StrTokenizer(releaseName, StrMatcher.charSetMatcher('.', '_'));
+        List<String> tokenList = strTokenizer.getTokenList();
+
+        return tokenList.stream()
+                .filter(s -> s.length() > 2)
+                .limit(2)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void updateRelease(Release release) {
+        if (release.getCategoryId() > 0) {
+            Category newCategory = categoryService.getCategory(release.getCategoryId());
+            release.setCategory(newCategory);
+        }
+
+        releaseDAO.updateRelease(release);
+    }
+
+    public List<Release> getTopDownloads() {
+        return releaseDAO.findTopDownloads();
+    }
+
+    public List<Release> getTopComments() {
+        return releaseDAO.findTopCommentedReleases();
+    }
+
+    /**
+     *
+     * @return List of Object[Category,Long]
+     */
+    public List<Object[]> getRecentlyAddedReleases() {
+        return releaseDAO.findRecentlyAddedReleaseCategories();
     }
 
     public Binaries getBinaries() {
