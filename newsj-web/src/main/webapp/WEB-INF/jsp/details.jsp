@@ -1,4 +1,3 @@
-<%--@elvariable id="site" type="net.longfalcon.newsj.model.Site"--%>
 <%--
   ~ Copyright (c) 2016. Sten Martinez
   ~
@@ -16,6 +15,9 @@
   ~ with this program; if not, write to the Free Software Foundation, Inc.,
   ~ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
   --%>
+
+<%--@elvariable id="site" type="net.longfalcon.newsj.model.Site"--%>
+
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="text" uri="http://java.longfalcon.net/jsp/jstl/text" %>
 <%@ taglib prefix="date" uri="http://java.longfalcon.net/jsp/jstl/date" %>
