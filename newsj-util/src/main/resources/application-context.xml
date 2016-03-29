@@ -181,6 +181,10 @@
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
 
+    <bean id="userCartDAO" class="net.longfalcon.newsj.persistence.hibernate.UserCartDAOImpl">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+
     <!-- Services -->
 
     <bean id="config" class="net.longfalcon.newsj.Config" init-method="init">
@@ -335,5 +339,8 @@
     <bean id="searchService" class="net.longfalcon.newsj.service.SearchService">
         <property name="releases" ref="releases"/>
         <property name="binaryDAO" ref="binaryDAO"/>
+    </bean>
+    <bean id="cartService" class="net.longfalcon.newsj.service.CartService">
+        <property name="userCartDAO" ref="userCartDAO"/>
     </bean>
 </beans>

@@ -61,6 +61,8 @@ public interface ReleaseDAO {
 
     List<Object[]> findRecentlyAddedReleaseCategories();
 
+    List<Release> findByGuids(String[] guids);
+
     List<Release> findReleasesBeforeDate(Date before);
 
     List<Release> findReleasesByNameAndDateRange(String relName, Date startDate, Date endDate);
