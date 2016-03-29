@@ -202,7 +202,11 @@ public class BaseController {
     }
 
     public String getPageMetaTitle() {
-        return title;
+        if (ValidatorUtil.isNull(this.pageMetaTitle)) {
+            return title;
+        } else {
+            return pageMetaTitle;
+        }
     }
 
     public void setPageMetaTitle(String pageMetaTitle) {

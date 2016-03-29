@@ -39,6 +39,10 @@
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
+    
+    <listener>
+        <listener-class>net.longfalcon.web.listener.ContextListener</listener-class>
+    </listener>
 
     <!-- SERVLETS -->
     <servlet>

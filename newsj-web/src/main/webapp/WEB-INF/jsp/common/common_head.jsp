@@ -47,7 +47,7 @@
 
 <script type="text/javascript">
     var WWW_TOP = "${pageContext.request.contextPath}";
-    var SERVERROOT = "${pageContext.request.requestURL}";
+    var SERVERROOT = "${pageContext.request.contextPath}";
     var UID = "${userId}";
     var RSSTOKEN = "${rssToken}";
 </script>

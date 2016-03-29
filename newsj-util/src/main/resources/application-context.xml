@@ -184,7 +184,12 @@
     <!-- Services -->
 
     <bean id="config" class="net.longfalcon.newsj.Config" init-method="init">
-        <property name="propertyLocations" value="classpath:config.api.properties,classpath:config.properties"/>
+        <property name="propertyLocations">
+            <list>
+                <value>classpath:config.api.properties</value>
+                <value>classpath:config.properties</value>
+            </list>
+        </property>
         <property name="siteDAO" ref="siteDAO"/>
     </bean>
 

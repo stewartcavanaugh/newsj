@@ -13,11 +13,17 @@ DO NOT USE. NON-FUNCTIONAL
 * security implementation: Spring Sec or port the original
 * regex submission
 * ReqId
-* remove TvRage support and replace with TVDB, etc.
-* move to templates/Tiles
+* Add TVDB as a backup for TVRage
+* move to templates/Tiles?
 
 ### ToDo list
 * IMDB/TMDB data fetch/add movie info
 * refactor "Rage" to "TVData" or similar
 * better image hosting/storage
 * manage release data integrity when deleting movie/music/game/tv infos
+* match nzb directory with legacy (or port/move legacy dir)
+
+### Bugs
+* NZB modal duplicate rendering 
+* Some release names with dashes are clipped
+* Possible NFO File encoding issues with legacy DBs
