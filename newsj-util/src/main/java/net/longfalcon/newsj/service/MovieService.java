@@ -43,9 +43,11 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * User: Sten Martinez
@@ -73,6 +75,37 @@ public class MovieService {
             TmdbMovieResults tmdbMovieResult = tmdbMovieResults.get(0);
 
         }
+    }
+
+    // TODO: move to genre table
+    public List<String> getGenres() {
+        return Arrays.asList(
+                "Action",
+                "Adventure",
+                "Animation",
+                "Biography",
+                "Comedy",
+                "Crime",
+                "Documentary",
+                "Drama",
+                "Family",
+                "Fantasy",
+                "Film-Noir",
+                "Game-Show",
+                "History",
+                "Horror",
+                "Music",
+                "Musical",
+                "Mystery",
+                "News",
+                "Reality-TV",
+                "Romance",
+                "Sci-Fi",
+                "Sport",
+                "Talk-Show",
+                "Thriller",
+                "War",
+                "Western");
     }
 
     @Transactional
@@ -189,6 +222,26 @@ public class MovieService {
         }
 
         movieInfoDAO.update(movieInfo);
+    }
+
+    public int getMovieCount(List<Category> searchCategories, int maxAgeDays, List<Integer> userExCatIds,
+                             String titleSearch, String genreSearch, String actorsSearch, String directorSearch, String yearSearch) {
+        List<Integer> categoryIds = searchCategories.stream().map(Category::getId).collect(Collectors.toList());
+        List<Long> imdbIds = releaseDAO.getDistinctImdbIds(categoryIds, maxAgeDays, userExCatIds);
+        long movieCount = movieInfoDAO.getMovieCount(imdbIds, titleSearch, genreSearch, actorsSearch, directorSearch, yearSearch);
+
+        return Math.toIntExact(movieCount);
+    }
+
+    public List<MovieInfo> getMovies(List<Category> searchCategories, int maxAgeDays, List<Integer> userExCatIds,
+                             String titleSearch, String genreSearch, String actorsSearch, String directorSearch, String yearSearch,
+                                     int offset, int pageSize, String orderByField, boolean descending) {
+        List<Integer> categoryIds = searchCategories.stream().map(Category::getId).collect(Collectors.toList());
+        List<Long> imdbIds = releaseDAO.getDistinctImdbIds(categoryIds, maxAgeDays, userExCatIds);
+        List<MovieInfo> movieInfoList = movieInfoDAO.getMovies(imdbIds, titleSearch, genreSearch, actorsSearch,
+                directorSearch, yearSearch, offset, pageSize, orderByField, descending);
+
+        return movieInfoList;
     }
 
     public ReleaseDAO getReleaseDAO() {

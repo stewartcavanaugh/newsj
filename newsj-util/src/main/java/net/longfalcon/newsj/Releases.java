@@ -110,6 +110,15 @@ public class Releases {
         return release;
     }
 
+    public List<Release> findByImdbId(int imdbId) {
+        List<Release> releases = releaseDAO.findByImdbId(imdbId);
+        for(Release release : releases) {
+            populateTransientFields(release);
+        }
+
+        return releases;
+    }
+
     public Long getBrowseCount(Collection<Integer> categoryIds, int maxAgeDays, List<Integer> excludedCategoryIds, long groupId) {
         Date maxAge = null;
         if (maxAgeDays > 0) {

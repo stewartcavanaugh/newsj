@@ -31,37 +31,31 @@ import java.util.List;
  */
 public interface ReleaseDAO {
 
+    Long countByCategoriesMaxAgeAndGroup(Collection<Integer> categoryIds, Date maxAge,
+                                         Collection<Integer> excludedCategoryIds, Long groupId);
+
     Long countByGroupId(long groupId);
 
     Long countReleasesByRegexId(long regexId);
 
-    Long countByCategoriesMaxAgeAndGroup(Collection<Integer> categoryIds, Date maxAge,
-                                         Collection<Integer> excludedCategoryIds, Long groupId);
+    void deleteByGroupId(long groupId);
+
+    void deleteRelease(Release release);
 
     List<Release> findByCategoriesMaxAgeAndGroup(Collection<Integer> categoryIds, Date maxAge,
                                                  Collection<Integer> excludedCategoryIds, Long groupId,
                                                  String orderByField, boolean descending,
                                                  int offset, int pageSize);
 
-    Long searchCountByCategoriesMaxAgeAndGroup(String[] searchTokens, Collection<Integer> categoryIds, Date maxAge,
-                                               Collection<Integer> excludedCategoryIds, Long groupId);
-
-    List<Release> searchByCategoriesMaxAgeAndGroup(String[] searchTokens, Collection<Integer> categoryIds, Date maxAge,
-                                                   Collection<Integer> excludedCategoryIds, Long groupId,
-                                                   String orderByField, boolean descending,
-                                                   int offset, int pageSize);
-
-    void deleteByGroupId(long groupId);
-
-    void deleteRelease(Release release);
-
     Release findByGuid(String guid);
+
+    List<Release> findByGuids(String[] guids);
 
     Release findByReleaseId(long releaseId);
 
     List<Object[]> findRecentlyAddedReleaseCategories();
 
-    List<Release> findByGuids(String[] guids);
+    List<Long> findReleaseGroupIds();
 
     List<Release> findReleasesBeforeDate(Date before);
 
@@ -79,13 +73,23 @@ public interface ReleaseDAO {
 
     List<Release> getReleases(int offset, int pageSize);
 
-    Long getReleasesCount();
-
     void resetReleaseTvRageId(long tvRageId);
 
-    void updateRelease(Release release);
+    List<Release> searchByCategoriesMaxAgeAndGroup(String[] searchTokens, Collection<Integer> categoryIds, Date maxAge,
+                                                   Collection<Integer> excludedCategoryIds, Long groupId,
+                                                   String orderByField, boolean descending,
+                                                   int offset, int pageSize);
+
+    Long searchCountByCategoriesMaxAgeAndGroup(String[] searchTokens, Collection<Integer> categoryIds, Date maxAge,
+                                               Collection<Integer> excludedCategoryIds, Long groupId);
 
     List<Release> searchReleasesByNameExludingCats(List<String> searchTokens, int limit, Collection<Integer> excludedCategoryIds);
 
-    List<Long> findReleaseGroupIds();
+    void updateRelease(Release release);
+
+    Long getReleasesCount();
+
+    List<Long> getDistinctImdbIds(List<Integer> searchCategories, int maxAgeDays, List<Integer> userExCatIds);
+
+    List<Release> findByImdbId(int imdbId);
 }
