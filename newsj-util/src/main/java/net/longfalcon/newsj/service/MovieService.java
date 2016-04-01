@@ -37,6 +37,7 @@ import net.longfalcon.newsj.ws.tmdb.TmdbFindResults;
 import net.longfalcon.newsj.ws.tmdb.TmdbMovieResults;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.joda.time.DateTime;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,6 +45,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -140,6 +142,13 @@ public class MovieService {
                         release.setImdbId(imdbId);
 
                         //check for existing movie entry
+                        MovieInfo movieInfo = movieInfoDAO.findByImdbId(imdbId);
+                        if (movieInfo == null) {
+                            movieInfo = fetchDataFromTmdb(imdbId);
+                            if (movieInfo != null) {
+                                movieInfoDAO.update(movieInfo);
+                            }
+                        }
                     } else {
                         //no imdb id found, set to all zeros so we dont process again
                         release.setImdbId(imdbId);
@@ -152,6 +161,32 @@ public class MovieService {
                 releaseDAO.updateRelease(release);
             }
         }
+    }
+
+    private MovieInfo fetchDataFromTmdb(int imdbId) {
+        MovieInfo movieInfo;
+        TmdbFindResults tmdbFindResults = tmdbService.findResultsByImdbId(imdbId);
+        List<TmdbMovieResults> movieResults = tmdbFindResults.getMovieResults();
+        if (movieResults != null && !movieResults.isEmpty()) {
+            TmdbMovieResults tmdbMovieResults = movieResults.get(0);
+            movieInfo = new MovieInfo();
+            movieInfo.setImdbId(imdbId);
+            movieInfo.setTitle(tmdbMovieResults.getTitle());
+            movieInfo.setPlot(tmdbMovieResults.getOverview());
+            movieInfo.setCreateDate(new Date());
+            Date releaseDate = tmdbMovieResults.getReleaseDate();
+            if (releaseDate != null) {
+                int year = new DateTime(releaseDate).getYear();
+                movieInfo.setYear(String.valueOf(year));
+            }
+            int rating = tmdbMovieResults.getVoteAverage().intValue();
+            movieInfo.setRating(String.valueOf(rating));
+            movieInfo.setLanguage(tmdbMovieResults.getOriginalLanguage());
+
+            return movieInfo;
+        }
+
+        return null;
     }
 
     private String parseMovieName(Release release) {
