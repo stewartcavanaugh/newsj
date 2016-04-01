@@ -406,6 +406,9 @@ ALTER TABLE `groups` CHANGE COLUMN `name` `name_` VARCHAR(255) NOT NULL DEFAULT 
 ALTER TABLE `parts` CHANGE COLUMN `number` `number_` BIGINT UNSIGNED NOT NULL DEFAULT '0';
 ALTER TABLE `parts` CHANGE COLUMN `size` `size_` BIGINT UNSIGNED NOT NULL DEFAULT '0';
 
+ALTER TABLE `movieinfo` CHANGE COLUMN `year` `year_` varchar(4) NOT NULL;
+ALTER TABLE `musicinfo` CHANGE COLUMN `year` `year_` varchar(4) NOT NULL;
+
 CREATE INDEX ix_releases_regexId ON releases (`regexID`);
 CREATE INDEX ix_releases_groupId on releases (`groupID`);
 

@@ -22,6 +22,7 @@ import net.longfalcon.newsj.fs.FileSystemService;
 import net.longfalcon.newsj.fs.model.Directory;
 import net.longfalcon.newsj.model.Binary;
 import net.longfalcon.newsj.model.Group;
+import net.longfalcon.newsj.model.MovieInfo;
 import net.longfalcon.newsj.model.Part;
 import net.longfalcon.newsj.model.Release;
 import net.longfalcon.newsj.model.ReleaseNfo;
@@ -31,6 +32,7 @@ import net.longfalcon.newsj.persistence.BinaryDAO;
 import net.longfalcon.newsj.persistence.GroupDAO;
 import net.longfalcon.newsj.persistence.PartDAO;
 import net.longfalcon.newsj.persistence.ReleaseNfoDAO;
+import net.longfalcon.newsj.service.MovieService;
 import net.longfalcon.newsj.util.ParseUtil;
 import net.longfalcon.newsj.util.StreamUtil;
 import net.longfalcon.newsj.util.ValidatorUtil;
@@ -64,6 +66,7 @@ public class Nfo {
     private GroupDAO groupDAO;
     private PartDAO partDAO;
     private ReleaseNfoDAO releaseNfoDAO;
+    private MovieService movieService;
     private NntpConnectionFactory nntpConnectionFactory;
     private FileSystemService fileSystemService;
 
@@ -114,10 +117,14 @@ public class Nfo {
                     // check imdb/movie
                     String imdbString = ParseUtil.parseImdb(nfoText);
                     if (ValidatorUtil.isNotNull(imdbString) && ValidatorUtil.isNumeric(imdbString)) {
-                        releaseNfo.getRelease().setImdbId(Integer.parseInt(imdbString));
+                        int imdbId = Integer.parseInt(imdbString);
+                        releaseNfo.getRelease().setImdbId(imdbId);
 
                         if (lookupImdb == 1) {
-                            // update movie info TODO
+                            MovieInfo movieInfo = movieService.getMovieInfo(imdbId);
+                            if (movieInfo == null) {
+                                movieService.addMovieInfo(imdbId);
+                            }
                         }
                     }
 

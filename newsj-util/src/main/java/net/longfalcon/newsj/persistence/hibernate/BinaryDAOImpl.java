@@ -287,7 +287,7 @@ public class BinaryDAOImpl extends HibernateDAOImpl implements net.longfalcon.ne
         if (searchTokens != null && searchTokens.length > 0) {
             Conjunction searchTokensOr = Restrictions.conjunction();
             for (String searchToken : searchTokens) {
-                searchTokensOr.add(Restrictions.like("name", searchToken.trim(), MatchMode.ANYWHERE));
+                searchTokensOr.add(Restrictions.ilike("name", searchToken.trim(), MatchMode.ANYWHERE));
             }
             criteria.add(searchTokensOr);
         }

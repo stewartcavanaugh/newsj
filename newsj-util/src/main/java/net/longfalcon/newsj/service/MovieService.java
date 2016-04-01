@@ -35,6 +35,7 @@ import net.longfalcon.newsj.ws.google.GoogleSearchResponse;
 import net.longfalcon.newsj.ws.google.GoogleSearchResult;
 import net.longfalcon.newsj.ws.tmdb.TmdbFindResults;
 import net.longfalcon.newsj.ws.tmdb.TmdbMovieResults;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.joda.time.DateTime;
@@ -71,12 +72,17 @@ public class MovieService {
         _log.info("fetching movie info from tmdb - " + imdbId);
 
         // check themoviedb for movie info
-        TmdbFindResults tmdbFindResults = tmdbService.findResultsByImdbId(imdbId);
-        List<TmdbMovieResults> tmdbMovieResults = tmdbFindResults.getMovieResults();
-        if (tmdbMovieResults != null && !tmdbMovieResults.isEmpty()) {
-            TmdbMovieResults tmdbMovieResult = tmdbMovieResults.get(0);
-
+        MovieInfo movieInfo = fetchDataFromTmdb(imdbId);
+        if (movieInfo != null) {
+            movieInfoDAO.update(movieInfo);
+            _log.info("Added Movie " + movieInfo.getTitle());
+        } else {
+            _log.warn("Unable to locate movie with imdb id " + imdbId);
         }
+    }
+
+    public MovieInfo getMovieInfo(int imdbId) {
+        return movieInfoDAO.findByImdbId(imdbId);
     }
 
     // TODO: move to genre table
@@ -165,15 +171,19 @@ public class MovieService {
 
     private MovieInfo fetchDataFromTmdb(int imdbId) {
         MovieInfo movieInfo;
+        _log.info("querying TMDB for imdbId " + imdbId);
         TmdbFindResults tmdbFindResults = tmdbService.findResultsByImdbId(imdbId);
         List<TmdbMovieResults> movieResults = tmdbFindResults.getMovieResults();
+        _log.info("TMDB returned " + movieResults.size() + " results");
         if (movieResults != null && !movieResults.isEmpty()) {
             TmdbMovieResults tmdbMovieResults = movieResults.get(0);
             movieInfo = new MovieInfo();
             movieInfo.setImdbId(imdbId);
+            movieInfo.setTmdbId(tmdbMovieResults.getId());
             movieInfo.setTitle(tmdbMovieResults.getTitle());
-            movieInfo.setPlot(tmdbMovieResults.getOverview());
+            movieInfo.setPlot(StringUtils.abbreviate(tmdbMovieResults.getOverview(), 255));
             movieInfo.setCreateDate(new Date());
+            movieInfo.setUpdateDate(new Date());
             Date releaseDate = tmdbMovieResults.getReleaseDate();
             if (releaseDate != null) {
                 int year = new DateTime(releaseDate).getYear();
@@ -182,6 +192,12 @@ public class MovieService {
             int rating = tmdbMovieResults.getVoteAverage().intValue();
             movieInfo.setRating(String.valueOf(rating));
             movieInfo.setLanguage(tmdbMovieResults.getOriginalLanguage());
+            movieInfo.setTagline("");
+            movieInfo.setBackdrop(false);
+            movieInfo.setCover(false);
+            movieInfo.setActors("");
+            movieInfo.setDirector("");
+            movieInfo.setGenre("");
 
             return movieInfo;
         }
@@ -317,5 +333,13 @@ public class MovieService {
 
     public void setMovieInfoDAO(MovieInfoDAO movieInfoDAO) {
         this.movieInfoDAO = movieInfoDAO;
+    }
+
+    public TmdbService getTmdbService() {
+        return tmdbService;
+    }
+
+    public void setTmdbService(TmdbService tmdbService) {
+        this.tmdbService = tmdbService;
     }
 }

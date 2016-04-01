@@ -289,6 +289,7 @@
         <property name="releaseDAO" ref="releaseDAO"/>
         <property name="movieInfoDAO" ref="movieInfoDAO"/>
         <property name="fileSystemService" ref="fileSystemService"/>
+        <property name="tmdbService" ref="tmdbService"/>
     </bean>
     <bean id="games" class="net.longfalcon.newsj.service.GameService">
         <property name="genreDAO" ref="genreDAO"/>

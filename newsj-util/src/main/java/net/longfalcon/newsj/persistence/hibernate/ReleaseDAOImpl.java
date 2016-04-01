@@ -289,7 +289,7 @@ public class ReleaseDAOImpl extends HibernateDAOImpl implements net.longfalcon.n
         if (searchTokens != null && searchTokens.length > 0) {
             Conjunction searchTokensOr = Restrictions.conjunction();
             for (String searchToken : searchTokens) {
-                searchTokensOr.add(Restrictions.like("searchName", searchToken.trim(), MatchMode.ANYWHERE));
+                searchTokensOr.add(Restrictions.ilike("searchName", searchToken.trim(), MatchMode.ANYWHERE));
             }
             criteria.add(searchTokensOr);
         }
@@ -326,7 +326,7 @@ public class ReleaseDAOImpl extends HibernateDAOImpl implements net.longfalcon.n
         if (searchTokens != null && searchTokens.length > 0) {
             Conjunction searchTokensOr = Restrictions.conjunction();
             for (String searchToken : searchTokens) {
-                searchTokensOr.add(Restrictions.like("searchName", searchToken.trim(), MatchMode.ANYWHERE));
+                searchTokensOr.add(Restrictions.ilike("searchName", searchToken.trim(), MatchMode.ANYWHERE));
             }
             criteria.add(searchTokensOr);
         }
@@ -356,7 +356,7 @@ public class ReleaseDAOImpl extends HibernateDAOImpl implements net.longfalcon.n
         if (!searchTokens.isEmpty()) {
             Disjunction searchOr = Restrictions.disjunction();
             for (String searchToken : searchTokens) {
-                searchOr.add(Restrictions.like("searchName", searchToken, MatchMode.ANYWHERE));
+                searchOr.add(Restrictions.ilike("searchName", searchToken, MatchMode.ANYWHERE));
             }
             criteria.add(searchOr);
         }

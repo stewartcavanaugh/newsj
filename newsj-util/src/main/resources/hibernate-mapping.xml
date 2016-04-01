@@ -212,7 +212,7 @@
         <property name="tagline" column="tagline"/>
         <property name="rating" column="rating"/>
         <property name="plot" column="plot"/>
-        <property name="year" column="year"/>
+        <property name="year" column="year_"/>
         <property name="genre" column="genre"/>
         <property name="director" column="director"/>
         <property name="actors" column="actors"/>
@@ -239,7 +239,7 @@
         <property name="publisher" column="publisher"/>
         <property name="releaseDate" column="releasedate"/>
         <property name="review" column="review"/>
-        <property name="year" column="year"/>
+        <property name="year" column="year_"/>
         <property name="genreId" column="genreID"/>
         <property name="tracks" column="tracks"/>
         <property name="cover" column="cover"/>
