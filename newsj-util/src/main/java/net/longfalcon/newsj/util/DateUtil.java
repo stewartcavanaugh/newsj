@@ -24,6 +24,8 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -47,7 +49,9 @@ public class DateUtil {
             "E, dd MMM yyyy HH:mm:ss z",
             "dd MMM yyyy HH:mm:ss Z",
             "dd MMM yyyy HH:mm:ss z",
-            "E, dd MMM yyyy HH:mm:ss Z (z)"
+            "E, dd MMM yyyy HH:mm:ss Z (z)",
+            "dd MMM yy HH:mm z",
+            "dd MMM yy HH:mm Z"
     };
 
     public static DateTime parseNNTPDate(String dateString) {
@@ -65,6 +69,18 @@ public class DateUtil {
                 DateTimeFormatter fmt = DateTimeFormat.forPattern(_dateFormats[i]);
                 dateTime = fmt.parseDateTime(dateString);
             } catch (IllegalArgumentException e) {
+                // do nothing
+            }
+            i++;
+        }
+
+        i = 0;
+        while(dateTime == null && i < _dateFormats.length) {
+            try {
+                DateFormat javaFormatter = new SimpleDateFormat(_dateFormats[i]);
+                Date date = javaFormatter.parse(dateString);
+                dateTime = new DateTime(date);
+            } catch (Exception e) {
                 // do nothing
             }
             i++;
