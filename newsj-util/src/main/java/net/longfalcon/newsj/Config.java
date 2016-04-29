@@ -100,7 +100,15 @@ public class Config {
     }
 
     public String getTmdbApiUrl() {
-        return properties.getProperty(PropsKeys.TMDB_API_KEY);
+        return properties.getProperty(PropsKeys.TMDB_API_URL);
+    }
+
+    public String getTraktApiUrl() {
+        return properties.getProperty(PropsKeys.TRAKT_API_URL);
+    }
+
+    public String getTraktAppId() {
+        return properties.getProperty(PropsKeys.TRAKT_API_APP_ID);
     }
 
     public int getYear() {

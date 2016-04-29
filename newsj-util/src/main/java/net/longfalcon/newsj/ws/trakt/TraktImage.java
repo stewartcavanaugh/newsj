@@ -16,21 +16,39 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package net.longfalcon.newsj;
+package net.longfalcon.newsj.ws.trakt;
 
 /**
  * User: Sten Martinez
- * Date: 10/6/15
- * Time: 8:19 AM
+ * Date: 4/28/16
+ * Time: 5:37 PM
  */
-public class PropsKeys {
-    public static final String NNTP_USERNAME = "newsj.nntp.username";
-    public static final String NNTP_PASSWORD = "newsj.nntp.password";
-    public static final String NNTP_SERVER = "newsj.nntp.server";
-    public static final String NNTP_PORT = "newsj.nntp.port";
-    public static final String NNTP_SSLENABLED = "newsj.nntp.ssl.enabled";
-    public static final String TMDB_API_URL = "newsj.tmdb.url";
-    public static final String IMDB_API_URL = "newsj.imdb.url";
-    public static final String TRAKT_API_URL = "newsj.trakt.url";
-    public static final String TRAKT_API_APP_ID = "newsj.trakt.appId";
+public class TraktImage {
+    private String full;
+    private String medium;
+    private String thumb;
+
+    public String getFull() {
+        return full;
+    }
+
+    public void setFull(String full) {
+        this.full = full;
+    }
+
+    public String getMedium() {
+        return medium;
+    }
+
+    public void setMedium(String medium) {
+        this.medium = medium;
+    }
+
+    public String getThumb() {
+        return thumb;
+    }
+
+    public void setThumb(String thumb) {
+        this.thumb = thumb;
+    }
 }

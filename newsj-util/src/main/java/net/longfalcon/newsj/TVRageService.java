@@ -24,9 +24,11 @@ import net.longfalcon.newsj.model.TvRage;
 import net.longfalcon.newsj.persistence.CategoryDAO;
 import net.longfalcon.newsj.persistence.ReleaseDAO;
 import net.longfalcon.newsj.persistence.TvRageDAO;
+import net.longfalcon.newsj.service.TraktService;
 import net.longfalcon.newsj.util.ArrayUtil;
 import net.longfalcon.newsj.util.DateUtil;
 import net.longfalcon.newsj.util.ValidatorUtil;
+import net.longfalcon.newsj.ws.trakt.TraktResult;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.joda.time.DateTime;
@@ -51,6 +53,8 @@ public class TVRageService {
     private ReleaseDAO releaseDAO;
     private CategoryDAO categoryDAO;
     private TvRageDAO tvRageDAO;
+
+    private TraktService traktService;
 
     public void processTvReleases(boolean lookupTvRage) {
         List<Category> movieCats = categoryDAO.findByParentId(CategoryService.CAT_PARENT_TV);
@@ -82,7 +86,7 @@ public class TVRageService {
                         _log.debug("didnt find rageid for \""+showInfo.getCleanName()+"\" in local db, checking web...");
                     }
 
-                    //rageId = getRageMatch(showInfo);
+                    rageId = getRageMatch(showInfo);
                     if (rageId > 0) {
                         //updateRageInfo(rageId, showInfo, release);
                     } else {
@@ -108,6 +112,12 @@ public class TVRageService {
 
             releaseDAO.updateRelease(release);
         }
+    }
+
+    private long getRageMatch(ShowInfo showInfo) {
+        TraktResult[] traktResults = traktService.searchTvShowByName(showInfo.getCleanName());
+
+        return 0;
     }
 
     private long getByTitle(String cleanName) {
@@ -401,6 +411,14 @@ public class TVRageService {
 
     public void setTvRageDAO(TvRageDAO tvRageDAO) {
         this.tvRageDAO = tvRageDAO;
+    }
+
+    public TraktService getTraktService() {
+        return traktService;
+    }
+
+    public void setTraktService(TraktService traktService) {
+        this.traktService = traktService;
     }
 
     private class ShowInfo{

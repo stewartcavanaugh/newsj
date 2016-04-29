@@ -304,6 +304,7 @@
         <property name="categoryDAO" ref="categoryDAO"/>
         <property name="releaseDAO" ref="releaseDAO"/>
         <property name="tvRageDAO" ref="tvRageDAO"/>
+        <property name="traktService" ref="traktService"/>
     </bean>
     <bean id="regexService" class="net.longfalcon.newsj.service.RegexService"/>
     <bean id="googleSearchService" class="net.longfalcon.newsj.service.GoogleSearchService">
@@ -343,5 +344,9 @@
     </bean>
     <bean id="cartService" class="net.longfalcon.newsj.service.CartService">
         <property name="userCartDAO" ref="userCartDAO"/>
+    </bean>
+    <bean id="traktService" class="net.longfalcon.newsj.service.TraktService">
+        <property name="config" ref="config"/>
+        <property name="restTemplate" ref="restTemplate"/>
     </bean>
 </beans>
