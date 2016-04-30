@@ -251,6 +251,10 @@ public class Backfill {
                 _log.info("Set interval to " + interval + " articles.");
             }
 
+            if (interval == 1) {
+                break;
+            }
+
             dateOfNextOne = postDate(nntpClient, upperBound-1, true);
             while (dateOfNextOne == null) {
                 dateOfNextOne = postDate(nntpClient, upperBound--, true);

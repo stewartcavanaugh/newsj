@@ -329,6 +329,7 @@
     <bean id="groupService" class="net.longfalcon.newsj.service.GroupService">
         <property name="groupDAO" ref="groupDAO"/>
         <property name="releaseDAO" ref="releaseDAO"/>
+        <property name="binaryDAO" ref="binaryDAO"/>
     </bean>
     <bean id="tmdbService" class="net.longfalcon.newsj.service.TmdbService">
         <property name="config" ref="config"/>

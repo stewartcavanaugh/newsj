@@ -18,7 +18,10 @@
 
 package net.longfalcon.newsj.ws.trakt;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.util.Date;
 
 /**
  * User: Sten Martinez
@@ -30,6 +33,18 @@ public class TraktEpisodeResult {
     private String overview;
     private int season;
     private int number;
+    @JsonProperty("number_abs")
+    private int numberAbs;
+    private float rating;
+    private int votes;
+    @JsonProperty("first_aired")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSX")
+    private Date firstAired;
+    @JsonProperty("updated_at")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSX")
+    private Date updatedAt;
+    @JsonProperty("available_translations")
+    private Object availableTranslations;
     @JsonProperty("images")
     private TraktImages traktImages;
     private TraktIdSet ids;
@@ -80,5 +95,53 @@ public class TraktEpisodeResult {
 
     public void setIds(TraktIdSet ids) {
         this.ids = ids;
+    }
+
+    public int getNumberAbs() {
+        return numberAbs;
+    }
+
+    public void setNumberAbs(int numberAbs) {
+        this.numberAbs = numberAbs;
+    }
+
+    public float getRating() {
+        return rating;
+    }
+
+    public void setRating(float rating) {
+        this.rating = rating;
+    }
+
+    public int getVotes() {
+        return votes;
+    }
+
+    public void setVotes(int votes) {
+        this.votes = votes;
+    }
+
+    public Date getFirstAired() {
+        return firstAired;
+    }
+
+    public void setFirstAired(Date firstAired) {
+        this.firstAired = firstAired;
+    }
+
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public Object getAvailableTranslations() {
+        return availableTranslations;
+    }
+
+    public void setAvailableTranslations(Object availableTranslations) {
+        this.availableTranslations = availableTranslations;
     }
 }

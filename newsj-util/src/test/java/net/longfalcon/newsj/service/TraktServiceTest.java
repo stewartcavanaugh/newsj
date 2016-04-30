@@ -19,11 +19,12 @@
 package net.longfalcon.newsj.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import net.longfalcon.newsj.test.BaseFsTestSupport;
+import net.longfalcon.newsj.ws.trakt.TraktEpisodeResult;
 import net.longfalcon.newsj.ws.trakt.TraktResult;
 import org.junit.Assert;
 import org.junit.Test;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.InputStream;
 
@@ -32,9 +33,10 @@ import java.io.InputStream;
  * Date: 4/28/16
  * Time: 5:27 PM
  */
-public class TraktServiceTest {
+public class TraktServiceTest extends BaseFsTestSupport {
 
-    private TraktService traktService;
+    @Autowired
+    TraktService traktService;
 
     @Test
     public void testGetResultsObject() throws Exception {
@@ -44,26 +46,29 @@ public class TraktServiceTest {
         Assert.assertTrue(results[0].getScore() > 50);
     }
 
-    //@Test
+    @Test
+    public void testGetEpisodeObject() throws Exception {
+        InputStream testJsonFileStream = this.getClass().getClassLoader().getResourceAsStream("trakt-get-episode-extended-response.json");
+        ObjectMapper mapper = new ObjectMapper();
+        TraktEpisodeResult result = mapper.readValue(testJsonFileStream, TraktEpisodeResult.class);
+        Assert.assertEquals("Winter Is Coming", result.getTitle());
+    }
+
+    @Test
     public void testSearchByRageId() throws Exception {
         TraktResult[] traktResults = traktService.searchByRageId(3506);
-        System.out.println(traktResults[0].getShowResult().getTitle());
+        Assert.assertEquals("Family Guy", traktResults[0].getShowResult().getTitle());
     }
 
-    //@Test
+    @Test
     public void testSearchMovieByName() throws Exception {
-
+        TraktResult[] traktResults = traktService.searchMovieByName("life of brian");
+        Assert.assertEquals("Life of Brian", traktResults[0].getMovieResult().getTitle());
     }
 
-    //@Test
+    @Test
     public void testSearchTvShowByName() throws Exception {
-
-    }
-
-    //@Before
-    public void setUp() throws Exception {
-        ApplicationContext context =
-                new ClassPathXmlApplicationContext(new String[] {"application-context.xml"});
-        traktService = (TraktService) context.getBean("traktService");
+        TraktResult[] traktResults = traktService.searchTvShowByName("family guy");
+        Assert.assertEquals("Family Guy", traktResults[0].getShowResult().getTitle());
     }
 }

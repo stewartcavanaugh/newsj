@@ -19,6 +19,7 @@
 package net.longfalcon.newsj.service;
 
 import net.longfalcon.newsj.Config;
+import net.longfalcon.newsj.ws.trakt.TraktEpisodeResult;
 import net.longfalcon.newsj.ws.trakt.TraktResult;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -112,6 +113,34 @@ public class TraktService {
             UriComponents uriComponents = UriComponentsBuilder.fromUriString(traktApiUrl + "/search")
                     .queryParam("query", name).queryParam("type", type).build();
             ResponseEntity<TraktResult[]> responseEntity = restTemplate.exchange(uriComponents.toUri(), HttpMethod.GET, requestEntity, TraktResult[].class);
+            HttpStatus statusCode = responseEntity.getStatusCode();
+            if (statusCode.is2xxSuccessful() || statusCode.is3xxRedirection()) {
+                return responseEntity.getBody();
+            } else {
+                _log.error(String.format("Trakt Search request: \n%s\n failed with HTTP code %s : %s", uriComponents.toString(), statusCode.toString(), statusCode.getReasonPhrase()));
+                return null;
+            }
+
+        } catch (Exception e) {
+            _log.error(e.toString(), e);
+        }
+        return null;
+    }
+
+    public TraktEpisodeResult getEpisode(long traktId, int season, int episode) {
+        try {
+            String traktApiUrl = config.getTraktApiUrl();
+            String traktAppId = config.getTraktAppId();
+
+            HttpHeaders httpHeaders = new HttpHeaders();
+            httpHeaders.set("Content-type", "application/json");
+            httpHeaders.set("trakt-api-key", traktAppId);
+            httpHeaders.set("trakt-api-version", "2");
+            HttpEntity<?> requestEntity = new HttpEntity(httpHeaders);
+
+            UriComponents uriComponents = UriComponentsBuilder.fromUriString(traktApiUrl + "/shows/" + traktId + "/seasons/" + season + "/episodes/" + episode)
+                    .queryParam("extended", "full").build();
+            ResponseEntity<TraktEpisodeResult> responseEntity = restTemplate.exchange(uriComponents.toUri(), HttpMethod.GET, requestEntity, TraktEpisodeResult.class);
             HttpStatus statusCode = responseEntity.getStatusCode();
             if (statusCode.is2xxSuccessful() || statusCode.is3xxRedirection()) {
                 return responseEntity.getBody();
