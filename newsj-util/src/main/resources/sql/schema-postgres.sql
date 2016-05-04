@@ -675,6 +675,11 @@ CREATE INDEX "IX_BINARY_DATE" ON "BINARIES" ("DATE_");
 
 CREATE INDEX "IX_PARTS_NUMBER" ON "PARTS" ("NUMBER_");
 --------------------------------------------------------
+--  DDL for Index IX_PARTS_MESSAGEID
+--------------------------------------------------------
+
+CREATE INDEX "IX_PARTS_MESSAGEID" ON "PARTS" ("MESSAGEID");
+--------------------------------------------------------
 --  DDL for Index IX_RELEASES_ADDDATE
 --------------------------------------------------------
 
@@ -689,6 +694,11 @@ CREATE INDEX "IX_RELEASES_REGEXID" ON "RELEASES" ("REGEXID");
 --------------------------------------------------------
 
 CREATE INDEX "IX_RELEASES_GROUPID" ON "RELEASES" ("GROUPID");
+--------------------------------------------------------
+--  DDL for Index IX_TVRAGE_TRAKTID
+--------------------------------------------------------
+
+CREATE INDEX "IX_TVRAGE_TRAKTID" ON "TVRAGE" ("TRAKTID");
 --------------------------------------------------------
 --  Constraints for Table FORUMPOST
 --------------------------------------------------------
