@@ -48,7 +48,7 @@ public class MusicInfoDAOImpl extends HibernateDAOImpl implements MusicInfoDAO {
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
     public Long countMusicInfos() {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(MusicInfo.class);
         criteria.setProjection(Projections.rowCount());
@@ -57,7 +57,7 @@ public class MusicInfoDAOImpl extends HibernateDAOImpl implements MusicInfoDAO {
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
     public List<MusicInfo> getMusicInfos(int offset, int pageSize) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(MusicInfo.class);
         criteria.setFirstResult(offset).setMaxResults(pageSize);
@@ -66,7 +66,7 @@ public class MusicInfoDAOImpl extends HibernateDAOImpl implements MusicInfoDAO {
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
     public MusicInfo findByMusicInfoId(long id) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(MusicInfo.class);
         criteria.add(Restrictions.eq("id", id));

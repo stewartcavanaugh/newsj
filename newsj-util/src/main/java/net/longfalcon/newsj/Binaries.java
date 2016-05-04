@@ -253,6 +253,14 @@ public class Binaries {
                 }
 
                 DateTime lastRecordPostDate = backfill.postDate(nntpClient, lastArticle, false);
+                // DEBUG REMOVE
+                if (lastRecordPostDate == null) {
+                    _log.error("retrying backfill.postDate(nntpClient, " + lastArticle + ", true)");
+                    lastRecordPostDate = backfill.postDate(nntpClient, lastArticle, true);
+                    if (lastRecordPostDate == null) {
+                        lastRecordPostDate = new DateTime();
+                    }
+                }
                 group.setLastRecordPostdate(lastRecordPostDate.toDate());
                 group.setLastUpdated(new Date());
                 updateGroupModel(group);
@@ -316,6 +324,7 @@ public class Binaries {
 
                         //article was added, delete from partrepair
                         // May need to be stored for later to prevent modification
+                        _log.info("part " + part.getNumber() + " successfully added");
                         partRepairDAO.deletePartRepair(partRepair);
                     } else {
                         partsFailed++;
@@ -323,6 +332,7 @@ public class Binaries {
                         //article was not added, increment attempts
                         int attempts = partRepair.getAttempts();
                         partRepair.setAttempts(attempts+1);
+                        _log.info("part " + partRepair.getNumberId() + " was not added");
                         partRepairDAO.updatePartRepair(partRepair);
                     }
                 }

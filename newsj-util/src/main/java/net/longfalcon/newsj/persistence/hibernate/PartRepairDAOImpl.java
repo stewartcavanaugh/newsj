@@ -57,9 +57,8 @@ public class PartRepairDAOImpl extends HibernateDAOImpl implements net.longfalco
     public PartRepair findByArticleNumberAndGroupId(long articleNumber, long groupId) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(PartRepair.class)
                 .add(Restrictions.eq("numberId", articleNumber))
-                .add(Restrictions.eq("groupId", articleNumber));
-        List results = criteria.list();
-        return results.size() > 0 ? (PartRepair) results.get(0) : null;
+                .add(Restrictions.eq("groupId", groupId));
+        return (PartRepair) criteria.uniqueResult();
     }
 
     /**

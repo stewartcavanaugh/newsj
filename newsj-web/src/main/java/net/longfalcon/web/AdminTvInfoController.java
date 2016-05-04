@@ -91,7 +91,7 @@ public class AdminTvInfoController extends BaseController {
                                  Model model) throws NoSuchResourceException {
         TvRage tvRage;
         if (id != null && id > 0) {
-            tvRage = tvRageDAO.findByTvRageId(id);
+            tvRage = tvRageDAO.findById(id);
             if (tvRage == null) {
                 throw new NoSuchResourceException();
             }
@@ -136,7 +136,7 @@ public class AdminTvInfoController extends BaseController {
 
     @RequestMapping(value = "/admin/rage-delete", method = RequestMethod.POST)
     public View deleteTvInfoPost(@RequestParam("id") long id) throws NoSuchResourceException {
-        TvRage tvRage = tvRageDAO.findByTvRageId(id);
+        TvRage tvRage = tvRageDAO.findById(id);
         if (tvRage == null) {
             throw new NoSuchResourceException();
         }
@@ -148,7 +148,7 @@ public class AdminTvInfoController extends BaseController {
 
     @RequestMapping(value = "/admin/rage-remove", method = RequestMethod.POST)
     public View removeTvInfoPost(@RequestParam("id") long id) throws NoSuchResourceException {
-        TvRage tvRage = tvRageDAO.findByTvRageId(id);
+        TvRage tvRage = tvRageDAO.findById(id);
         if (tvRage == null) {
             throw new NoSuchResourceException();
         }

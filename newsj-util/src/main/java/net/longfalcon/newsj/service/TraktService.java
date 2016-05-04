@@ -29,6 +29,8 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -39,6 +41,7 @@ import org.springframework.web.util.UriComponentsBuilder;
  * Time: 2:25 PM
  */
 @Service
+@Transactional(readOnly = true, propagation = Propagation.NOT_SUPPORTED)
 public class TraktService {
 
     private static final Log _log = LogFactory.getLog(TraktService.class);
@@ -57,6 +60,14 @@ public class TraktService {
 
     public TraktResult[] searchByRageId(long rageId) {
         return searchById(String.valueOf(rageId), "tvrage");
+    }
+
+    public TraktResult[] searchShowByTraktId(long traktId) {
+        return searchById(String.valueOf(traktId), "trakt-show");
+    }
+
+    public TraktResult[] searchEpisodeByTraktId(long traktId) {
+        return searchById(String.valueOf(traktId), "trakt-episode");
     }
 
     /**

@@ -42,4 +42,6 @@ public interface PartDAO {
     Long sumPartsSizeByBinaryId(long binaryId);
 
     List<Part> findByNumberAndBinaryIds(long number, List<Long> binaryIds);
+
+    List<Object[]> findDistinctMessageIdSizeAndPartNumberByBinaryId(long binaryId);
 }

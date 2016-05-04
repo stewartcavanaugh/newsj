@@ -75,7 +75,7 @@ public class ImagesController {
                                                         @RequestParam(value = "id") int id) throws IOException {
 
         if (type.toLowerCase().equals("tvrage")) {
-            TvRage tvRage = tvRageDAO.findByTvRageId(id);
+            TvRage tvRage = tvRageDAO.findById(id);
             if (tvRage != null) {
                 ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(tvRage.getImgData());
                 return new ResponseEntity<>(new InputStreamResource(byteArrayInputStream), HttpStatus.OK);

@@ -409,8 +409,12 @@ ALTER TABLE `parts` CHANGE COLUMN `size` `size_` BIGINT UNSIGNED NOT NULL DEFAUL
 ALTER TABLE `movieinfo` CHANGE COLUMN `year` `year_` varchar(4) NOT NULL;
 ALTER TABLE `musicinfo` CHANGE COLUMN `year` `year_` varchar(4) NOT NULL;
 
+ALTER TABLE `tvrage` ADD COLUMN `traktid` INT NOT NULL DEFAULT 0;
+
 CREATE INDEX ix_releases_regexId ON releases (`regexID`);
 CREATE INDEX ix_releases_groupId on releases (`groupID`);
+CREATE INDEX ix_parts_messageId on parts (`messageID`);
+CREATE INDEX ix_tvrage_traktId on tvrage (`traktid`);
 
 -- TODO: verify this works
 -- makes "rageId" EVERYWHERE BUT TVRAGE represent a "tvinfo" id, not a TvRage id specific to the TvRage site

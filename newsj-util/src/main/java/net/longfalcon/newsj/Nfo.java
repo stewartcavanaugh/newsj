@@ -75,7 +75,7 @@ public class Nfo {
      * @param release
      * @return
      */
-    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS, isolation = Isolation.READ_UNCOMMITTED)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS, isolation = Isolation.REPEATABLE_READ)
     public ReleaseNfo determineReleaseNfo(Release release) {
         Pattern nfoPattern = Pattern.compile(".*\\.nfo[ \"\\)\\]\\-]?.*", Pattern.CASE_INSENSITIVE);
 
@@ -161,35 +161,30 @@ public class Nfo {
         }
         String nfo;
         List<Part> partList = partDAO.findPartsByBinaryId(binary.getId());
-        if (partList.size() > 1) {
-            _log.error("NFO is more than one part, skipping " + binary.getName());
-            return null;
-        } else {
-            try {
-                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                Directory tempDir = fileSystemService.getDirectory("/temp");
-                File tempFile = tempDir.getTempFile(String.valueOf(System.currentTimeMillis()));
-                for (Part part : partList) {
-                    BufferedReader bufferedReader = newsClient.retrieveArticleBody(part.getNumber());
-                    if (bufferedReader != null) {
-                        YDecoder.decode(bufferedReader, tempFile);
-                    } else {
-                        return null;
-                    }
+        try {
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            Directory tempDir = fileSystemService.getDirectory("/temp");
+            File tempFile = tempDir.getTempFile(String.valueOf(System.currentTimeMillis()));
+            for (Part part : partList) {
+                BufferedReader bufferedReader = newsClient.retrieveArticleBody(part.getNumber());
+                if (bufferedReader != null) {
+                    YDecoder.decode(bufferedReader, tempFile);
+                } else {
+                    return null;
                 }
-
-                FileReader fileReader = new FileReader(tempFile);
-                String enc = fileReader.getEncoding();
-                InputStream inputStream = new FileInputStream(tempFile);
-                StreamUtil.transferByteArray(inputStream, byteArrayOutputStream, 1024);
-                nfo = byteArrayOutputStream.toString(enc);
-
-
-            } catch (IOException e) {
-                _log.error(e);
-                return null;
             }
+
+            FileReader fileReader = new FileReader(tempFile);
+            String enc = fileReader.getEncoding();
+            InputStream inputStream = new FileInputStream(tempFile);
+            StreamUtil.transferByteArray(inputStream, byteArrayOutputStream, 1024);
+            nfo = byteArrayOutputStream.toString(enc);
+
+        } catch (IOException e) {
+            _log.error(e);
+            return null;
         }
+
 
         return nfo;
     }
@@ -240,5 +235,13 @@ public class Nfo {
 
     public void setGroupDAO(GroupDAO groupDAO) {
         this.groupDAO = groupDAO;
+    }
+
+    public MovieService getMovieService() {
+        return movieService;
+    }
+
+    public void setMovieService(MovieService movieService) {
+        this.movieService = movieService;
     }
 }

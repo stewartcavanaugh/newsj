@@ -39,7 +39,7 @@ import java.util.List;
 public class ReleaseCommentDAOImpl extends HibernateDAOImpl implements ReleaseCommentDAO {
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
     public Long countReleaseComments() {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ReleaseComment.class);
         criteria.setProjection(Projections.count("id"));
@@ -54,7 +54,7 @@ public class ReleaseCommentDAOImpl extends HibernateDAOImpl implements ReleaseCo
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
     public ReleaseComment findByReleaseCommentId(long id) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ReleaseComment.class);
         criteria.add(Restrictions.eq("id", id));
@@ -65,7 +65,7 @@ public class ReleaseCommentDAOImpl extends HibernateDAOImpl implements ReleaseCo
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
     public List<ReleaseComment> findByReleaseId(long releaseId) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ReleaseComment.class);
         criteria.add(Restrictions.eq("release.id", releaseId));
@@ -77,7 +77,7 @@ public class ReleaseCommentDAOImpl extends HibernateDAOImpl implements ReleaseCo
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
     public List<ReleaseComment> getReleaseComments(int start, int pageSize) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ReleaseComment.class);
         criteria.setFirstResult(start).setMaxResults(pageSize);

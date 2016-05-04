@@ -29,6 +29,7 @@ public class TvRage {
     private long id;
     private long rageId;
     private long tvdbId;
+    private long traktId;
     private String releaseTitle;
     private String description;
     private String genre;
@@ -115,5 +116,13 @@ public class TvRage {
 
     public void setHasImage(boolean hasImage) {
         this.hasImage = hasImage;
+    }
+
+    public long getTraktId() {
+        return traktId;
+    }
+
+    public void setTraktId(long traktId) {
+        this.traktId = traktId;
     }
 }

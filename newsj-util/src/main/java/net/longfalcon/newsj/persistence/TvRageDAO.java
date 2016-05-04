@@ -32,7 +32,11 @@ public interface TvRageDAO {
 
     void delete(TvRage tvRage);
 
-    TvRage findByTvRageId(long id);
+    TvRage findById(long id);
+
+    TvRage findByTvRageId(long rageId);
+
+    TvRage findByTvTraktId(long traktId);
 
     TvRage findByReleaseTitle(String title);
 

@@ -159,7 +159,12 @@ public class Backfill {
                 transactionManager.commit(transaction);
             }
             DateTime firstRecordPostDate = postDate(nntpClient, first, false);
-            group.setFirstRecordPostdate(firstRecordPostDate.toDate());
+
+            Date firstRecordPostDateDate = null;
+            if (firstRecordPostDate != null) {
+                firstRecordPostDateDate = firstRecordPostDate.toDate();
+            }
+            group.setFirstRecordPostdate( firstRecordPostDateDate);
             group.setLastUpdated(new Date());
             groupDAO.update(group);
 
@@ -303,6 +308,7 @@ public class Backfill {
         } while (attempts <= 3 && !success);
 
         if (!success) {
+            _log.warn("unable to find message id " + articleNumber);
             return null;
         }
         DateTime postDate = DateUtil.parseNNTPDate(dateString);
@@ -311,7 +317,7 @@ public class Backfill {
 
     private int daysOld(DateTime then) {
         DateTime now = DateTime.now();
-        if (then.isAfter(now)) {
+        if (then == null || then.isAfter(now)) {
             return 0;
         } else {
             Period period = new Period(then, now);

@@ -426,6 +426,7 @@
         </id>
         <property name="rageId" column="rageID"/>
         <property name="tvdbId" column="tvdbID"/>
+        <property name="traktId" column="traktid"/>
         <property name="releaseTitle" column="releasetitle"/>
         <property name="description" column="description"/>
         <property name="genre" column="genre"/>

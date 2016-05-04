@@ -72,7 +72,7 @@ public class UserDAOImpl extends HibernateDAOImpl implements net.longfalcon.news
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
     public User findByUserId(long userId) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(User.class);
         criteria.add(Restrictions.eq("id", userId));
@@ -81,7 +81,7 @@ public class UserDAOImpl extends HibernateDAOImpl implements net.longfalcon.news
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
     public User findByUsername(String username) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(User.class);
         criteria.add(Restrictions.eq("username", username));
@@ -90,7 +90,7 @@ public class UserDAOImpl extends HibernateDAOImpl implements net.longfalcon.news
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
     public User findByEmail(String email) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(User.class);
         criteria.add(Restrictions.eq("email", email));
@@ -99,7 +99,7 @@ public class UserDAOImpl extends HibernateDAOImpl implements net.longfalcon.news
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
     public long countUsers() {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(User.class);
         criteria.setProjection(Projections.countDistinct("id"));
@@ -108,7 +108,7 @@ public class UserDAOImpl extends HibernateDAOImpl implements net.longfalcon.news
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
     public List<User> findTopGrabbers() {
         Query query = sessionFactory.getCurrentSession().createQuery("select u from User u where u.grabs > 0 order by u.grabs desc");
         query.setMaxResults(10);
