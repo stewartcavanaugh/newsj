@@ -306,6 +306,7 @@
         <property name="releaseDAO" ref="releaseDAO"/>
         <property name="tvRageDAO" ref="tvRageDAO"/>
         <property name="traktService" ref="traktService"/>
+        <property name="fileSystemService" ref="fileSystemService"/>
     </bean>
     <bean id="regexService" class="net.longfalcon.newsj.service.RegexService"/>
     <bean id="googleSearchService" class="net.longfalcon.newsj.service.GoogleSearchService">

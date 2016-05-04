@@ -140,7 +140,7 @@ public class AdminReleaseController extends BaseController {
         return "admin/release-files";
     }
 
-    @RequestMapping(value = "/admin/release-rebuild", method = RequestMethod.POST)
+    @RequestMapping(value = "/admin/release-rebuild")
     public String rebuildReleasePost(@RequestParam(value = "id")Long id, Model model) throws NoSuchResourceException {
         Release release = releases.findByReleaseId(id);
         if (release == null) {

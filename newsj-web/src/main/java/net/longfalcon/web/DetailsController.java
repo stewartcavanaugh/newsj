@@ -117,10 +117,9 @@ public class DetailsController extends BaseController {
 
         List<ReleaseComment> commentsList = releaseCommentDAO.findByReleaseId(releaseId);
 
-        // TODO move to using trakt Id
         TvRage tvInfo = null;
         if (rageId != null && rageId > 0) {
-            tvInfo = tvRageDAO.findByTvRageId(rageId);
+            tvInfo = tvRageDAO.findById(rageId);
         }
 
         MovieInfo movieInfo = null;

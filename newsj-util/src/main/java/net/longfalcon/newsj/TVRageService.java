@@ -18,6 +18,8 @@
 
 package net.longfalcon.newsj;
 
+import net.longfalcon.newsj.fs.FileSystemService;
+import net.longfalcon.newsj.fs.model.Directory;
 import net.longfalcon.newsj.model.Category;
 import net.longfalcon.newsj.model.Release;
 import net.longfalcon.newsj.model.TvRage;
@@ -27,9 +29,12 @@ import net.longfalcon.newsj.persistence.TvRageDAO;
 import net.longfalcon.newsj.service.TraktService;
 import net.longfalcon.newsj.util.ArrayUtil;
 import net.longfalcon.newsj.util.DateUtil;
+import net.longfalcon.newsj.util.StreamUtil;
 import net.longfalcon.newsj.util.ValidatorUtil;
 import net.longfalcon.newsj.ws.trakt.TraktEpisodeResult;
 import net.longfalcon.newsj.ws.trakt.TraktIdSet;
+import net.longfalcon.newsj.ws.trakt.TraktImage;
+import net.longfalcon.newsj.ws.trakt.TraktImages;
 import net.longfalcon.newsj.ws.trakt.TraktResult;
 import net.longfalcon.newsj.ws.trakt.TraktShowResult;
 import org.apache.commons.lang3.StringUtils;
@@ -40,6 +45,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -62,6 +74,7 @@ public class TVRageService {
     private TvRageDAO tvRageDAO;
 
     private TraktService traktService;
+    private FileSystemService fileSystemService;
 
     @Transactional(propagation = Propagation.SUPPORTS)
     public void processTvReleases(boolean lookupTvRage) {
@@ -132,6 +145,51 @@ public class TVRageService {
             }
 
             releaseDAO.updateRelease(release);
+        }
+    }
+
+    public void rebuildTvInfo(TvRage tvRage) {
+        try {
+            TraktResult traktResult = getTraktMatch(tvRage.getReleaseTitle());
+            if (traktResult != null) {
+                TraktShowResult showResult = traktResult.getShowResult();
+
+                _log.info("found tvinfo for " + tvRage.getReleaseTitle());
+
+                tvRage.setTraktId(showResult.getIds().getTrakt());
+                tvRage.setRageId(showResult.getIds().getTvrage());
+                tvRage.setTvdbId(showResult.getIds().getTvdb());
+                tvRage.setReleaseTitle(showResult.getTitle());
+                TraktImages traktImages = showResult.getTraktImages();
+                try {
+                    if (traktImages != null) {
+                        TraktImage posterImage = traktImages.getPoster();
+                        if (posterImage != null) {
+                            String posterUrl = posterImage.getMedium();
+                            if (ValidatorUtil.isNotNull(posterUrl)) {
+                                Directory tempDir = fileSystemService.getDirectory("/temp");
+                                File tempFile = tempDir.getTempFile("image_" + String.valueOf(System.currentTimeMillis()));
+                                FileOutputStream fileOutputStream = new FileOutputStream(tempFile);
+                                URL url = new URL(posterUrl);
+                                URLConnection urlConnection = url.openConnection();
+                                urlConnection.setRequestProperty("User-Agent", "Java");
+                                StreamUtil.transferByteArray(urlConnection.getInputStream(), fileOutputStream, 1024);
+                                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                                InputStream tempFileInputStream = new FileInputStream(tempFile);
+                                StreamUtil.transferByteArray(tempFileInputStream, byteArrayOutputStream, 1024);
+                                tvRage.setImgData(byteArrayOutputStream.toByteArray());
+                            }
+                        }
+                    }
+                } catch (Exception e) {
+                    _log.warn("unable to add poster image for " + tvRage.getReleaseTitle(), e);
+                }
+
+                tvRage.setDescription(showResult.getOverview());
+                tvRageDAO.update(tvRage);
+            }
+        } catch (Exception e) {
+            _log.error(e);
         }
     }
 
@@ -301,6 +359,46 @@ public class TVRageService {
         } catch (Exception e) {
             _log.error(e.toString(), e);
             return -2; // error
+        }
+    }
+
+    private TraktResult getTraktMatch(String showname) {
+        _log.info("searching trakt for show " + showname);
+        try {
+            TraktResult[] traktResults = new TraktResult[0];
+            try {
+                traktResults = traktService.searchTvShowByName(showname.toLowerCase());
+            } catch (Exception e) {
+                _log.error("error fetching show data for " + showname + " - " + e.toString());
+                _log.debug("", e);
+            }
+            if (traktResults.length > 0) {
+                TraktResult firstResult = traktResults[0];
+                if (firstResult.getScore() > 50) {
+                    // probably the best match, we wont bother looking elsewhere.
+                    if (firstResult.getShowResult() != null) {
+                        _log.info("found +50% match: " + firstResult.getShowResult().getTitle());
+                        return firstResult;
+                    } else {
+                        return null;// error
+                    }
+                } else if (traktResults.length > 1) {
+                    String firstResultName = firstResult.getShowResult().getTitle();
+                    String secondResultName = traktResults[1].getShowResult().getTitle();
+                    double firstSimilarityScore = StringUtils.getJaroWinklerDistance(showname, firstResultName);
+                    double secondSimilarityScore = StringUtils.getJaroWinklerDistance(showname, secondResultName);
+                    if (firstSimilarityScore > secondSimilarityScore) {
+                        return firstResult;
+                    } else {
+                        return traktResults[1];
+                    }
+                }
+                return firstResult;
+            }
+            return null; // not found
+        } catch (Exception e) {
+            _log.error(e.toString(), e);
+            return null; // error
         }
     }
 
@@ -672,6 +770,14 @@ public class TVRageService {
 
     public void setTraktService(TraktService traktService) {
         this.traktService = traktService;
+    }
+
+    public FileSystemService getFileSystemService() {
+        return fileSystemService;
+    }
+
+    public void setFileSystemService(FileSystemService fileSystemService) {
+        this.fileSystemService = fileSystemService;
     }
 
     private class ShowInfo{
