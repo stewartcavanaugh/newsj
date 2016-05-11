@@ -228,7 +228,9 @@ public class ReleaseDAOImpl extends HibernateDAOImpl implements net.longfalcon.n
     public List<Release> findReleasesByRageIdAndCategoryId(long rageId, Collection<Integer> categoryIds) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Release.class);
         criteria.add(Restrictions.eq("rageId", rageId));
-        criteria.add(Restrictions.in("category.id", categoryIds));
+        if (categoryIds != null && !categoryIds.isEmpty()) {
+            criteria.add(Restrictions.in("category.id", categoryIds));
+        }
 
         return criteria.list();
     }

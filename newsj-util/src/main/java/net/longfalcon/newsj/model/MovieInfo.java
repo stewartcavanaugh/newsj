@@ -28,7 +28,7 @@ import java.util.Date;
 public class MovieInfo {
     private long id;
     private int imdbId;
-    private Integer tmdbId;
+    private Long tmdbId;
     private String title;
     private String tagline;
     private String rating;
@@ -59,11 +59,11 @@ public class MovieInfo {
         this.imdbId = imdbId;
     }
 
-    public Integer getTmdbId() {
+    public Long getTmdbId() {
         return tmdbId;
     }
 
-    public void setTmdbId(Integer tmdbId) {
+    public void setTmdbId(Long tmdbId) {
         this.tmdbId = tmdbId;
     }
 

@@ -119,6 +119,15 @@ public class Releases {
         return releases;
     }
 
+    public List<Release> findByRageIdAndCategoryId(long rageId, Collection<Integer> categoryIds) {
+        List<Release> releases = releaseDAO.findReleasesByRageIdAndCategoryId(rageId, categoryIds);
+        for(Release release : releases) {
+            populateTransientFields(release);
+        }
+
+        return releases;
+    }
+
     public Long getBrowseCount(Collection<Integer> categoryIds, int maxAgeDays, List<Integer> excludedCategoryIds, long groupId) {
         Date maxAge = null;
         if (maxAgeDays > 0) {

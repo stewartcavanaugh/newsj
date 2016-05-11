@@ -3,6 +3,11 @@
 <%@ taglib prefix="date" uri="http://java.longfalcon.net/jsp/jstl/date" %>
 <%@ taglib prefix="tags" tagdir="/WEB-INF/tags" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%--@elvariable id="isAdmin" type="boolean"--%>
+<%--@elvariable id="loggedIn" type="boolean"--%>
+<%--@elvariable id="userId" type="java.lang.String"--%>
+<%--@elvariable id="site" type="net.longfalcon.newsj.model.Site"--%>
+<%--@elvariable id="userData" type="net.longfalcon.view.UserData"--%>
 <%--
   ~ Copyright (c) 2016. Sten Martinez
   ~

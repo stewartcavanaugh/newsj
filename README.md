@@ -6,6 +6,7 @@ DO NOT USE. NON-FUNCTIONAL
 ## Roadmap
 * v0.1 - general porting of code from legacy newznab
 * v0.2 - 90% admin UI, front page, cmd line binary and release processing
+* v0.3 - full front page and search, rss, newznab api
 * v0.8 - feature complete with original newznab
 * v1.0 - final release
 
@@ -13,11 +14,11 @@ DO NOT USE. NON-FUNCTIONAL
 * security implementation: Spring Sec or port the original
 * regex submission
 * ReqId
-* Add TVDB as a backup for TVRage
 * move to templates/Tiles?
+* Job management for update binaries / update releases
+* command line tools for integration with cron,etc.
 
 ### ToDo list
-* IMDB/TMDB data fetch/add movie info
 * refactor "Rage" to "TVData" or similar
 * better image hosting/storage
 * manage release data integrity when deleting movie/music/game/tv infos

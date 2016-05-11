@@ -179,7 +179,7 @@ public class MovieService {
             TmdbMovieResults tmdbMovieResults = movieResults.get(0);
             movieInfo = new MovieInfo();
             movieInfo.setImdbId(imdbId);
-            movieInfo.setTmdbId(tmdbMovieResults.getId());
+            movieInfo.setTmdbId(tmdbMovieResults.getId().longValue());
             movieInfo.setTitle(tmdbMovieResults.getTitle());
             movieInfo.setPlot(StringUtils.abbreviate(tmdbMovieResults.getOverview(), 255));
             movieInfo.setCreateDate(new Date());

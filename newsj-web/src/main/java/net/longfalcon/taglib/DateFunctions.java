@@ -96,4 +96,8 @@ public class DateFunctions {
     public static String dateFormat(Date date, String format) {
         return DateUtil.formatDate(date, format);
     }
+
+    public static boolean isInFuture(Date date) {
+        return date.getTime() > new Date().getTime();
+    }
 }
