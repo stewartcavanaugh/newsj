@@ -155,6 +155,15 @@ public class ReleaseDAOImpl extends HibernateDAOImpl implements net.longfalcon.n
 
     @Override
     @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
+    public List<Release> findByImdbId(int imdbId) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Release.class);
+        criteria.add(Restrictions.eq("imdbId", imdbId));
+
+        return criteria.list();
+    }
+
+    @Override
+    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
     public Release findByReleaseId(long releaseId) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Release.class);
         criteria.add(Restrictions.eq("id", releaseId));
@@ -249,6 +258,28 @@ public class ReleaseDAOImpl extends HibernateDAOImpl implements net.longfalcon.n
         Query query = sessionFactory.getCurrentSession().createQuery("select r from Release r where grabs > 0 order by grabs desc");
         query.setMaxResults(10);
         return query.list();
+    }
+
+    @Override
+    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
+    public List<Long> getDistinctImdbIds(List<Integer> searchCategories, int maxAgeDays, List<Integer> userExCatIds) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Release.class);
+        if (searchCategories != null && !searchCategories.isEmpty()) {
+            criteria.add(Restrictions.in("category.id", searchCategories));
+        }
+
+        if (maxAgeDays > 0) {
+            Date maxAge = new DateTime().minusDays(maxAgeDays).toDate();
+            criteria.add(Restrictions.gt("postDate", maxAge));
+        }
+
+        if (!userExCatIds.isEmpty()) {
+            criteria.add(Restrictions.not(Restrictions.in("category.id", userExCatIds)));
+        }
+
+        criteria.setProjection(Projections.distinct(Projections.property("imdbId")));
+
+        return criteria.list();
     }
 
     @Override
@@ -385,36 +416,5 @@ public class ReleaseDAOImpl extends HibernateDAOImpl implements net.longfalcon.n
         criteria.setProjection(Projections.rowCount());
 
         return (Long) criteria.uniqueResult();
-    }
-
-    @Override
-    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
-    public List<Long> getDistinctImdbIds(List<Integer> searchCategories, int maxAgeDays, List<Integer> userExCatIds) {
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Release.class);
-        if (searchCategories != null && !searchCategories.isEmpty()) {
-            criteria.add(Restrictions.in("category.id", searchCategories));
-        }
-
-        if (maxAgeDays > 0) {
-            Date maxAge = new DateTime().minusDays(maxAgeDays).toDate();
-            criteria.add(Restrictions.gt("postDate", maxAge));
-        }
-
-        if (!userExCatIds.isEmpty()) {
-            criteria.add(Restrictions.not(Restrictions.in("category.id", userExCatIds)));
-        }
-
-        criteria.setProjection(Projections.distinct(Projections.property("imdbId")));
-
-        return criteria.list();
-    }
-
-    @Override
-    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
-    public List<Release> findByImdbId(int imdbId) {
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Release.class);
-        criteria.add(Restrictions.eq("imdbId", imdbId));
-
-        return criteria.list();
     }
 }

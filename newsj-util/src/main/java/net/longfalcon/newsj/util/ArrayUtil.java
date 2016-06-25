@@ -87,6 +87,18 @@ public class ArrayUtil {
         return array;
     }
 
+    public static List<Integer> rangeListInt(int from, int to) {
+        if ( to < from ) {
+            throw new IllegalArgumentException(String.format("to argument %s is less than from argument %s", to, from));
+        }
+        List<Integer> array = new ArrayList<>(to - from + 1);
+        for (int j = from; j <= to; j++) {
+            array.add(j);
+        }
+
+        return array;
+    }
+
     public static Set<Long> rangeSet(long from, long to) {
         if ( to < from ) {
             throw new IllegalArgumentException(String.format("to argument %s is less than from argument %s", to, from));

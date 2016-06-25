@@ -99,6 +99,9 @@ public class ViewSeriesController extends BaseController {
         model.addAttribute("catName", catName);
         model.addAttribute("categoryId", categoryId);
         model.addAttribute("sortedMap", sortedMap);
+        model.addAttribute("pageMetaTitle", "View TV Series " + tvRage.getReleaseTitle());
+        model.addAttribute("pageMetaKeywords", "view,series,tv,show,description,details");
+        model.addAttribute("pageMetaDescription", "View " + tvRage.getReleaseTitle() + " Series");
 
         return "view-series";
     }

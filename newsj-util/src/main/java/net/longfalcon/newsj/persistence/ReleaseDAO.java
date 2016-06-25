@@ -51,6 +51,8 @@ public interface ReleaseDAO {
 
     List<Release> findByGuids(String[] guids);
 
+    List<Release> findByImdbId(int imdbId);
+
     Release findByReleaseId(long releaseId);
 
     List<Object[]> findRecentlyAddedReleaseCategories();
@@ -68,6 +70,8 @@ public interface ReleaseDAO {
     List<Release> findTopCommentedReleases();
 
     List<Release> findTopDownloads();
+
+    List<Long> getDistinctImdbIds(List<Integer> searchCategories, int maxAgeDays, List<Integer> userExCatIds);
 
     Date getLastReleaseDateByRegexId(long regexId);
 
@@ -88,8 +92,4 @@ public interface ReleaseDAO {
     void updateRelease(Release release);
 
     Long getReleasesCount();
-
-    List<Long> getDistinctImdbIds(List<Integer> searchCategories, int maxAgeDays, List<Integer> userExCatIds);
-
-    List<Release> findByImdbId(int imdbId);
 }

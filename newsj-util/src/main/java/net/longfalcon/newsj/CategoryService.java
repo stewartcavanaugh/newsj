@@ -129,7 +129,7 @@ public class CategoryService {
         return parentCategory.getTitle() + " > " + category.getTitle();
     }
 
-    private List<Category> getSubCategories(Set<Integer> userExcludedCategoryIds, int parentId) {
+    public List<Category> getSubCategories(Set<Integer> userExcludedCategoryIds, int parentId) {
         List<Category> categoryList = categoryDAO.getForMenu(userExcludedCategoryIds, parentId);
         for (Category category : categoryList) {
             category.setSubCategories(getSubCategories(userExcludedCategoryIds, category.getId()));
