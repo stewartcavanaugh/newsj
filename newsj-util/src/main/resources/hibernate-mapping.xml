@@ -139,6 +139,7 @@
         <property name="forumId" column="forumID"/>
         <property name="parentId" column="parentID"/>
         <property name="userId" column="userID"/>
+        <property name="username" formula="(select u.username from users u where u.ID = userID)"/>
         <property name="subject" column="subject"/>
         <property name="message" column="message"/>
         <property name="locked" column="locked"/>

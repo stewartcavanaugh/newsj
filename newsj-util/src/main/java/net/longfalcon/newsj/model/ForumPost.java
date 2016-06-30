@@ -28,8 +28,9 @@ import java.util.Date;
 public class ForumPost {
     private long id;
     private int forumId;
-    private int parentId;
+    private long parentId;
     private long userId;
+    private String username;
     private String subject;
     private String message;
     private boolean locked;
@@ -54,11 +55,11 @@ public class ForumPost {
         this.forumId = forumId;
     }
 
-    public int getParentId() {
+    public long getParentId() {
         return parentId;
     }
 
-    public void setParentId(int parentId) {
+    public void setParentId(long parentId) {
         this.parentId = parentId;
     }
 
@@ -124,5 +125,13 @@ public class ForumPost {
 
     public void setUpdateDate(Date updateDate) {
         this.updateDate = updateDate;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 }

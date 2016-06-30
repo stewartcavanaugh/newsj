@@ -185,6 +185,10 @@
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
 
+    <bean id="forumPostDAO" class="net.longfalcon.newsj.persistence.hibernate.ForumPostDAOImpl">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+
     <!-- Services -->
 
     <bean id="config" class="net.longfalcon.newsj.Config" init-method="init">
