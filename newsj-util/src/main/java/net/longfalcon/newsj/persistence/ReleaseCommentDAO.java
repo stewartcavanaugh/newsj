@@ -38,5 +38,9 @@ public interface ReleaseCommentDAO {
 
     List<ReleaseComment> getReleaseComments(int start, int pageSize);
 
+    List<ReleaseComment> getReleaseCommentsByUser(long userId, int start, int pageSize);
+
+    long countReleaseCommentsByUser(long userId);
+
     void updateReleaseComment(ReleaseComment releaseComment);
 }

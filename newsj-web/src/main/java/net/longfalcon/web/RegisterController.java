@@ -158,7 +158,7 @@ public class RegisterController extends BaseController {
                 }
             }
         }
-
+        populateModel(model, httpSession, httpServletRequest, "", "");
         return "register";
     }
 }

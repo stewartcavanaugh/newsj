@@ -30,7 +30,7 @@ public class ValidatorUtil {
     private static Pattern numericPattern = Pattern.compile("^[-]?[0-9]+$");
     private static Pattern emailPattern = Pattern.compile("^([a-z0-9\\+_\\-]+)(\\.[a-z0-9\\+_\\-]+)*@([a-z0-9\\-]+\\.)+[a-z]{2,6}$", Pattern.CASE_INSENSITIVE);
     public static boolean isNull(String s) {
-        return s == null || s.isEmpty() || s.equals("");
+        return s == null || s.isEmpty() || s.equals("") || s.equals("null");
     }
 
     public static boolean isNotNull(String s) {

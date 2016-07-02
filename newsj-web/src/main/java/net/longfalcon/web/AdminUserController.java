@@ -22,7 +22,9 @@ import net.longfalcon.newsj.model.User;
 import net.longfalcon.newsj.persistence.UserDAO;
 import net.longfalcon.newsj.service.UserService;
 import net.longfalcon.newsj.util.ValidatorUtil;
+import net.longfalcon.view.EditUserVO;
 import net.longfalcon.view.UserRegistrationVO;
+import net.longfalcon.web.auth.PasswordHash;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +37,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.View;
 
+import javax.servlet.http.HttpSession;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -104,22 +109,22 @@ public class AdminUserController extends BaseController {
 
     @RequestMapping("/admin/user-edit")
     public String userEditView(@RequestParam(value = "id", required = false)Long id, Model model) {
-        User user;
-        String error = "";
+        EditUserVO userVO;
+
         if (ValidatorUtil.isNull(id)) {
             // add user
             title = "Add User";
-            user = new User();
-            user.setRole(UserService.ROLE_USER);
-            user.setInvites(UserService.DEFAULT_INVITES);
-            user.setMovieView(1);
+            userVO = new EditUserVO();
+            userVO.setRole(UserService.ROLE_USER);
+            userVO.setInvites(UserService.DEFAULT_INVITES);
+            userVO.setMovieView(true);
         } else {
             title = "Edit User";
-            user = userDAO.findByUserId(id);
+            User user = userDAO.findByUserId(id);
             if (user == null) {
-                error = "User does not exist";
                 user = new User();
             }
+            userVO = new EditUserVO(user);
         }
         Map<Integer,String> roleMap = new HashMap<>();
         roleMap.put(UserService.ROLE_ADMIN, "Admin");
@@ -127,47 +132,66 @@ public class AdminUserController extends BaseController {
         roleMap.put(UserService.ROLE_DISABLED, "Disabled");
 
         model.addAttribute("title", title);
-        model.addAttribute("user", user);
-        model.addAttribute("error", error);
+        model.addAttribute("user", userVO);
         model.addAttribute("roleMap", roleMap);
         return "admin/user-edit";
     }
 
     @RequestMapping(value = "/admin/user-edit", method = RequestMethod.POST)
-    public View userEditPost(@ModelAttribute("user")User user, Model model) {
+    public View userEditPost(@ModelAttribute("user")EditUserVO userVO, HttpSession httpSession, Model model) {
         long returnCode = 0;
-        if (user.getId() > 0) {
-            returnCode = userService.update(user);
+        User user;
+        if (userVO.getUserId() > 0) {
+            user = userDAO.findByUserId(userVO.getUserId());
+            user.setUsername(userVO.getUsername());
+            user.setEmail(userVO.getEmail());
+            String newPassword = userVO.getPassword();
+            if ( ValidatorUtil.isNotNull(newPassword)) {
+                try {
+                    user.setPassword(PasswordHash.createHash(newPassword));
+                } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+                    _log.error(e);
+                }
+            }
+            user.setMovieView(userVO.isMovieView() ? 1 : 0);
+            user.setMusicView(userVO.isMusicView() ? 1 : 0);
+            user.setConsoleView(userVO.isConsoleView() ? 1 : 0);
+            user.setGrabs(userVO.getGrabs());
+            user.setInvites(userVO.getInvites());
+            user.setRole(userVO.getRole());
+            returnCode = userService.update(user); //TODO: there is a bug here with saving after an error
         } else {
             UserRegistrationVO userRegistrationVO = new UserRegistrationVO();
-            userRegistrationVO.setUserName(user.getUsername());
-            userRegistrationVO.setEmail(user.getEmail());
-            userRegistrationVO.setPassword(user.getPassword());
+            userRegistrationVO.setUserName(userVO.getUsername());
+            userRegistrationVO.setEmail(userVO.getEmail());
+            userRegistrationVO.setPassword(userVO.getPassword());
             returnCode = userService.signup(userRegistrationVO);
         }
 
         if (returnCode < 1) {
+            String error = "";
             if (returnCode == UserService.ERR_SIGNUP_BADUNAME) {
-                model.addAttribute("error", "Bad username. Try a better one.");
+                error += "Bad username. Try a better one.<br/>";
             } else if (returnCode == UserService.ERR_SIGNUP_BADPASS) {
-                model.addAttribute("error", "Bad password. Try a longer one.");
+                error += "Bad password. Try a longer one.<br/>";
 
             } else if (returnCode == UserService.ERR_SIGNUP_BADEMAIL) {
-                model.addAttribute("error", "Bad email.");
+                error += "Bad email.<br/>";
 
             } else if (returnCode == UserService.ERR_SIGNUP_UNAMEINUSE) {
-                model.addAttribute("error", "Username in use.");
+                error += "Username in use.<br/>";
 
             } else if (returnCode == UserService.ERR_SIGNUP_EMAILINUSE) {
-                model.addAttribute("error", "Email in use.");
+                error += "Email in use.<br/>";
 
             } else {
-                model.addAttribute("error", "Unknown save error. Please contact site administrator.");
+                error += "Unknown save error. Please contact site administrator.<br/>";
             }
+            httpSession.setAttribute("errors", error);
         } else {
-            user = userDAO.findByUserId(returnCode);
+            return safeRedirect("/admin/user-edit?id="+ returnCode);
         }
-        return safeRedirect("/admin/user-edit?id="+user.getId());
+        return safeRedirect("/admin/user-edit?id="+ userVO.getUserId());
     }
 
     @RequestMapping(value = "/admin/user-delete", method = RequestMethod.POST)

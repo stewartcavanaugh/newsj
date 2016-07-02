@@ -84,7 +84,7 @@
                             </div>
                         </td>
                         <td>
-                            <a title="View profile" href="${pageContext.request.contextPath}/profile/?name=${forumPost.username}">${forumPost.username}</a>
+                            <a title="View profile" href="${pageContext.request.contextPath}/profile?name=${forumPost.username}">${forumPost.username}</a>
                             <br/>
                             on <span title="${forumPost.createDate}">${date:formatDate(forumPost.createDate)}</span> <div class="hint">(${date:timeAgo(forumPost.createDate)})</div>
                         </td>

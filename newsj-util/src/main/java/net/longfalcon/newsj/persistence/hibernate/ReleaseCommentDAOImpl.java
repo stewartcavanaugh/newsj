@@ -88,6 +88,29 @@ public class ReleaseCommentDAOImpl extends HibernateDAOImpl implements ReleaseCo
     }
 
     @Override
+    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
+    public List<ReleaseComment> getReleaseCommentsByUser(long userId, int start, int pageSize) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ReleaseComment.class);
+        criteria.add(Restrictions.eq("user.id", userId));
+        criteria.setFirstResult(start).setMaxResults(pageSize);
+        criteria.setFetchMode("user",FetchMode.JOIN);
+        criteria.addOrder(Order.desc("createDate"));
+
+        return criteria.list();
+    }
+
+    @Override
+    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
+    public long countReleaseCommentsByUser(long userId) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ReleaseComment.class);
+        criteria.add(Restrictions.eq("user.id", userId));
+        criteria.setFetchMode("user",FetchMode.JOIN);
+        criteria.setProjection(Projections.rowCount());
+
+        return (Long) criteria.uniqueResult();
+    }
+
+    @Override
     @Transactional
     public void updateReleaseComment(ReleaseComment releaseComment) {
         sessionFactory.getCurrentSession().saveOrUpdate(releaseComment);

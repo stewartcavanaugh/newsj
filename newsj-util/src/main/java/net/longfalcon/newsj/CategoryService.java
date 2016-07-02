@@ -29,6 +29,8 @@ import org.joda.time.Period;
 import org.joda.time.format.PeriodFormat;
 import org.joda.time.format.PeriodFormatter;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -127,6 +129,16 @@ public class CategoryService {
         // TODO: replace with hbm mapping for parentCategory
         Category parentCategory = categoryDAO.findByCategoryId(category.getParentId());
         return parentCategory.getTitle() + " > " + category.getTitle();
+    }
+
+    public List<String> getCategoryDisplayNames(Collection<Integer> categoryIds) {
+        List<String> categoryNames = new ArrayList<>(categoryIds.size());
+        for (Integer categoryId : categoryIds) {
+            if (categoryId != null) {
+                categoryNames.add(getCategoryDisplayName(categoryId));
+            }
+        }
+        return categoryNames;
     }
 
     public List<Category> getSubCategories(Set<Integer> userExcludedCategoryIds, int parentId) {

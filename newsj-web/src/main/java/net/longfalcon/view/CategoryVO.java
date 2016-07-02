@@ -67,4 +67,8 @@ public class CategoryVO {
     public void setActive(boolean active) {
         this.active = active;
     }
+
+    public String getDisplayName() {
+        return parentCategoryTitle + " > " + title;
+    }
 }
