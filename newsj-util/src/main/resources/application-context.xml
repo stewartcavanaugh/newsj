@@ -35,6 +35,7 @@
     <tx:annotation-driven transaction-manager="transactionManager"/>
 
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="ignoreResourceNotFound" value="true" />
         <property name="locations" value="classpath:db.properties"/>
     </bean>
 
