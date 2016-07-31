@@ -413,7 +413,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "", name = "pubDate", scope = RssItem.class)
-    public JAXBElement<String> createRssItemPubDate(String value) {
+    public JAXBElement<String>  createRssItemPubDate(String value) {
         return new JAXBElement<String>(_RssChannelPubDate_QNAME, String.class, RssItem.class, value);
     }
 

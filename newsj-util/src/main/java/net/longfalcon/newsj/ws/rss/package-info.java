@@ -21,7 +21,8 @@
  * Date: 7/28/16
  * Time: 4:21 PM
  */
-@javax.xml.bind.annotation.XmlSchema(xmlns={@XmlNs(prefix="atom", namespaceURI="http://www.w3.org/2005/Atom")})
+@javax.xml.bind.annotation.XmlSchema(xmlns={@XmlNs(prefix="atom", namespaceURI="http://www.w3.org/2005/Atom"),
+        @XmlNs(prefix = "newznab", namespaceURI = "http://www.newznab.com/DTD/2010/feeds/attributes/")})
 package net.longfalcon.newsj.ws.rss;
 
 import javax.xml.bind.annotation.XmlNs;

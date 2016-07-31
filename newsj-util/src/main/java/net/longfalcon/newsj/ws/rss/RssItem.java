@@ -1,6 +1,7 @@
 
 package net.longfalcon.newsj.ws.rss;
 
+import net.longfalcon.newsj.ws.newznab.NewzNabAttribute;
 import org.w3c.dom.Element;
 
 import javax.xml.bind.JAXBElement;
@@ -8,6 +9,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyAttribute;
 import javax.xml.bind.annotation.XmlAnyElement;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlType;
@@ -54,7 +56,8 @@ import java.util.Map;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "RssItem", propOrder = {
-    "titleOrDescriptionOrLink"
+    "titleOrDescriptionOrLink",
+        "attributes"
 })
 public class RssItem {
 
@@ -72,6 +75,8 @@ public class RssItem {
     })
     @XmlAnyElement(lax = true)
     protected List<Object> titleOrDescriptionOrLink;
+    @XmlElement(name = "attr", namespace = "http://www.newznab.com/DTD/2010/feeds/attributes/")
+    protected List<NewzNabAttribute> attributes;
     @XmlAnyAttribute
     private Map<QName, String> otherAttributes = new HashMap<QName, String>();
 
@@ -133,4 +138,11 @@ public class RssItem {
         return otherAttributes;
     }
 
+    public List<NewzNabAttribute> getAttributes() {
+        if (attributes == null) {
+            attributes = new ArrayList<>();
+        }
+
+        return this.attributes;
+    }
 }

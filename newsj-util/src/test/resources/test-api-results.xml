@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  ~ Copyright (c) 2016. Sten Martinez
+  ~
+  ~ This program is free software; you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation; either version 2 of the License, or
+  ~ (at your option) any later version.
+  ~                            
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~                            
+  ~ You should have received a copy of the GNU General Public License along
+  ~ with this program; if not, write to the Free Software Foundation, Inc.,
+  ~ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+  -->
+
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:newznab="http://www.newznab.com/DTD/2010/feeds/attributes/" encoding="utf-8">
+    <channel>
+        <atom:link href="http://testserver/newznab/api" rel="self" type="application/rss+xml" />
+        <title>Newznab</title>
+        <description>Newznab API Results</description>
+        <link>http://testserver/newznab/</link>
+        <language>en-gb</language>
+        <webMaster>info@newznab.com (Newznab)</webMaster>
+        <category>usenet,nzbs,newznab,cms,community</category>
+        <image>
+            <url>http://testserver/newznab/images/banner.jpg</url>
+            <title>Newznab</title>
+            <link>http://testserver/newznab/</link>
+            <description>Visit Newznab - A great usenet indexer</description>
+        </image>
+        <newznab:response offset="0" total="2" />
+        <item>
+            <title>Top.Gear.S23E06.720p.BluRay.x264-OUIJA</title>
+            <guid isPermaLink="true">http://testserver/newznab/details/e50d44232a243210972effa5c1bfa821</guid>
+            <link>http://testserver/newznab/getnzb/e50d44232a243210972effa5c1bfa821.nzb&amp;i=1&amp;r=de84e64bd90abd16c1eeaa7a023035dd</link>
+            <comments>http://testserver/newznab/details/e50d44232a243210972effa5c1bfa821#comments</comments>
+            <pubDate>Fri, 29 Jul 2016 17:59:02 -0700</pubDate>
+            <category>TV &gt; HD</category>
+            <description>Top.Gear.S23E06.720p.BluRay.x264-OUIJA</description>
+            <enclosure url="http://testserver/newznab/getnzb/e50d44232a243210972effa5c1bfa821.nzb&amp;i=1&amp;r=de84e64bd90abd16c1eeaa7a023035dd" length="3298578371" type="application/x-nzb" />
+
+            <newznab:attr name="category" value="5000" />
+            <newznab:attr name="category" value="5040" />
+            <newznab:attr name="size" value="3298578371" />
+            <newznab:attr name="files" value="84" />
+            <newznab:attr name="poster" value="prime@time.tv (autobot)" />
+            <newznab:attr name="season" value="S23" />
+            <newznab:attr name="episode" value="E06" />
+            <newznab:attr name="rageid" value="6753" />
+            <newznab:attr name="grabs" value="0" />
+            <newznab:attr name="comments" value="0" />
+            <newznab:attr name="password" value="0" />
+            <newznab:attr name="usenetdate" value="Fri, 29 Jul 2016 17:36:07 -0700" />
+            <newznab:attr name="group" value="alt.binaries.teevee" />
+        </item>
+        <item>
+            <title>Top.Gear.S23E05.720p.BluRay.x264-OUIJA</title>
+            <guid isPermaLink="true">http://testserver/newznab/details/8f7ff44ae22819c834f0166c789b5c09</guid>
+            <link>http://testserver/newznab/getnzb/8f7ff44ae22819c834f0166c789b5c09.nzb&amp;i=1&amp;r=de84e64bd90abd16c1eeaa7a023035dd</link>
+            <comments>http://testserver/newznab/details/8f7ff44ae22819c834f0166c789b5c09#comments</comments>
+            <pubDate>Fri, 29 Jul 2016 17:59:01 -0700</pubDate>
+            <category>TV &gt; HD</category>
+            <description>Top.Gear.S23E05.720p.BluRay.x264-OUIJA</description>
+            <enclosure url="http://testserver/newznab/getnzb/8f7ff44ae22819c834f0166c789b5c09.nzb&amp;i=1&amp;r=de84e64bd90abd16c1eeaa7a023035dd" length="3319222870" type="application/x-nzb" />
+
+            <newznab:attr name="category" value="5000" />
+            <newznab:attr name="category" value="5040" />
+            <newznab:attr name="size" value="3319222870" />
+            <newznab:attr name="files" value="85" />
+            <newznab:attr name="poster" value="prime@time.tv (autobot)" />
+            <newznab:attr name="season" value="S23" />
+            <newznab:attr name="episode" value="E05" />
+            <newznab:attr name="rageid" value="6753" />
+            <newznab:attr name="grabs" value="0" />
+            <newznab:attr name="comments" value="0" />
+            <newznab:attr name="password" value="0" />
+            <newznab:attr name="usenetdate" value="Fri, 29 Jul 2016 17:36:00 -0700" />
+            <newznab:attr name="group" value="alt.binaries.teevee" />
+        </item>
+    </channel>
+</rss>

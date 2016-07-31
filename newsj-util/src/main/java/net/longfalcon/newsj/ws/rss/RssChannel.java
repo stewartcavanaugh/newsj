@@ -2,6 +2,7 @@
 package net.longfalcon.newsj.ws.rss;
 
 import net.longfalcon.newsj.ws.atom.Link;
+import net.longfalcon.newsj.ws.newznab.Response;
 import org.w3c.dom.Element;
 
 import javax.xml.bind.JAXBElement;
@@ -68,6 +69,7 @@ import java.util.Map;
 @XmlType(name = "RssChannel", propOrder = {
     "atomLink",
     "titleOrLinkOrDescription",
+        "newznabResponse",
     "item",
     "any"
 })
@@ -98,6 +100,8 @@ public class RssChannel {
     protected List<Object> titleOrLinkOrDescription;
     @XmlElement(namespace = "http://www.w3.org/2005/Atom", name = "link")
     protected Link atomLink;
+    @XmlElement(namespace = "http://www.newznab.com/DTD/2010/feeds/attributes/", name = "response")
+    protected Response newznabResponse;
     @XmlElement(required = true)
     protected List<RssItem> item;
     @XmlAnyElement(lax = true)
@@ -237,5 +241,13 @@ public class RssChannel {
 
     public void setAtomLink(Link atomLink) {
         this.atomLink = atomLink;
+    }
+
+    public Response getNewznabResponse() {
+        return newznabResponse;
+    }
+
+    public void setNewznabResponse(Response newznabResponse) {
+        this.newznabResponse = newznabResponse;
     }
 }
