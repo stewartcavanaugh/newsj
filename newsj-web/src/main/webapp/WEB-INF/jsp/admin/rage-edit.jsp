@@ -104,7 +104,7 @@
                     <tr>
                         <td><label for="imagedata">Series Image</label>:</td>
                         <td>
-                            <c:if test="${tvRage.hasImage}">
+                            <c:if test="${tvRage.hasImage()}">
                                 <img style="max-width:200px; display:block;" alt="" src="${pageContext.request.contextPath}/images?type=tvrage&id=${tvRage.id}">
                             </c:if>
                             <input type="file" id="imagedata" name="imagedata">

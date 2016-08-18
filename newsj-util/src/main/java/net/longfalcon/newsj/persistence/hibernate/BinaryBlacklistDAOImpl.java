@@ -51,7 +51,7 @@ public class BinaryBlacklistDAOImpl extends HibernateDAOImpl implements net.long
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
     public List<BinaryBlacklistEntry> findAllBinaryBlacklistEntries(boolean activeOnly) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(BinaryBlacklistEntry.class);
         if (activeOnly) {
@@ -63,7 +63,7 @@ public class BinaryBlacklistDAOImpl extends HibernateDAOImpl implements net.long
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
     public BinaryBlacklistEntry findByBinaryBlacklistId(long id) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(BinaryBlacklistEntry.class);
         criteria.add(Restrictions.eq("id",id));

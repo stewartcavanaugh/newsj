@@ -29,14 +29,13 @@ public class TvRage {
     private long id;
     private long rageId;
     private long tvdbId;
-    private long traktId;
+    private Long traktId;
     private String releaseTitle;
     private String description;
     private String genre;
     private String country;
     private byte[] imgData;
     private Date createDate;
-    private boolean hasImage;
 
     public long getId() {
         return id;
@@ -110,19 +109,15 @@ public class TvRage {
         this.imgData = imgData;
     }
 
-    public boolean isHasImage() {
-        return hasImage;
+    public boolean hasImage() {
+        return (imgData != null && imgData.length > 0);
     }
 
-    public void setHasImage(boolean hasImage) {
-        this.hasImage = hasImage;
-    }
-
-    public long getTraktId() {
+    public Long getTraktId() {
         return traktId;
     }
 
-    public void setTraktId(long traktId) {
+    public void setTraktId(Long traktId) {
         this.traktId = traktId;
     }
 }

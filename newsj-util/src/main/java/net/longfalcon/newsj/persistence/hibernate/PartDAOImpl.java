@@ -65,7 +65,7 @@ public class PartDAOImpl extends HibernateDAOImpl implements net.longfalcon.news
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
     public List<Part> findPartsByBinaryId(long binaryId) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Part.class);
         criteria.add(Restrictions.eq("binaryId", binaryId));
@@ -74,7 +74,7 @@ public class PartDAOImpl extends HibernateDAOImpl implements net.longfalcon.news
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
     public Long countPartsByBinaryId(long binaryId) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Part.class);
         criteria.add(Restrictions.eq("binaryId", binaryId));
@@ -84,7 +84,7 @@ public class PartDAOImpl extends HibernateDAOImpl implements net.longfalcon.news
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
     public Long sumPartsSizeByBinaryId(long binaryId) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Part.class);
         criteria.add(Restrictions.eq("binaryId", binaryId));
@@ -94,7 +94,7 @@ public class PartDAOImpl extends HibernateDAOImpl implements net.longfalcon.news
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
     public List<Part> findByNumberAndBinaryIds(long number, List<Long> binaryIds) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Part.class);
         criteria.add(Restrictions.eq("number", number));
@@ -109,7 +109,7 @@ public class PartDAOImpl extends HibernateDAOImpl implements net.longfalcon.news
      * @return list of {String,Long,Integer}
      */
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
     public List<Object[]> findDistinctMessageIdSizeAndPartNumberByBinaryId(long binaryId) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Part.class);
         criteria.add(Restrictions.eq("binaryId", binaryId));

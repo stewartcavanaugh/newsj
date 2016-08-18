@@ -75,7 +75,7 @@ public class Nfo {
      * @param release
      * @return
      */
-    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS, isolation = Isolation.REPEATABLE_READ)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS, isolation = Isolation.READ_COMMITTED)
     public ReleaseNfo determineReleaseNfo(Release release) {
         Pattern nfoPattern = Pattern.compile(".*\\.nfo[ \"\\)\\]\\-]?.*", Pattern.CASE_INSENSITIVE);
 

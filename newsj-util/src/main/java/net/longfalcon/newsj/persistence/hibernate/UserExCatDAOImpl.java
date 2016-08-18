@@ -48,7 +48,7 @@ public class UserExCatDAOImpl extends HibernateDAOImpl implements net.longfalcon
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
     public List<Integer> getUserExCatIds(long userId) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserExCat.class);
         criteria.add(Restrictions.eq("userId", userId));

@@ -294,7 +294,7 @@ public class FetchBinaries {
         addMissingParts(missingMessagesSet, group);
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.REPEATABLE_READ)
+    @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.READ_COMMITTED)
     public void addMissingParts(Set<Long> missingMessages, Group group) {
         long groupId = group.getId();
         for (Long number : missingMessages) {

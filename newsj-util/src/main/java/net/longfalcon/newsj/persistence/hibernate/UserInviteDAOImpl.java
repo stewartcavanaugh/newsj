@@ -47,7 +47,7 @@ public class UserInviteDAOImpl extends HibernateDAOImpl implements net.longfalco
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
     public void cleanOldInvites(Date expireDate) {
         Query query = sessionFactory.getCurrentSession().createQuery("delete from UserInvite ui where createDate < :expireDate");
         query.setParameter("expireDate", expireDate);
@@ -56,7 +56,7 @@ public class UserInviteDAOImpl extends HibernateDAOImpl implements net.longfalco
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
     public UserInvite getInviteByGuid(String guid) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserInvite.class);
         criteria.add(Restrictions.eq("guid", guid));
