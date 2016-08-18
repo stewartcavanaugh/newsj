@@ -16,7 +16,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package net.longfalcon.web.api.xml.caps;
+package net.longfalcon.newsj.ws.newznab.caps;
 
 import javax.xml.bind.annotation.*;
 

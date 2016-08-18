@@ -16,36 +16,52 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package net.longfalcon.web.api.xml.caps;
+package net.longfalcon.newsj.ws.newznab;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * User: longfalcon
- * Date: 3/3/16
+ * Date: 3/1/16
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType
-public class TvSearchType {
+@XmlRootElement(name = "error")
+public class Error extends ApiResponse {
 
     @XmlAttribute
-    protected String available;
+    @JsonProperty("errorCode")
+    public String code;
 
-    public TvSearchType() {
+    @XmlAttribute
+    @JsonProperty("errorDescription")
+    public String description;
+
+    public Error() {
     }
 
-    public TvSearchType(boolean available) {
-        this.available = available ? "yes" : "no";
+    public Error(Integer code, String description) {
+        this.code = String.valueOf(code);
+        this.description = description;
     }
 
-    public String getAvailable() {
-        return available;
+    public String getCode() {
+        return code;
     }
 
-    public void setAvailable(String available) {
-        this.available = available;
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

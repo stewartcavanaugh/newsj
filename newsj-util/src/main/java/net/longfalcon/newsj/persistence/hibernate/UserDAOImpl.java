@@ -100,6 +100,15 @@ public class UserDAOImpl extends HibernateDAOImpl implements net.longfalcon.news
 
     @Override
     @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
+    public User findByApiKey(String apiKey) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(User.class);
+        criteria.add(Restrictions.eq("rssToken", apiKey));
+
+        return (User) criteria.uniqueResult();
+    }
+
+    @Override
+    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
     public long countUsers() {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(User.class);
         criteria.setProjection(Projections.countDistinct("id"));

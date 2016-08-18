@@ -16,11 +16,20 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package net.longfalcon.web.api.xml;
+package net.longfalcon.newsj.ws.newznab;
 
-import net.longfalcon.web.api.xml.caps.*;
 
-import javax.xml.bind.annotation.*;
+import net.longfalcon.newsj.ws.newznab.caps.CategoriesType;
+import net.longfalcon.newsj.ws.newznab.caps.LimitsType;
+import net.longfalcon.newsj.ws.newznab.caps.RegistrationType;
+import net.longfalcon.newsj.ws.newznab.caps.SearchingType;
+import net.longfalcon.newsj.ws.newznab.caps.ServerType;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 /**
  * User: longfalcon

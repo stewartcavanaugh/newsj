@@ -16,7 +16,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package net.longfalcon.web.api.xml.caps;
+package net.longfalcon.newsj.ws.newznab.caps;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -25,24 +25,20 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * User: longfalcon
- * Date: 3/1/16
+ * Date: 3/3/16
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType
-public class RegistrationType {
+public class TvSearchType {
 
     @XmlAttribute
     protected String available;
 
-    @XmlAttribute
-    protected String open;
-
-    public RegistrationType() {
+    public TvSearchType() {
     }
 
-    public RegistrationType(boolean available, boolean open) {
+    public TvSearchType(boolean available) {
         this.available = available ? "yes" : "no";
-        this.open = open ? "yes" : "no";
     }
 
     public String getAvailable() {
@@ -51,13 +47,5 @@ public class RegistrationType {
 
     public void setAvailable(String available) {
         this.available = available;
-    }
-
-    public String getOpen() {
-        return open;
-    }
-
-    public void setOpen(String open) {
-        this.open = open;
     }
 }

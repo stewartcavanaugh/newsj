@@ -16,36 +16,36 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package net.longfalcon.web.api.xml.caps;
+package net.longfalcon.newsj.ws.newznab.caps;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
-import java.util.List;
 
 /**
  * User: longfalcon
- * Date: 3/1/16
+ * Date: 3/3/16
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType
-public class CategoriesType {
-    @XmlElement(name = "category")
-    protected List<CategoryType> categories;
+public class AudioSearchType {
 
-    public CategoriesType() {
+    @XmlAttribute
+    protected String available;
+
+    public AudioSearchType() {
     }
 
-    public CategoriesType(List<CategoryType> categories) {
-        this.categories = categories;
+    public AudioSearchType(boolean available) {
+        this.available = available ? "yes" : "no";
     }
 
-    public List<CategoryType> getCategories() {
-        return categories;
+    public String getAvailable() {
+        return available;
     }
 
-    public void setCategories(List<CategoryType> categories) {
-        this.categories = categories;
+    public void setAvailable(String available) {
+        this.available = available;
     }
 }

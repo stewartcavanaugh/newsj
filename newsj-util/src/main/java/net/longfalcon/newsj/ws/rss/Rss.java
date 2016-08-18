@@ -1,6 +1,7 @@
 
 package net.longfalcon.newsj.ws.rss;
 
+import net.longfalcon.newsj.ws.newznab.ApiResponse;
 import org.w3c.dom.Element;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -47,7 +48,7 @@ import java.util.Map;
     "any"
 })
 @XmlRootElement(name = "rss")
-public class Rss {
+public class Rss extends ApiResponse {
 
     @XmlElement(required = true)
     protected RssChannel channel;

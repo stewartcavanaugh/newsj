@@ -157,16 +157,7 @@ public class Releases {
 
         List<Release> releases = releaseDAO.findByCategoriesMaxAgeAndGroup(categoryIds, maxAge, excludedCategoryIds, groupIdObj,
                 orderByField, descending, offset, pageSize);
-        for (Release release : releases) {
-            Group group = groupDAO.findGroupByGroupId(release.getGroupId());
-            if (group != null) {
-                release.setGroupName(group.getName());
-            }
-            Category category = release.getCategory();
-            if (category != null) {
-                release.setCategoryDisplayName(categoryService.getCategoryDisplayName(category.getId()));
-            }
-        }
+        populateTransientFields(releases);
         return releases;
     }
 
@@ -212,16 +203,7 @@ public class Releases {
 
         List<Release> releases = releaseDAO.searchByCategoriesMaxAgeAndGroup(searchTokens, categoryIds, maxAge, excludedCategoryIds, groupIdObj,
                 orderByField, descending, offset, pageSize);
-        for (Release release : releases) {
-            Group group = groupDAO.findGroupByGroupId(release.getGroupId());
-            if (group != null) {
-                release.setGroupName(group.getName());
-            }
-            Category category = release.getCategory();
-            if (category != null) {
-                release.setCategoryDisplayName(categoryService.getCategoryDisplayName(category.getId()));
-            }
-        }
+        populateTransientFields(releases);
         return releases;
     }
 
@@ -770,6 +752,19 @@ public class Releases {
         }
 
         return answer;
+    }
+
+    private void populateTransientFields(List<Release> releases) {
+        for (Release release : releases) {
+            Group group = groupDAO.findGroupByGroupId(release.getGroupId());
+            if (group != null) {
+                release.setGroupName(group.getName());
+            }
+            Category category = release.getCategory();
+            if (category != null) {
+                release.setCategoryDisplayName(categoryService.getCategoryDisplayName(category.getId()));
+            }
+        }
     }
 
     // merge releases with same release name, similar to original messy query

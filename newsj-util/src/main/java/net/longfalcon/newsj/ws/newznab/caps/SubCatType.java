@@ -16,61 +16,48 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package net.longfalcon.web.api.xml;
+package net.longfalcon.newsj.ws.newznab.caps;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 /**
- * User: Sten Martinez
- * Date: 3/7/16
- * Time: 10:26 PM
+ * User: longfalcon
+ * Date: 3/3/16
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlRootElement(name = "register")
-public class RegisterType extends ApiResponse {
+@XmlType
+public class SubCatType {
 
     @XmlAttribute
-    private String username;
+    protected int id;
 
     @XmlAttribute
-    private String password;
+    protected String name;
 
-    @XmlAttribute
-    private String apikey;
-
-    public RegisterType() {
+    public SubCatType() {
     }
 
-    public RegisterType(String username, String password, String apikey) {
-        this.username = username;
-        this.password = password;
-        this.apikey = apikey;
+    public SubCatType(int id, String name) {
+        this.id = id;
+        this.name = name;
     }
 
-    public String getUsername() {
-        return username;
+    public int getId() {
+        return id;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setId(int id) {
+        this.id = id;
     }
 
-    public String getPassword() {
-        return password;
+    public String getName() {
+        return name;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getApikey() {
-        return apikey;
-    }
-
-    public void setApikey(String apikey) {
-        this.apikey = apikey;
+    public void setName(String name) {
+        this.name = name;
     }
 }
