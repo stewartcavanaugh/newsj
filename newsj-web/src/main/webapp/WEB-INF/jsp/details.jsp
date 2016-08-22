@@ -54,7 +54,7 @@
         <%--START PAGE CONTENT--%>
             <h1>${text:escapeHtml(release.searchName)}</h1>
 
-            <c:if test="${tvInfo != null && tvInfo.hasImage}">
+            <c:if test="${tvInfo != null && tvInfo.hasImage()}">
                 <img class="shadow" src="${pageContext.request.contextPath}/images?type=tvrage&id=${tvInfo.id}" width="180" alt="${text:escapeHtml(tvInfo.releaseTitle)}" style="float:right;" />
             </c:if>
             <c:if test="${movieInfo != null && movieInfo.cover}">

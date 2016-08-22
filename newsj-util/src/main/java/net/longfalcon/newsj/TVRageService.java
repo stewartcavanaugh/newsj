@@ -122,7 +122,7 @@ public class TVRageService {
                         _log.info("no trakt data found for " + cleanName + " - adding placeholder");
                         TvRage tvRage = new TvRage();
                         tvRage.setRageId(-2);
-                        tvRage.setTraktId(-2);
+                        tvRage.setTraktId((long) -2);
                         tvRage.setReleaseTitle(cleanName);
                         tvRage.setCreateDate(new Date());
                         tvRage.setDescription("");

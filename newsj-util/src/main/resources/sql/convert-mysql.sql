@@ -415,6 +415,7 @@ CREATE INDEX ix_releases_regexId ON releases (`regexID`);
 CREATE INDEX ix_releases_groupId on releases (`groupID`);
 CREATE INDEX ix_parts_messageId on parts (`messageID`);
 CREATE INDEX ix_tvrage_traktId on tvrage (`traktid`);
+CREATE UNIQUE INDEX ix_users_rsstoken on users (`rsstoken`);
 
 -- TODO: verify this works
 -- makes "rageId" EVERYWHERE BUT TVRAGE represent a "tvinfo" id, not a TvRage id specific to the TvRage site

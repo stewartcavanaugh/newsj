@@ -157,16 +157,7 @@ public class Releases {
 
         List<Release> releases = releaseDAO.findByCategoriesMaxAgeAndGroup(categoryIds, maxAge, excludedCategoryIds, groupIdObj,
                 orderByField, descending, offset, pageSize);
-        for (Release release : releases) {
-            Group group = groupDAO.findGroupByGroupId(release.getGroupId());
-            if (group != null) {
-                release.setGroupName(group.getName());
-            }
-            Category category = release.getCategory();
-            if (category != null) {
-                release.setCategoryDisplayName(categoryService.getCategoryDisplayName(category.getId()));
-            }
-        }
+        populateTransientFields(releases);
         return releases;
     }
 
@@ -212,16 +203,62 @@ public class Releases {
 
         List<Release> releases = releaseDAO.searchByCategoriesMaxAgeAndGroup(searchTokens, categoryIds, maxAge, excludedCategoryIds, groupIdObj,
                 orderByField, descending, offset, pageSize);
-        for (Release release : releases) {
-            Group group = groupDAO.findGroupByGroupId(release.getGroupId());
-            if (group != null) {
-                release.setGroupName(group.getName());
-            }
-            Category category = release.getCategory();
-            if (category != null) {
-                release.setCategoryDisplayName(categoryService.getCategoryDisplayName(category.getId()));
-            }
+        populateTransientFields(releases);
+        return releases;
+    }
+
+    public Long getSearchCount(String[] searchTokens, long imdbId, long rageId, String season, String episode,
+                               Collection<Integer> categoryIds, int maxAgeDays, List<Integer> excludedCategoryIds, long groupId) {
+        Date maxAge = null;
+        if (maxAgeDays > 0) {
+            maxAge = DateTime.now().minusDays(maxAgeDays).toDate();
         }
+
+        Long groupIdObj = null;
+        if (groupId > 0) {
+            groupIdObj = groupId;
+        }
+
+        Long imdbIdObj = null;
+        if (imdbId > 0) {
+            imdbIdObj = imdbId;
+        }
+
+        Long rageIdObj = null;
+        if (rageId > 0) {
+            rageIdObj = rageId;
+        }
+
+        return releaseDAO.searchCountByCategoriesMaxAgeAndGroup(searchTokens, imdbIdObj, rageIdObj, season, episode, categoryIds, maxAge, excludedCategoryIds, groupIdObj);
+    }
+
+    public List<Release> getSearchReleases(String[] searchTokens, long imdbId, long rageId, String season, String episode,
+                                           Collection<Integer> categoryIds, int maxAgeDays, List<Integer> excludedCategoryIds,
+                                           long groupId, String orderByField, boolean descending,
+                                           int offset, int pageSize) {
+        Date maxAge = null;
+        if (maxAgeDays > 0) {
+            maxAge = DateTime.now().minusDays(maxAgeDays).toDate();
+        }
+
+        Long groupIdObj = null;
+        if (groupId > 0) {
+            groupIdObj = groupId;
+        }
+
+        Long imdbIdObj = null;
+        if (imdbId > 0) {
+            imdbIdObj = imdbId;
+        }
+
+        Long rageIdObj = null;
+        if (rageId > 0) {
+            rageIdObj = rageId;
+        }
+
+        List<Release> releases = releaseDAO.searchByCategoriesMaxAgeAndGroup(searchTokens, imdbIdObj, rageIdObj, season, episode, categoryIds, maxAge, excludedCategoryIds, groupIdObj,
+                orderByField, descending, offset, pageSize);
+        populateTransientFields(releases);
         return releases;
     }
 
@@ -770,6 +807,19 @@ public class Releases {
         }
 
         return answer;
+    }
+
+    private void populateTransientFields(List<Release> releases) {
+        for (Release release : releases) {
+            Group group = groupDAO.findGroupByGroupId(release.getGroupId());
+            if (group != null) {
+                release.setGroupName(group.getName());
+            }
+            Category category = release.getCategory();
+            if (category != null) {
+                release.setCategoryDisplayName(categoryService.getCategoryDisplayName(category.getId()));
+            }
+        }
     }
 
     // merge releases with same release name, similar to original messy query

@@ -787,6 +787,8 @@ CREATE INDEX "IX_TVRAGE_TRAKTID" ON "TVRAGE" ("TRAKTID");
 --  Constraints for Table USERS
 --------------------------------------------------------
 
+CREATE UNIQUE INDEX "IX_USERS_RSSTOKEN" on "USERS" ("RSSTOKEN");
+
 --------------------------------------------------------
 --  Constraints for Table RELEASECOMMENT
 --------------------------------------------------------

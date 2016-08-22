@@ -53,7 +53,7 @@ public class PartRepairDAOImpl extends HibernateDAOImpl implements net.longfalco
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
     public PartRepair findByArticleNumberAndGroupId(long articleNumber, long groupId) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(PartRepair.class)
                 .add(Restrictions.eq("numberId", articleNumber))
@@ -69,7 +69,7 @@ public class PartRepairDAOImpl extends HibernateDAOImpl implements net.longfalco
      * @return
      */
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
     public List<PartRepair> findByGroupIdAndAttempts(long groupId, int attempts, boolean lessThan) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(PartRepair.class)
                 .add(Restrictions.eq("groupId", groupId))
@@ -81,7 +81,7 @@ public class PartRepairDAOImpl extends HibernateDAOImpl implements net.longfalco
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
     public List<PartRepair> findByGroupIdAndNumbers(long groupId, Collection<Long> numbers) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(PartRepair.class)
                 .add(Restrictions.eq("groupId", groupId)).add(Restrictions.in("numberId", numbers))

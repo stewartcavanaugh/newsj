@@ -74,7 +74,7 @@
             </h1>
 
             <div class="tvseriesheading">
-                <c:if test="${tvInfo.hasImage}">
+                <c:if test="${tvInfo.hasImage()}">
                     <img class="shadow" alt="${tvInfo.releaseTitle} Logo" src="${pageContext.request.contextPath}/images?type=tvrage&amp;id=${tvInfo.id}" />
                 </c:if>
                 <p>

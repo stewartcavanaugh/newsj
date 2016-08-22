@@ -44,5 +44,7 @@ public interface UserDAO {
 
     User findByEmail(String email);
 
+    User findByApiKey(String apiKey);
+
     long countUsers();
 }

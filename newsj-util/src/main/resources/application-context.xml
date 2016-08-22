@@ -349,6 +349,7 @@
     <bean id="searchService" class="net.longfalcon.newsj.service.SearchService">
         <property name="releases" ref="releases"/>
         <property name="binaryDAO" ref="binaryDAO"/>
+        <property name="siteDAO" ref="siteDAO"/>
     </bean>
     <bean id="cartService" class="net.longfalcon.newsj.service.CartService">
         <property name="userCartDAO" ref="userCartDAO"/>

@@ -49,7 +49,7 @@ public class ReleaseNfoDAOImpl extends HibernateDAOImpl implements net.longfalco
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
     public List<ReleaseNfo> findReleaseNfoWithNullNfoByAttempts(int attempts) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ReleaseNfo.class);
         criteria.add(Restrictions.isNull("nfo"));
@@ -59,7 +59,7 @@ public class ReleaseNfoDAOImpl extends HibernateDAOImpl implements net.longfalco
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
     public ReleaseNfo findByReleaseId(long releaseId) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ReleaseNfo.class);
         criteria.add(Restrictions.eq("release.id", releaseId));

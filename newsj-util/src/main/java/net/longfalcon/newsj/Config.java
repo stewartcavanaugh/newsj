@@ -46,7 +46,7 @@ public class Config {
     Properties properties;
     private Site defaultSite;
 
-    @Transactional(propagation = Propagation.SUPPORTS, isolation = Isolation.REPEATABLE_READ)
+    @Transactional(propagation = Propagation.SUPPORTS, isolation = Isolation.READ_COMMITTED)
     public void init() {
         properties = new Properties();
         for (Resource resource : propertyLocations) {

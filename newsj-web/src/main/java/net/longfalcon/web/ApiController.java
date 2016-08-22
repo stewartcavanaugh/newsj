@@ -21,26 +21,30 @@ package net.longfalcon.web;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.longfalcon.newsj.model.Category;
+import net.longfalcon.newsj.model.Release;
 import net.longfalcon.newsj.model.Site;
 import net.longfalcon.newsj.model.User;
 import net.longfalcon.newsj.persistence.CategoryDAO;
+import net.longfalcon.newsj.persistence.ReleaseDAO;
 import net.longfalcon.newsj.persistence.SiteDAO;
 import net.longfalcon.newsj.persistence.UserDAO;
+import net.longfalcon.newsj.persistence.UserExCatDAO;
+import net.longfalcon.newsj.service.SearchService;
 import net.longfalcon.newsj.service.SiteService;
 import net.longfalcon.newsj.service.UserService;
 import net.longfalcon.newsj.util.ValidatorUtil;
+import net.longfalcon.newsj.ws.newznab.ApiResponse;
+import net.longfalcon.newsj.ws.newznab.CapsType;
+import net.longfalcon.newsj.ws.newznab.Error;
+import net.longfalcon.newsj.ws.newznab.RegisterType;
+import net.longfalcon.newsj.ws.newznab.caps.CategoriesType;
+import net.longfalcon.newsj.ws.newznab.caps.CategoryType;
+import net.longfalcon.newsj.ws.newznab.caps.LimitsType;
+import net.longfalcon.newsj.ws.newznab.caps.RegistrationType;
+import net.longfalcon.newsj.ws.newznab.caps.SearchingType;
+import net.longfalcon.newsj.ws.newznab.caps.ServerType;
+import net.longfalcon.newsj.ws.newznab.caps.SubCatType;
 import net.longfalcon.view.UserRegistrationVO;
-import net.longfalcon.web.api.xml.ApiResponse;
-import net.longfalcon.web.api.xml.CapsType;
-import net.longfalcon.web.api.xml.Error;
-import net.longfalcon.web.api.xml.RegisterType;
-import net.longfalcon.web.api.xml.caps.CategoriesType;
-import net.longfalcon.web.api.xml.caps.CategoryType;
-import net.longfalcon.web.api.xml.caps.LimitsType;
-import net.longfalcon.web.api.xml.caps.RegistrationType;
-import net.longfalcon.web.api.xml.caps.SearchingType;
-import net.longfalcon.web.api.xml.caps.ServerType;
-import net.longfalcon.web.api.xml.caps.SubCatType;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +52,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,7 +68,16 @@ public class ApiController {
     CategoryDAO categoryDAO;
 
     @Autowired
+    ReleaseDAO releaseDAO;
+
+    @Autowired
+    SearchService searchService;
+
+    @Autowired
     SiteDAO siteDAO;
+
+    @Autowired
+    UserExCatDAO userExCatDAO;
 
     @Autowired
     UserService userService;
@@ -84,6 +98,7 @@ public class ApiController {
     @ResponseBody
     public ApiResponse xmlApi(@RequestParam(value = "t", required = false) String type,
                               @RequestParam(value = "apikey", required = false) String apiKey,
+                              @RequestParam(value = "id", required = false) String guid,
                               @RequestParam(value = "extended", required = false) String extended,
                               @RequestParam(value = "del", required = false) String del,
                               @RequestParam(value = "q", required = false) String query,
@@ -94,7 +109,9 @@ public class ApiController {
                               @RequestParam(value = "rid", required = false) String rid,
                               @RequestParam(value = "season", required = false) String season,
                               @RequestParam(value = "ep", required = false) String ep,
-                              @RequestParam(value = "email", required = false) String email) {
+                              @RequestParam(value = "email", required = false) String email,
+                              @RequestParam(value = "cat", required = false) String categoryIdsString,
+                              UriComponentsBuilder uriComponentsBuilder) {
         String function = TYPE_SEARCH;
         if (ValidatorUtil.isNotNull(type)) {
             if (type.equals("details") || type.equals(TYPE_DETAILS)) {
@@ -118,13 +135,49 @@ public class ApiController {
             return generateError(200);
         }
 
+        String serverBaseUrl = uriComponentsBuilder.toUriString();
+
         if (function.equals(TYPE_CAPS)) {
-            return getCaps();
+            return getCaps(serverBaseUrl);
         }
 
         if (function.equals(TYPE_REGISTER)) {
             return getRegister(email);
 
+        }
+
+        if (ValidatorUtil.isNull(apiKey)) {
+            return generateError(200);
+        }
+
+        User user = userDAO.findByApiKey(apiKey);
+        if (user == null) {
+            return generateError(100);
+        }
+
+        if (function.equals(TYPE_SEARCH)) {
+            if (query != null && query.equals("")) {
+                return generateError(200);
+            }
+            return getSearchResponse(user, serverBaseUrl, extended, query, maxAge, limit, offset, categoryIdsString);
+        }
+
+        if (function.equals(TYPE_TVSEARCH)) {
+            if (query != null && query.equals("")) {
+                return generateError(200);
+            }
+            return getTvSearchResponse(user, serverBaseUrl, extended, query, maxAge, limit, offset, categoryIdsString, rid, season, ep);
+        }
+
+        if (function.equals(TYPE_MOVIE)) {
+            if (query != null && query.equals("")) {
+                return generateError(200);
+            }
+            return getMovieSearchResponse(user, serverBaseUrl, extended, query, maxAge, limit, offset, categoryIdsString, imdbId);
+        }
+
+        if (function.equals(TYPE_DETAILS)) {
+            return getReleaseDetailsResponse(user, serverBaseUrl, extended, guid);
         }
 
         return generateError(202);
@@ -133,20 +186,23 @@ public class ApiController {
     @RequestMapping(value = "/api", params = "o=json", produces = "application/json")
     @ResponseBody
     public String jsonApi(@RequestParam(value = "t", required = false) String type,
-                         @RequestParam(value = "apikey", required = false) String apiKey,
-                         @RequestParam(value = "extended", required = false) String extended,
-                         @RequestParam(value = "del", required = false) String del,
-                         @RequestParam(value = "q", required = false) String query,
-                         @RequestParam(value = "maxage", required = false) String maxAge,
-                         @RequestParam(value = "limit", required = false) String limit,
-                         @RequestParam(value = "offset", required = false) String offset,
-                         @RequestParam(value = "imdbid", required = false) String imdbId,
-                         @RequestParam(value = "rid", required = false) String rid,
-                         @RequestParam(value = "season", required = false) String season,
-                         @RequestParam(value = "ep", required = false) String ep,
-                          @RequestParam(value = "email", required = false) String email) throws JsonProcessingException {
+                            @RequestParam(value = "apikey", required = false) String apiKey,
+                            @RequestParam(value = "id", required = false) String guid,
+                            @RequestParam(value = "extended", required = false) String extended,
+                            @RequestParam(value = "del", required = false) String del,
+                            @RequestParam(value = "q", required = false) String query,
+                            @RequestParam(value = "maxage", required = false) String maxAge,
+                            @RequestParam(value = "limit", required = false) String limit,
+                            @RequestParam(value = "offset", required = false) String offset,
+                            @RequestParam(value = "imdbid", required = false) String imdbId,
+                            @RequestParam(value = "rid", required = false) String rid,
+                            @RequestParam(value = "season", required = false) String season,
+                            @RequestParam(value = "ep", required = false) String ep,
+                            @RequestParam(value = "email", required = false) String email,
+                            @RequestParam(value = "cat", required = false) String categoryIdsString,
+                            UriComponentsBuilder uriComponentsBuilder) throws JsonProcessingException {
 
-        ApiResponse apiResponse = xmlApi(type, apiKey, extended, del, query, maxAge, limit, offset, imdbId, rid, season, ep, email);
+        ApiResponse apiResponse = xmlApi(type, apiKey, guid, extended, del, query, maxAge, limit, offset, imdbId, rid, season, ep, email, categoryIdsString, uriComponentsBuilder);
 
         ObjectMapper objectMapper = new ObjectMapper();
 
@@ -193,12 +249,12 @@ public class ApiController {
         return new RegisterType(username, password, user.getRssToken());
     }
 
-    private ApiResponse getCaps() {
+    private ApiResponse getCaps(String serverBaseUrl) {
         Site site = siteDAO.getDefaultSite();
 
         CapsType caps = new CapsType();
         caps.setServerType(new ServerType("0.2.3", "0.1", site.getTitle(), site.getStrapLine(), "email@email.com",
-                "http://localhost:8080", ""));
+                serverBaseUrl, ""));
         caps.setLimitsType(new LimitsType(100,100));
         caps.setRegistrationType(new RegistrationType(true, site.getRegisterStatus() == 1));
         caps.setSearchingType(new SearchingType(true, true, true, false));
@@ -220,6 +276,144 @@ public class ApiController {
         return caps;
     }
 
+    private ApiResponse getSearchResponse(User user, String serverBaseUrl, String extended, String query, String maxAge, String limitString, String offsetString, String categoryIdsString) {
+
+        List<Integer> categoryIds = new ArrayList<>();
+        if (ValidatorUtil.isNotNull(categoryIdsString)) {
+            String[] categoryIdsSplit = categoryIdsString.split(",");
+            for (String categoryIdString : categoryIdsSplit) {
+                categoryIds.add(Integer.parseInt(categoryIdString));
+            }
+        }
+        int maxAgeDays = -1;
+        if (ValidatorUtil.isNotNull(maxAge)) {
+            if (ValidatorUtil.isNumeric(maxAge)) {
+                maxAgeDays = Integer.parseInt(maxAge);
+            } else {
+                return generateError(200);
+            }
+        }
+        List<Integer> userExCatIds = userExCatDAO.getUserExCatIds(user.getId());
+        long groupId = -1;
+        String orderByFieldName = "addDate";
+        boolean orderByDesc = true;
+        int offset = 0;
+        if (ValidatorUtil.isNotNull(offsetString)) {
+            offset = Integer.parseInt(offsetString);
+        }
+        int pageSize = 100;
+        if (ValidatorUtil.isNotNull(limitString)) {
+            pageSize = Integer.parseInt(limitString);
+        }
+        boolean isExtended = false;
+        if (ValidatorUtil.isNotNull(extended)) {
+            isExtended = extended.equals("1") || extended.equals("true");
+        }
+
+        return searchService.searchReleasesApi(user, serverBaseUrl, query, categoryIds, maxAgeDays, userExCatIds, groupId, orderByFieldName, orderByDesc, offset, pageSize, isExtended);
+    }
+
+    private ApiResponse getTvSearchResponse(User user, String serverBaseUrl, String extended, String query, String maxAge,
+                                            String limitString, String offsetString, String categoryIdsString, String rageIdString, String season, String episode) {
+
+        List<Integer> categoryIds = new ArrayList<>();
+        if (ValidatorUtil.isNotNull(categoryIdsString)) {
+            String[] categoryIdsSplit = categoryIdsString.split(",");
+            for (String categoryIdString : categoryIdsSplit) {
+                categoryIds.add(Integer.parseInt(categoryIdString));
+            }
+        }
+        int maxAgeDays = -1;
+        if (ValidatorUtil.isNotNull(maxAge)) {
+            if (ValidatorUtil.isNumeric(maxAge)) {
+                maxAgeDays = Integer.parseInt(maxAge);
+            } else {
+                return generateError(200);
+            }
+        }
+        List<Integer> userExCatIds = userExCatDAO.getUserExCatIds(user.getId());
+        long groupId = -1;
+        String orderByFieldName = "addDate";
+        boolean orderByDesc = true;
+        int offset = 0;
+        if (ValidatorUtil.isNotNull(offsetString)) {
+            offset = Integer.parseInt(offsetString);
+        }
+        int pageSize = 100;
+        if (ValidatorUtil.isNotNull(limitString)) {
+            pageSize = Integer.parseInt(limitString);
+        }
+        boolean isExtended = false;
+        if (ValidatorUtil.isNotNull(extended)) {
+            isExtended = extended.equals("1") || extended.equals("true");
+        }
+
+        long rageId = -1; // this is a TVRage metadata ID, not a tvInfo id
+        if (ValidatorUtil.isNotNull(rageIdString)) {
+            rageId = Long.parseLong(rageIdString);
+        }
+
+        return searchService.searchTvReleasesApi(user, serverBaseUrl, query, rageId, season, episode, categoryIds, maxAgeDays, userExCatIds, groupId, orderByFieldName, orderByDesc, offset, pageSize, isExtended);
+    }
+
+    private ApiResponse getMovieSearchResponse(User user, String serverBaseUrl, String extended, String query, String maxAge,
+                                            String limitString, String offsetString, String categoryIdsString, String imdbIdString) {
+
+        List<Integer> categoryIds = new ArrayList<>();
+        if (ValidatorUtil.isNotNull(categoryIdsString)) {
+            String[] categoryIdsSplit = categoryIdsString.split(",");
+            for (String categoryIdString : categoryIdsSplit) {
+                categoryIds.add(Integer.parseInt(categoryIdString));
+            }
+        }
+        int maxAgeDays = -1;
+        if (ValidatorUtil.isNotNull(maxAge)) {
+            if (ValidatorUtil.isNumeric(maxAge)) {
+                maxAgeDays = Integer.parseInt(maxAge);
+            } else {
+                return generateError(200);
+            }
+        }
+        List<Integer> userExCatIds = userExCatDAO.getUserExCatIds(user.getId());
+        long groupId = -1;
+        String orderByFieldName = "addDate";
+        boolean orderByDesc = true;
+        int offset = 0;
+        if (ValidatorUtil.isNotNull(offsetString)) {
+            offset = Integer.parseInt(offsetString);
+        }
+        int pageSize = 100;
+        if (ValidatorUtil.isNotNull(limitString)) {
+            pageSize = Integer.parseInt(limitString);
+        }
+        boolean isExtended = false;
+        if (ValidatorUtil.isNotNull(extended)) {
+            isExtended = extended.equals("1") || extended.equals("true");
+        }
+
+        long imdbId = -1;
+        if (ValidatorUtil.isNotNull(imdbIdString)) {
+            imdbId = Long.parseLong(imdbIdString);
+        }
+
+        return searchService.searchMovieReleasesApi(user, serverBaseUrl, query, imdbId, categoryIds, maxAgeDays, userExCatIds, groupId, orderByFieldName, orderByDesc, offset, pageSize, isExtended);
+    }
+
+    private ApiResponse getReleaseDetailsResponse(User user, String serverBaseUrl, String extended, String guid) {
+        boolean isExtended = false;
+        if (ValidatorUtil.isNotNull(extended)) {
+            isExtended = extended.equals("1") || extended.equals("true");
+        }
+
+        Release release = releaseDAO.findByGuid(guid);
+        if (release == null) {
+            return generateError(300);
+        }  else {
+            return searchService.getSingleRelease(user, serverBaseUrl, release, isExtended);
+        }
+    }
+
+    // todo: replace with enum
     private Error generateError(int code) {
         
         String errorMessage;

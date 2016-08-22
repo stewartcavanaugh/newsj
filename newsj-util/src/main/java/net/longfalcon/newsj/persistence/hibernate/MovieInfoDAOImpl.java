@@ -51,7 +51,7 @@ public class MovieInfoDAOImpl extends HibernateDAOImpl implements MovieInfoDAO {
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS )
+    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS )
     public Long countMovieInfos() {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(MovieInfo.class);
         criteria.setProjection(Projections.rowCount());
@@ -59,7 +59,7 @@ public class MovieInfoDAOImpl extends HibernateDAOImpl implements MovieInfoDAO {
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS )
+    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS )
     public List<MovieInfo> getMovieInfos(int offset, int pageSize) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(MovieInfo.class);
         criteria.setFirstResult(offset).setMaxResults(pageSize);
@@ -67,7 +67,7 @@ public class MovieInfoDAOImpl extends HibernateDAOImpl implements MovieInfoDAO {
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS )
+    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS )
     public MovieInfo findByMovieInfoId(long id) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(MovieInfo.class);
         criteria.add(Restrictions.eq("id", id));
@@ -76,7 +76,7 @@ public class MovieInfoDAOImpl extends HibernateDAOImpl implements MovieInfoDAO {
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS )
+    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS )
     public MovieInfo findByImdbId(long imdbId) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(MovieInfo.class);
         criteria.add(Restrictions.eq("imdbId", imdbId));
@@ -85,7 +85,7 @@ public class MovieInfoDAOImpl extends HibernateDAOImpl implements MovieInfoDAO {
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS )
+    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS )
     public List<MovieInfo> findByImdbId(List<Long> imdbIds) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(MovieInfo.class);
         if (imdbIds != null && !imdbIds.isEmpty()) {
@@ -96,7 +96,7 @@ public class MovieInfoDAOImpl extends HibernateDAOImpl implements MovieInfoDAO {
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
     public Long getMovieCount(List<Long> imdbIds, String titleSearch, String genreSearch, String actorsSearch,
                               String directorSearch, String yearSearch) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(MovieInfo.class);
@@ -131,7 +131,7 @@ public class MovieInfoDAOImpl extends HibernateDAOImpl implements MovieInfoDAO {
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
     public List<MovieInfo> getMovies(List<Long> imdbIds, String titleSearch, String genreSearch, String actorsSearch,
                                          String directorSearch, String yearSearch,
                                          int offset, int pageSize, String orderByField, boolean descending) {

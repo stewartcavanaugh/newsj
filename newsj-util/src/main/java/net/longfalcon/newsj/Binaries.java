@@ -350,7 +350,7 @@ public class Binaries {
         }
     }
 
-    @Transactional(isolation = Isolation.REPEATABLE_READ, propagation = Propagation.NOT_SUPPORTED)
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.NOT_SUPPORTED)
     public void updateGroupModel(Group group) {
         groupDAO.update(group);
     }

@@ -42,7 +42,7 @@ import java.util.Set;
 public class CategoryDAOImpl extends HibernateDAOImpl implements net.longfalcon.newsj.persistence.CategoryDAO {
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
     public Category findByCategoryId(int categoryId) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Category.class);
         criteria.add(Restrictions.eq("id", categoryId));
@@ -51,7 +51,7 @@ public class CategoryDAOImpl extends HibernateDAOImpl implements net.longfalcon.
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
     public List<Category> findByParentId(int parentId) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Category.class);
         criteria.add(Restrictions.eq("parentId", parentId));
@@ -60,7 +60,7 @@ public class CategoryDAOImpl extends HibernateDAOImpl implements net.longfalcon.
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
     public List<Category> getForMenu(Set<Integer> userExcludedCategoryIds, Integer parentId) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Category.class);
         if (!userExcludedCategoryIds.isEmpty()) {
@@ -72,13 +72,13 @@ public class CategoryDAOImpl extends HibernateDAOImpl implements net.longfalcon.
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
     public List<Category> getForMenu(Set<Integer> userExcludedCategoryIds) {
         return getForMenu(userExcludedCategoryIds, null);
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
     public List<Category> getParentCategories() {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Category.class);
         criteria.add(Restrictions.isNull("parentId"));
@@ -88,7 +88,7 @@ public class CategoryDAOImpl extends HibernateDAOImpl implements net.longfalcon.
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
     public List<Category> getChildCategories() {
         Query query = sessionFactory.getCurrentSession().createQuery("from Category c where c.parentId != 0 order by c.id");
 
@@ -96,7 +96,7 @@ public class CategoryDAOImpl extends HibernateDAOImpl implements net.longfalcon.
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
     public List<Integer> getCategoryChildrenIds(int categoryParentId) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Category.class);
         criteria.add(Restrictions.eq("parentId", categoryParentId));
@@ -106,7 +106,7 @@ public class CategoryDAOImpl extends HibernateDAOImpl implements net.longfalcon.
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
     public List<Category> getAllCategories(boolean activeOnly) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Category.class);
         if (activeOnly) {

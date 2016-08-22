@@ -48,7 +48,7 @@ public class TvRageDAOImpl extends HibernateDAOImpl implements net.longfalcon.ne
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
     public TvRage findById(long id) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(TvRage.class);
         criteria.add(Restrictions.eq("id", id));
@@ -57,7 +57,7 @@ public class TvRageDAOImpl extends HibernateDAOImpl implements net.longfalcon.ne
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
     public TvRage findByTvRageId(long rageId) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(TvRage.class);
         criteria.add(Restrictions.eq("rageId", rageId));
@@ -66,7 +66,7 @@ public class TvRageDAOImpl extends HibernateDAOImpl implements net.longfalcon.ne
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
     public TvRage findByTvTraktId(long traktId) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(TvRage.class);
         criteria.add(Restrictions.eq("traktId", traktId));
@@ -75,16 +75,16 @@ public class TvRageDAOImpl extends HibernateDAOImpl implements net.longfalcon.ne
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
     public TvRage findByReleaseTitle(String title) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(TvRage.class);
-        criteria.add(Restrictions.eq("releaseTitle", title.toLowerCase()));
+        criteria.add(Restrictions.ilike("releaseTitle", title));
 
         return (TvRage) criteria.uniqueResult();
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
     public Long countTvRage() {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(TvRage.class);
         criteria.setProjection(Projections.rowCount());
@@ -93,7 +93,7 @@ public class TvRageDAOImpl extends HibernateDAOImpl implements net.longfalcon.ne
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
     public List<TvRage> getTvRage(int offset, int pageSize) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(TvRage.class);
         criteria.setFirstResult(offset).setMaxResults(pageSize);
@@ -102,7 +102,7 @@ public class TvRageDAOImpl extends HibernateDAOImpl implements net.longfalcon.ne
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
     public List<TvRage> searchTvRage(int offset, int pageSize, String titleSearch) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(TvRage.class);
         criteria.add(Restrictions.like("releaseTitle", "%" + titleSearch + "%"));

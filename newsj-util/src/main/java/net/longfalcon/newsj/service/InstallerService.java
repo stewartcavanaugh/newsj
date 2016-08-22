@@ -40,7 +40,7 @@ public class InstallerService {
     private FileSystemService fileSystemService;
     private Config config;
 
-    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.REPEATABLE_READ)
+    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
     public void initializeNzbStorage(String newNzbPath) {
         Site defaultSite = siteDAO.getDefaultSite();
         defaultSite.setNzbPath(newNzbPath);

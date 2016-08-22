@@ -35,13 +35,13 @@ import org.springframework.transaction.annotation.Transactional;
 public class SiteDAOImpl extends HibernateDAOImpl implements SiteDAO {
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.REPEATABLE_READ)
+    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
     public void update(Site site) {
         this.sessionFactory.getCurrentSession().saveOrUpdate(site);
         this.sessionFactory.getCurrentSession().flush();
     }
 
-    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
     public Site getDefaultSite() {
         Criteria criteria = this.sessionFactory.getCurrentSession().createCriteria(Site.class);
         criteria.setMaxResults(1);

@@ -117,6 +117,15 @@ public class GetNzbController extends BaseController {
         }
     }
 
+    @RequestMapping(value = "/getnzb/{releaseGuid}.nzb", produces = "application/x-nzb")
+    @Transactional
+    public ResponseEntity<?> getNzb(@RequestParam(value = "i", required = false) Long remoteUserId,
+                                    @RequestParam(value = "r", required = false) String rssToken,
+                                    @PathVariable("releaseGuid") String releaseGuid,
+                                    Model model) throws PermissionDeniedException, NoSuchResourceException, FlagrantSystemException {
+        return getNzb(remoteUserId, rssToken, releaseGuid, null, model);
+    }
+
     @RequestMapping(value = "/getnzb", produces = "application/octet-stream")
     @Transactional
     public ResponseEntity<?> getNzbs(@RequestParam(value = "i", required = false) Long remoteUserId,
