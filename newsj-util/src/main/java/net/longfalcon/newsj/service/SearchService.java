@@ -38,6 +38,7 @@ import net.longfalcon.newsj.ws.rss.ObjectFactory;
 import net.longfalcon.newsj.ws.rss.Rss;
 import net.longfalcon.newsj.ws.rss.RssChannel;
 import net.longfalcon.newsj.ws.rss.RssItem;
+import org.springframework.stereotype.Service;
 
 import javax.xml.bind.JAXBElement;
 import java.math.BigDecimal;
@@ -52,6 +53,7 @@ import java.util.List;
  * Date: 3/24/16
  * Time: 1:44 PM
  */
+@Service
 public class SearchService {
 
     private Releases releases;
