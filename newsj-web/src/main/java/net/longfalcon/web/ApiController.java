@@ -21,9 +21,11 @@ package net.longfalcon.web;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.longfalcon.newsj.model.Category;
+import net.longfalcon.newsj.model.Release;
 import net.longfalcon.newsj.model.Site;
 import net.longfalcon.newsj.model.User;
 import net.longfalcon.newsj.persistence.CategoryDAO;
+import net.longfalcon.newsj.persistence.ReleaseDAO;
 import net.longfalcon.newsj.persistence.SiteDAO;
 import net.longfalcon.newsj.persistence.UserDAO;
 import net.longfalcon.newsj.persistence.UserExCatDAO;
@@ -66,6 +68,9 @@ public class ApiController {
     CategoryDAO categoryDAO;
 
     @Autowired
+    ReleaseDAO releaseDAO;
+
+    @Autowired
     SearchService searchService;
 
     @Autowired
@@ -93,6 +98,7 @@ public class ApiController {
     @ResponseBody
     public ApiResponse xmlApi(@RequestParam(value = "t", required = false) String type,
                               @RequestParam(value = "apikey", required = false) String apiKey,
+                              @RequestParam(value = "id", required = false) String guid,
                               @RequestParam(value = "extended", required = false) String extended,
                               @RequestParam(value = "del", required = false) String del,
                               @RequestParam(value = "q", required = false) String query,
@@ -156,6 +162,24 @@ public class ApiController {
             return getSearchResponse(user, serverBaseUrl, extended, query, maxAge, limit, offset, categoryIdsString);
         }
 
+        if (function.equals(TYPE_TVSEARCH)) {
+            if (query != null && query.equals("")) {
+                return generateError(200);
+            }
+            return getTvSearchResponse(user, serverBaseUrl, extended, query, maxAge, limit, offset, categoryIdsString, rid, season, ep);
+        }
+
+        if (function.equals(TYPE_MOVIE)) {
+            if (query != null && query.equals("")) {
+                return generateError(200);
+            }
+            return getMovieSearchResponse(user, serverBaseUrl, extended, query, maxAge, limit, offset, categoryIdsString, imdbId);
+        }
+
+        if (function.equals(TYPE_DETAILS)) {
+            return getReleaseDetailsResponse(user, serverBaseUrl, extended, guid);
+        }
+
         return generateError(202);
     }
 
@@ -163,6 +187,7 @@ public class ApiController {
     @ResponseBody
     public String jsonApi(@RequestParam(value = "t", required = false) String type,
                             @RequestParam(value = "apikey", required = false) String apiKey,
+                            @RequestParam(value = "id", required = false) String guid,
                             @RequestParam(value = "extended", required = false) String extended,
                             @RequestParam(value = "del", required = false) String del,
                             @RequestParam(value = "q", required = false) String query,
@@ -177,7 +202,7 @@ public class ApiController {
                             @RequestParam(value = "cat", required = false) String categoryIdsString,
                             UriComponentsBuilder uriComponentsBuilder) throws JsonProcessingException {
 
-        ApiResponse apiResponse = xmlApi(type, apiKey, extended, del, query, maxAge, limit, offset, imdbId, rid, season, ep, email, categoryIdsString, uriComponentsBuilder);
+        ApiResponse apiResponse = xmlApi(type, apiKey, guid, extended, del, query, maxAge, limit, offset, imdbId, rid, season, ep, email, categoryIdsString, uriComponentsBuilder);
 
         ObjectMapper objectMapper = new ObjectMapper();
 
@@ -262,7 +287,11 @@ public class ApiController {
         }
         int maxAgeDays = -1;
         if (ValidatorUtil.isNotNull(maxAge)) {
-            maxAgeDays = Integer.parseInt(maxAge);
+            if (ValidatorUtil.isNumeric(maxAge)) {
+                maxAgeDays = Integer.parseInt(maxAge);
+            } else {
+                return generateError(200);
+            }
         }
         List<Integer> userExCatIds = userExCatDAO.getUserExCatIds(user.getId());
         long groupId = -1;
@@ -282,6 +311,106 @@ public class ApiController {
         }
 
         return searchService.searchReleasesApi(user, serverBaseUrl, query, categoryIds, maxAgeDays, userExCatIds, groupId, orderByFieldName, orderByDesc, offset, pageSize, isExtended);
+    }
+
+    private ApiResponse getTvSearchResponse(User user, String serverBaseUrl, String extended, String query, String maxAge,
+                                            String limitString, String offsetString, String categoryIdsString, String rageIdString, String season, String episode) {
+
+        List<Integer> categoryIds = new ArrayList<>();
+        if (ValidatorUtil.isNotNull(categoryIdsString)) {
+            String[] categoryIdsSplit = categoryIdsString.split(",");
+            for (String categoryIdString : categoryIdsSplit) {
+                categoryIds.add(Integer.parseInt(categoryIdString));
+            }
+        }
+        int maxAgeDays = -1;
+        if (ValidatorUtil.isNotNull(maxAge)) {
+            if (ValidatorUtil.isNumeric(maxAge)) {
+                maxAgeDays = Integer.parseInt(maxAge);
+            } else {
+                return generateError(200);
+            }
+        }
+        List<Integer> userExCatIds = userExCatDAO.getUserExCatIds(user.getId());
+        long groupId = -1;
+        String orderByFieldName = "addDate";
+        boolean orderByDesc = true;
+        int offset = 0;
+        if (ValidatorUtil.isNotNull(offsetString)) {
+            offset = Integer.parseInt(offsetString);
+        }
+        int pageSize = 100;
+        if (ValidatorUtil.isNotNull(limitString)) {
+            pageSize = Integer.parseInt(limitString);
+        }
+        boolean isExtended = false;
+        if (ValidatorUtil.isNotNull(extended)) {
+            isExtended = extended.equals("1") || extended.equals("true");
+        }
+
+        long rageId = -1; // this is a TVRage metadata ID, not a tvInfo id
+        if (ValidatorUtil.isNotNull(rageIdString)) {
+            rageId = Long.parseLong(rageIdString);
+        }
+
+        return searchService.searchTvReleasesApi(user, serverBaseUrl, query, rageId, season, episode, categoryIds, maxAgeDays, userExCatIds, groupId, orderByFieldName, orderByDesc, offset, pageSize, isExtended);
+    }
+
+    private ApiResponse getMovieSearchResponse(User user, String serverBaseUrl, String extended, String query, String maxAge,
+                                            String limitString, String offsetString, String categoryIdsString, String imdbIdString) {
+
+        List<Integer> categoryIds = new ArrayList<>();
+        if (ValidatorUtil.isNotNull(categoryIdsString)) {
+            String[] categoryIdsSplit = categoryIdsString.split(",");
+            for (String categoryIdString : categoryIdsSplit) {
+                categoryIds.add(Integer.parseInt(categoryIdString));
+            }
+        }
+        int maxAgeDays = -1;
+        if (ValidatorUtil.isNotNull(maxAge)) {
+            if (ValidatorUtil.isNumeric(maxAge)) {
+                maxAgeDays = Integer.parseInt(maxAge);
+            } else {
+                return generateError(200);
+            }
+        }
+        List<Integer> userExCatIds = userExCatDAO.getUserExCatIds(user.getId());
+        long groupId = -1;
+        String orderByFieldName = "addDate";
+        boolean orderByDesc = true;
+        int offset = 0;
+        if (ValidatorUtil.isNotNull(offsetString)) {
+            offset = Integer.parseInt(offsetString);
+        }
+        int pageSize = 100;
+        if (ValidatorUtil.isNotNull(limitString)) {
+            pageSize = Integer.parseInt(limitString);
+        }
+        boolean isExtended = false;
+        if (ValidatorUtil.isNotNull(extended)) {
+            isExtended = extended.equals("1") || extended.equals("true");
+        }
+
+        long imdbId = -1;
+        if (ValidatorUtil.isNotNull(imdbIdString)) {
+            imdbId = Long.parseLong(imdbIdString);
+        }
+
+        return searchService.searchMovieReleasesApi(user, serverBaseUrl, query, imdbId, categoryIds, maxAgeDays, userExCatIds, groupId, orderByFieldName, orderByDesc, offset, pageSize, isExtended);
+    }
+
+    private ApiResponse getReleaseDetailsResponse(User user, String serverBaseUrl, String extended, String guid) {
+        boolean isExtended = false;
+        if (ValidatorUtil.isNotNull(extended)) {
+            isExtended = extended.equals("1") || extended.equals("true");
+        }
+
+        Release release = releaseDAO.findByGuid(guid);
+        if (release == null) {
+            return generateError(300);
+        }  else {
+            return searchService.getSingleRelease(user, serverBaseUrl, release, isExtended);
+        }
     }
 
     // todo: replace with enum

@@ -87,6 +87,16 @@ public interface ReleaseDAO {
     Long searchCountByCategoriesMaxAgeAndGroup(String[] searchTokens, Collection<Integer> categoryIds, Date maxAge,
                                                Collection<Integer> excludedCategoryIds, Long groupId);
 
+    List<Release> searchByCategoriesMaxAgeAndGroup(String[] searchTokens, Long imdbId, Long rageId, String season,
+                                                   String episode, Collection<Integer> categoryIds, Date maxAge,
+                                                   Collection<Integer> excludedCategoryIds, Long groupId,
+                                                   String orderByField, boolean descending,
+                                                   int offset, int pageSize);
+
+    Long searchCountByCategoriesMaxAgeAndGroup(String[] searchTokens, Long imdbId, Long rageId, String season,
+                                               String episode, Collection<Integer> categoryIds, Date maxAge,
+                                               Collection<Integer> excludedCategoryIds, Long groupId);
+
     List<Release> searchReleasesByNameExludingCats(List<String> searchTokens, int limit, Collection<Integer> excludedCategoryIds);
 
     void updateRelease(Release release);

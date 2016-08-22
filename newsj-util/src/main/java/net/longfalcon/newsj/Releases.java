@@ -207,6 +207,61 @@ public class Releases {
         return releases;
     }
 
+    public Long getSearchCount(String[] searchTokens, long imdbId, long rageId, String season, String episode,
+                               Collection<Integer> categoryIds, int maxAgeDays, List<Integer> excludedCategoryIds, long groupId) {
+        Date maxAge = null;
+        if (maxAgeDays > 0) {
+            maxAge = DateTime.now().minusDays(maxAgeDays).toDate();
+        }
+
+        Long groupIdObj = null;
+        if (groupId > 0) {
+            groupIdObj = groupId;
+        }
+
+        Long imdbIdObj = null;
+        if (imdbId > 0) {
+            imdbIdObj = imdbId;
+        }
+
+        Long rageIdObj = null;
+        if (rageId > 0) {
+            rageIdObj = rageId;
+        }
+
+        return releaseDAO.searchCountByCategoriesMaxAgeAndGroup(searchTokens, imdbIdObj, rageIdObj, season, episode, categoryIds, maxAge, excludedCategoryIds, groupIdObj);
+    }
+
+    public List<Release> getSearchReleases(String[] searchTokens, long imdbId, long rageId, String season, String episode,
+                                           Collection<Integer> categoryIds, int maxAgeDays, List<Integer> excludedCategoryIds,
+                                           long groupId, String orderByField, boolean descending,
+                                           int offset, int pageSize) {
+        Date maxAge = null;
+        if (maxAgeDays > 0) {
+            maxAge = DateTime.now().minusDays(maxAgeDays).toDate();
+        }
+
+        Long groupIdObj = null;
+        if (groupId > 0) {
+            groupIdObj = groupId;
+        }
+
+        Long imdbIdObj = null;
+        if (imdbId > 0) {
+            imdbIdObj = imdbId;
+        }
+
+        Long rageIdObj = null;
+        if (rageId > 0) {
+            rageIdObj = rageId;
+        }
+
+        List<Release> releases = releaseDAO.searchByCategoriesMaxAgeAndGroup(searchTokens, imdbIdObj, rageIdObj, season, episode, categoryIds, maxAge, excludedCategoryIds, groupIdObj,
+                orderByField, descending, offset, pageSize);
+        populateTransientFields(releases);
+        return releases;
+    }
+
     public void processReleases() {
         String startDateString = DateUtil.displayDateFormatter.print(System.currentTimeMillis());
         _log.info(String.format("Starting release update process (%s)", startDateString));

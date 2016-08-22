@@ -42,6 +42,7 @@ import net.longfalcon.newsj.ws.rss.RssItem;
 import javax.xml.bind.JAXBElement;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -99,6 +100,37 @@ public class SearchService {
             releaseList = releases.getBrowseReleases(categoryIds, maxAgeDays, userExCatIds, groupId, orderByFieldName, orderByDesc, offset, pageSize);
         }
 
+        return buildSearchResponse(user, serverBaseUrl, offset, extended, releaseList, total);
+    }
+
+    public Rss searchTvReleasesApi(User user, String serverBaseUrl, String search, long rageId, String season, String episode, List<Integer> categoryIds, int maxAgeDays,
+                                 List<Integer> userExCatIds, long groupId, String orderByFieldName, boolean orderByDesc, int offset, int pageSize, boolean extended) {
+        String[] searchTokens = splitSearchQueryString(search);
+        List<Release> releaseList;
+        long total = releases.getSearchCount(searchTokens, -1, rageId, season, episode, categoryIds, maxAgeDays, userExCatIds, groupId);
+        releaseList = releases.getSearchReleases(searchTokens, -1, rageId, season, episode, categoryIds, maxAgeDays, userExCatIds, groupId, orderByFieldName, orderByDesc, offset, pageSize);
+
+        return buildSearchResponse(user, serverBaseUrl, offset, extended, releaseList, total);
+    }
+
+    public Rss searchMovieReleasesApi(User user, String serverBaseUrl, String search, long imdbId, List<Integer> categoryIds, int maxAgeDays,
+                                   List<Integer> userExCatIds, long groupId, String orderByFieldName, boolean orderByDesc, int offset, int pageSize, boolean extended) {
+        String[] searchTokens = splitSearchQueryString(search);
+        List<Release> releaseList;
+        long total = releases.getSearchCount(searchTokens, imdbId, -1, null, null, categoryIds, maxAgeDays, userExCatIds, groupId);
+        releaseList = releases.getSearchReleases(searchTokens, imdbId, -1, null, null, categoryIds, maxAgeDays, userExCatIds, groupId, orderByFieldName, orderByDesc, offset, pageSize);
+
+        return buildSearchResponse(user, serverBaseUrl, offset, extended, releaseList, total);
+    }
+
+    public Rss getSingleRelease(User user, String serverBaseUrl, Release release, boolean extended) {
+        List<Release> releaseList = new ArrayList<>(1);
+        releaseList.add(release);
+
+        return buildSearchResponse(user, serverBaseUrl, 0, extended, releaseList, 1);
+    }
+
+    private Rss buildSearchResponse(User user, String serverBaseUrl, int offset, boolean extended, List<Release> releaseList, long total) {
         ObjectFactory rssObjectFactory = new ObjectFactory();
 
         Rss rssRoot = generateRssRoot(serverBaseUrl, siteDAO.getDefaultSite(), rssObjectFactory);
