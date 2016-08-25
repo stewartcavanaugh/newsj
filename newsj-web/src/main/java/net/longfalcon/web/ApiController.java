@@ -52,6 +52,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.view.RedirectView;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.ArrayList;
@@ -181,6 +182,11 @@ public class ApiController {
         }
 
         return generateError(202);
+    }
+
+    @RequestMapping(value = "/api", produces = "application/x-nzb", params = "t=g")
+    public RedirectView getNzbApi(@RequestParam(value = "id", required = true) String guid, @RequestParam(value = "del", required = false) String del) {
+        return new RedirectView("/getnzb/"+guid+".nzb", true);
     }
 
     @RequestMapping(value = "/api", params = "o=json", produces = "application/json")

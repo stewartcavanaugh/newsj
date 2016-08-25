@@ -115,6 +115,10 @@ public class CategoryService {
         return categoryDAO.getChildCategories();
     }
 
+    public List<Category> getParentCategories() {
+        return categoryDAO.getParentCategories();
+    }
+
     public List<Integer> getCategoryChildrenIds(int categoryParentId) {
         return categoryDAO.getCategoryChildrenIds(categoryParentId);
     }
