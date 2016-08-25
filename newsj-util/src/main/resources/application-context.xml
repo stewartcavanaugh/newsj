@@ -23,6 +23,7 @@
        xmlns:tx="http://www.springframework.org/schema/tx"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:security="http://www.springframework.org/schema/security"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/tx
@@ -30,7 +31,11 @@
         http://www.springframework.org/schema/aop
         http://www.springframework.org/schema/aop/spring-aop.xsd
         http://www.springframework.org/schema/context
-        http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/util
+        http://www.springframework.org/schema/util/spring-util.xsd
+        http://www.springframework.org/schema/security
+        http://www.springframework.org/schema/security/spring-security.xsd">
 
     <tx:annotation-driven transaction-manager="transactionManager"/>
 
@@ -366,4 +371,26 @@
         <property name="config" ref="config"/>
         <property name="restTemplate" ref="restTemplate"/>
     </bean>
+
+    <!-- WEB SECURITY -->
+
+    <bean id="userDetailsService" class="net.longfalcon.web.auth.UserDetailsServiceImpl">
+        <property name="userDAO" ref="userDAO"/>
+    </bean>
+
+    <bean id="pbkdfPasswordEncoder" class="net.longfalcon.web.auth.PbkdfPasswordEncoder"/>
+
+    <security:authentication-manager>
+        <security:authentication-provider user-service-ref="userDetailsService">
+            <security:password-encoder ref="pbkdfPasswordEncoder"/>
+        </security:authentication-provider>
+    </security:authentication-manager>
+
+    <security:http>
+        <security:intercept-url pattern="/login*" access="permitAll"/>
+        <security:intercept-url pattern="/admin/**" access="hasRole('ROLE_ADMIN')" />
+        <security:intercept-url pattern="/**" access="hasRole('ROLE_USER')" />
+        <security:form-login login-page="/login" />
+        <security:logout />
+    </security:http>
 </beans>
