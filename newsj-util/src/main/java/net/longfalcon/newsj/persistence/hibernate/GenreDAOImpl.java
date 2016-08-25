@@ -47,7 +47,7 @@ public class GenreDAOImpl extends HibernateDAOImpl implements GenreDAO {
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public List<Genre> getGenres(int type) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Genre.class);
         criteria.add(Restrictions.eq("type", type));
@@ -56,7 +56,7 @@ public class GenreDAOImpl extends HibernateDAOImpl implements GenreDAO {
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public Genre getGenre(long genreId) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Genre.class);
         criteria.add(Restrictions.eq("id", genreId));

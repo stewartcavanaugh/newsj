@@ -39,7 +39,7 @@ import java.util.List;
 public class ForumPostDAOImpl extends HibernateDAOImpl implements ForumPostDAO {
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public List<ForumPost> getForumPostsByParent(long parentId) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ForumPost.class);
 
@@ -49,7 +49,7 @@ public class ForumPostDAOImpl extends HibernateDAOImpl implements ForumPostDAO {
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public List<ForumPost> getForumPosts(int offset, int pageSize) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ForumPost.class);
         criteria.add(Restrictions.eq("parentId", 0L));
@@ -59,7 +59,7 @@ public class ForumPostDAOImpl extends HibernateDAOImpl implements ForumPostDAO {
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public Long getForumPostCount() {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ForumPost.class);
         criteria.add(Restrictions.eq("parentId", 0L));
@@ -69,7 +69,7 @@ public class ForumPostDAOImpl extends HibernateDAOImpl implements ForumPostDAO {
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public ForumPost getForumPost(long forumPostId) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ForumPost.class);
 

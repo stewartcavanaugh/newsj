@@ -41,7 +41,7 @@ public class SiteDAOImpl extends HibernateDAOImpl implements SiteDAO {
         this.sessionFactory.getCurrentSession().flush();
     }
 
-    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public Site getDefaultSite() {
         Criteria criteria = this.sessionFactory.getCurrentSession().createCriteria(Site.class);
         criteria.setMaxResults(1);
