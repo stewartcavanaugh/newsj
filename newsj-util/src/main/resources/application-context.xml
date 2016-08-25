@@ -350,6 +350,11 @@
         <property name="config" ref="config"/>
     </bean>
     <bean id="searchService" class="net.longfalcon.newsj.service.SearchService">
+        <property name="consoleInfoDAO" ref="consoleInfoDAO"/>
+        <property name="genreDAO" ref="genreDAO"/>
+        <property name="movieInfoDAO" ref="movieInfoDAO"/>
+        <property name="musicInfoDAO" ref="musicInfoDAO"/>
+        <property name="tvRageDAO" ref="tvRageDAO"/>
         <property name="releases" ref="releases"/>
         <property name="binaryDAO" ref="binaryDAO"/>
         <property name="siteDAO" ref="siteDAO"/>

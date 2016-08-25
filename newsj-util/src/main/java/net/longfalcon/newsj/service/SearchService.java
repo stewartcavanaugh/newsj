@@ -18,14 +18,26 @@
 
 package net.longfalcon.newsj.service;
 
+import net.longfalcon.newsj.CategoryService;
 import net.longfalcon.newsj.Releases;
 import net.longfalcon.newsj.model.Binary;
+import net.longfalcon.newsj.model.ConsoleInfo;
+import net.longfalcon.newsj.model.Genre;
+import net.longfalcon.newsj.model.MovieInfo;
+import net.longfalcon.newsj.model.MusicInfo;
 import net.longfalcon.newsj.model.Release;
 import net.longfalcon.newsj.model.Site;
+import net.longfalcon.newsj.model.TvRage;
 import net.longfalcon.newsj.model.User;
 import net.longfalcon.newsj.persistence.BinaryDAO;
+import net.longfalcon.newsj.persistence.ConsoleInfoDAO;
+import net.longfalcon.newsj.persistence.GenreDAO;
+import net.longfalcon.newsj.persistence.MovieInfoDAO;
+import net.longfalcon.newsj.persistence.MusicInfoDAO;
 import net.longfalcon.newsj.persistence.SiteDAO;
+import net.longfalcon.newsj.persistence.TvRageDAO;
 import net.longfalcon.newsj.util.DateUtil;
+import net.longfalcon.newsj.util.FormatUtil;
 import net.longfalcon.newsj.util.ValidatorUtil;
 import net.longfalcon.newsj.ws.atom.Link;
 import net.longfalcon.newsj.ws.newznab.NewzNabAttribute;
@@ -58,7 +70,12 @@ public class SearchService {
 
     private Releases releases;
     private BinaryDAO binaryDAO;
+    private ConsoleInfoDAO consoleInfoDAO;
+    private GenreDAO genreDAO;
+    private MovieInfoDAO movieInfoDAO;
+    private MusicInfoDAO musicInfoDAO;
     private SiteDAO siteDAO;
+    private TvRageDAO tvRageDAO;
 
     public List<Release> getSearchReleases(String search, List<Integer> categoryIds, int maxAgeDays,
                                            List<Integer> userExCatIds, long groupId, String orderByFieldName, boolean orderByDesc, int offset, int pageSize) {
@@ -132,10 +149,26 @@ public class SearchService {
         return buildSearchResponse(user, serverBaseUrl, 0, extended, releaseList, 1);
     }
 
+    public Rss getRssFeed(User user, String serverBaseUrl, List<Integer> userExCatIds, List<Integer> categoryIds, int limit, boolean download) {
+        List<Release> releaseList = releases.getBrowseReleases(categoryIds, -1, userExCatIds, -1, "postDate", true, 0, limit);
+
+        ObjectFactory rssObjectFactory = new ObjectFactory();
+
+        Rss rssRoot = generateRssRoot(serverBaseUrl, siteDAO.getDefaultSite(), true, rssObjectFactory);
+        RssChannel rssChannelMain = rssRoot.getChannel();
+
+        List<RssItem> rssItems = rssChannelMain.getItem();
+        for (Release releaseItem : releaseList) {
+            rssItems.add(createRssItem(releaseItem, user, serverBaseUrl, true, download, true, rssObjectFactory));
+        }
+
+        return rssRoot;
+    }
+
     private Rss buildSearchResponse(User user, String serverBaseUrl, int offset, boolean extended, List<Release> releaseList, long total) {
         ObjectFactory rssObjectFactory = new ObjectFactory();
 
-        Rss rssRoot = generateRssRoot(serverBaseUrl, siteDAO.getDefaultSite(), rssObjectFactory);
+        Rss rssRoot = generateRssRoot(serverBaseUrl, siteDAO.getDefaultSite(), true, rssObjectFactory);
         RssChannel rssChannelMain = rssRoot.getChannel();
         Response response = new Response();
         response.setOffset(offset);
@@ -144,13 +177,13 @@ public class SearchService {
 
         List<RssItem> rssItems = rssChannelMain.getItem();
         for (Release releaseItem : releaseList) {
-            rssItems.add(createRssItem(releaseItem, user, serverBaseUrl, extended, rssObjectFactory));
+            rssItems.add(createRssItem(releaseItem, user, serverBaseUrl, extended, true, false, rssObjectFactory));
         }
 
         return rssRoot;
     }
 
-    private Rss generateRssRoot(String serverBaseUrl, Site site, ObjectFactory rssObjectFactory) {
+    private Rss generateRssRoot(String serverBaseUrl, Site site, boolean isApi, ObjectFactory rssObjectFactory) {
 
         Rss rssRoot = new Rss();
         rssRoot.setVersion(new BigDecimal(2.0));
@@ -158,13 +191,25 @@ public class SearchService {
         rssRoot.setChannel(rssChannelMain);
 
         Link atomLink = new Link();
-        atomLink.setHref(serverBaseUrl + "/api");
+        String path;
+        if (isApi) {
+            path = "/api";
+        } else {
+            path = "/rss";
+        }
+        atomLink.setHref(serverBaseUrl + path);
         atomLink.setRel("self");
         atomLink.setType("application/rss+xml");
         rssChannelMain.setAtomLink(atomLink);
 
         JAXBElement<String> titleElement = rssObjectFactory.createRssChannelTitle("Newznab");
-        JAXBElement<String> descElement = rssObjectFactory.createRssChannelDescription("Newznab API Results");
+        String channelDesc;
+        if (isApi) {
+            channelDesc = "Newznab API Results";
+        } else {
+            channelDesc = "Newznab Nzb Feed";
+        }
+        JAXBElement<String> descElement = rssObjectFactory.createRssChannelDescription(channelDesc);
         JAXBElement<String> linkElement = rssObjectFactory.createRssChannelLink(serverBaseUrl);
         List<Object> titleOrLinkOrDescription = rssChannelMain.getTitleOrLinkOrDescription();
         titleOrLinkOrDescription.add(titleElement);
@@ -181,7 +226,7 @@ public class SearchService {
         return rssRoot;
     }
 
-    private RssItem createRssItem(Release release, User user, String serverBaseUrl, boolean extended, ObjectFactory rssObjectFactory) {
+    private RssItem createRssItem(Release release, User user, String serverBaseUrl, boolean extended, boolean download, boolean rssFeed, ObjectFactory rssObjectFactory) {
         RssItem rssItem = new RssItem();
         String releaseDetailsUrl = serverBaseUrl + "/details/" + release.getGuid();
         String releasePermalink  = serverBaseUrl + "/getnzb/" + release.getGuid() + ".nzb?i=" + user.getId() + "&r=" + user.getRssToken();
@@ -197,7 +242,12 @@ public class SearchService {
         JAXBElement<Guid> itemGuid = rssObjectFactory.createRssItemGuid(itemGuidValue);
         titleOrDescOrLink.add(itemGuid);
 
-        JAXBElement<String> itemLink = rssObjectFactory.createRssItemLink(releasePermalink);
+        JAXBElement<String> itemLink;
+        if (download) {
+            itemLink = rssObjectFactory.createRssItemLink(releasePermalink);
+        } else {
+            itemLink = rssObjectFactory.createRssItemLink(releaseDetailsUrl);
+        }
         titleOrDescOrLink.add(itemLink);
 
         JAXBElement<String> itemComments = rssObjectFactory.createRssItemComments(releaseDetailsUrl + "#comments");
@@ -211,10 +261,23 @@ public class SearchService {
         JAXBElement<Category> itemCategory = rssObjectFactory.createRssItemCategory(categoryElement);
         titleOrDescOrLink.add(itemCategory);
 
-        JAXBElement<String> itemDesc = rssObjectFactory.createRssItemDescription(release.getSearchName());
+        JAXBElement<String> itemDesc;
+        if (rssFeed) {
+            String description = getRssFeedItemDescription(release, serverBaseUrl);
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("<![CDATA[").append(description).append("]]>");
+            itemDesc = rssObjectFactory.createRssItemDescription(stringBuilder.toString());
+        } else {
+            itemDesc = rssObjectFactory.createRssItemDescription(release.getSearchName());
+        }
         titleOrDescOrLink.add(itemDesc);
+
         Enclosure enclosure = rssObjectFactory.createEnclosure();
-        enclosure.setUrl(releasePermalink);
+        if (download) {
+            enclosure.setUrl(releasePermalink);
+        } else {
+            enclosure.setUrl(releaseDetailsUrl);
+        }
         enclosure.setLength(BigInteger.valueOf(release.getSize()));
         enclosure.setType("application/x-nzb");
         JAXBElement<Enclosure> itemEncl = rssObjectFactory.createRssItemEnclosure(enclosure);
@@ -312,6 +375,172 @@ public class SearchService {
         }
     }
 
+    // TODO: UGHHHH MOVE THIS TO A VELOCITY TEMPLATE OR SOMETHING, FUCK
+    private String getRssFeedItemDescription(Release release, String serverBaseUrl) {
+
+        Long rageId = release.getRageId();
+        Integer imdbId = release.getImdbId();
+        Integer musicInfoId = release.getMusicInfoId();
+        Integer consoleInfoId = release.getConsoleInfoId();
+
+        TvRage tvInfo = null;
+        if (rageId != null && rageId > 0) {
+            tvInfo = tvRageDAO.findById(rageId);
+        }
+
+        MovieInfo movieInfo = null;
+        if (imdbId != null && imdbId > 0) {
+            movieInfo = movieInfoDAO.findByImdbId(imdbId);
+        }
+
+        MusicInfo musicInfo = null;
+        if (musicInfoId != null && musicInfoId > 0) {
+            musicInfo = musicInfoDAO.findByMusicInfoId(musicInfoId);
+        }
+
+        ConsoleInfo gameInfo = null;
+        if (consoleInfoId != null && consoleInfoId > 0) {
+            gameInfo = consoleInfoDAO.findByConsoleInfoId(consoleInfoId);
+        }
+
+        StringBuilder descriptionHtmlFragment = new StringBuilder();
+
+        descriptionHtmlFragment.append("<div>\n");
+        if (movieInfo != null && movieInfo.isCover()) {
+            descriptionHtmlFragment.append("\t\t<img style=\"margin-left:10px;margin-bottom:10px;float:right;\" src=\"")
+                    .append(serverBaseUrl)
+                    .append("/images/covers/movies/")
+                    .append(movieInfo.getId())
+                    .append("-cover.jpg\" width=\"120\" border=\"0\" alt=\"")
+                    .append(release.getSearchName()).append("\" />\n");
+        }
+        if (musicInfo != null && musicInfo.isCover()) {
+            descriptionHtmlFragment.append("\t\t<img style=\"margin-left:10px;margin-bottom:10px;float:right;\" src=\"")
+                    .append(serverBaseUrl).append("/images/covers/music/").append(musicInfo.getId())
+                    .append(".jpg\" width=\"120\" border=\"0\" alt=\"").append(release.getSearchName())
+                    .append("\" />\n");
+        }
+
+        if (gameInfo != null && gameInfo.isCover()) {
+            descriptionHtmlFragment.append("\t\t<img style=\"margin-left:10px;margin-bottom:10px;float:right;\" src=\"")
+                    .append(serverBaseUrl).append("/images/covers/console/").append(gameInfo.getId())
+                    .append(".jpg\" width=\"120\" border=\"0\" alt=\"").append(release.getSearchName())
+                    .append("\" />\n");
+        }
+
+        descriptionHtmlFragment.append("\t<ul>\n").append("\t<li>ID: <a href=\"").append(serverBaseUrl).append("details/")
+                .append(release.getGuid()).append("\">").append(release.getGuid()).append("</a> (Size: ")
+                .append(FormatUtil.formatFileSize(release.getSize(), true)).append(") </li>\n")
+                .append("\t<li>Name: ").append(release.getSearchName()).append("</li>\n");
+
+        String categoryName = release.getCategoryDisplayName();
+
+        descriptionHtmlFragment.append("\t<li>Attributes: Category - ").append(categoryName).append("</li>\n").append("\t<li>Groups: ")
+                .append(release.getGroupName()).append("</li>\n").append("\t<li>Poster: ").append(release.getFromName()).append("</li>\n")
+                .append("\t<li>PostDate: ").append(DateUtil.RFC_822_dateFormatter.print(release.getPostDate().getTime())).append("</li>\n");
+
+        String passwordStatus = "Unknown";
+        if (release.getPasswordStatus() == 0) {
+            passwordStatus = "None";
+        } else if (release.getPasswordStatus() == 1) {
+            passwordStatus = "Passworded Rar Archive";
+        } else if (release.getPasswordStatus() == 2) {
+            passwordStatus = "Contains Cab/Ace Archive";
+        }
+
+        descriptionHtmlFragment.append("\t<li>Password: " + passwordStatus + "</li>\n")
+                .append("\t\n");
+        if (release.getCategory().getParentId() == CategoryService.CAT_PARENT_MOVIE) {
+            if (ValidatorUtil.isNotNull(imdbId) && movieInfo != null) {
+                descriptionHtmlFragment.append("\t\t<li>Imdb Info: \n")
+                        .append("\t\t\t<ul>\n")
+                        .append("\t\t\t\t<li>IMDB Link: <a href=\"http://www.imdb.com/title/tt")
+                        .append(String.format("%07d", imdbId)).append("/\">").append(release.getSearchName()).append("</a></li>\n");
+                if (movieInfo.getRating() != null) {
+                    descriptionHtmlFragment.append("\t\t\t\t<li>Rating: " + movieInfo.getRating() + "</li>\n");
+                }
+                if (movieInfo.getPlot() != null) {
+                    descriptionHtmlFragment.append("\t\t\t\t<li>Plot: " + movieInfo.getPlot() + "</li>\n");
+                }
+                if (movieInfo.getYear() != null) {
+                    descriptionHtmlFragment.append("\t\t\t\t<li>Year: " + movieInfo.getYear() +  "/li>\n");
+                }
+                if (movieInfo.getGenre() != null) {
+                    descriptionHtmlFragment.append("\t\t\t\t<li>Genre: " + movieInfo.getGenre() + "</li>\n");
+                }
+                if (movieInfo.getDirector() != null) {
+                    descriptionHtmlFragment.append("\t\t\t\t<li>Director: " + movieInfo.getDirector() +"</li>\n");
+                }
+                if (movieInfo.getActors() != null) {
+                    descriptionHtmlFragment.append("\t\t\t\t<li>Actors: " + movieInfo.getActors() + "</li>\n");
+                }
+                descriptionHtmlFragment.append("\t\t\t</ul>\n").append("\t\t</li>\n");
+            }
+        }
+        if (release.getCategory().getParentId() == CategoryService.CAT_PARENT_MUSIC) {
+            if (musicInfo != null) {
+                descriptionHtmlFragment.append("\t\t<li>Music Info: \n").append("\t\t\t<ul>\n");
+                if (musicInfo.getUrl() != null) {
+                    descriptionHtmlFragment.append("\t\t\t\t<li>Amazon: <a href=\"" + musicInfo.getUrl() + "\">" + musicInfo.getTitle() + "</a></li>\n");
+                }
+                if (musicInfo.getArtist() != null) {
+                    descriptionHtmlFragment.append("\t\t\t\t<li>Artist: " + musicInfo.getArtist() + "</li>\n");
+                }
+                if (musicInfo.getGenreId() != null) {
+                    Genre genre = genreDAO.getGenre(musicInfo.getGenreId());
+                    descriptionHtmlFragment.append("\t\t\t\t<li>Genre: " + genre.getTitle() + "</li>\n");
+                }
+                if (musicInfo.getPublisher() != null) {
+                    descriptionHtmlFragment.append("\t\t\t\t<li>Publisher: " + musicInfo.getPublisher() + "</li>\n");
+                }
+                if (musicInfo.getReleaseDate() != null) {
+                    descriptionHtmlFragment.append("\t\t\t\t<li>Released: " + DateUtil.formatDefaultDate(musicInfo.getReleaseDate()) + "</li>\n");
+                }
+                if (musicInfo.getReview() != null) {
+                    descriptionHtmlFragment.append("\t\t\t\t<li>Review: " + musicInfo.getReview() + "</li>\n");
+                }
+                if (musicInfo.getTracks() != null) {
+                    descriptionHtmlFragment.append("\t\t\t\t<li>Track Listing:\n")
+                            .append("\t\t\t\t\t<ol>\n");
+                    String[] tracks = musicInfo.getTracks().split("|"); // tODO: check if this is how we want to do track listing going forward
+                    for (String track : tracks) {
+                        descriptionHtmlFragment.append("\t\t\t\t\t\t<li>" + track.trim() + "</li>\n");
+                    }
+                    descriptionHtmlFragment.append("\t\t\t\t\t</ol>\n").append("\t\t\t\t</li>\t\t\t\t\n");
+
+                }
+                descriptionHtmlFragment.append("\t\t\t</ul>\n").append("\t\t</li>\n");
+            }
+        }
+        if (release.getCategory().getParentId() == CategoryService.CAT_PARENT_GAME) {
+            if (gameInfo != null) {
+                descriptionHtmlFragment.append("\t\t<li>Console Info: \n").append("\t\t\t<ul>\n");
+                if (gameInfo.getUrl() != null) {
+                    descriptionHtmlFragment.append("\t\t\t\t<li>Amazon: <a href=\"" + gameInfo.getUrl() + "\">" + gameInfo.getTitle() + "</a></li>\n");
+                }
+                if (gameInfo.getGenreId() != null) {
+                    Genre genre = genreDAO.getGenre(gameInfo.getGenreId());
+                    descriptionHtmlFragment.append("\t\t\t\t<li>Genre: " + genre.getTitle() + "</li>\n");
+                }
+                if (gameInfo.getPublisher() != null) {
+                    descriptionHtmlFragment.append("\t\t\t\t<li>Publisher: " + gameInfo.getPublisher() + "</li>\n");
+                }
+                if (gameInfo.getReleaseDate() != null) {
+                    descriptionHtmlFragment.append("\t\t\t\t<li>Released: " + DateUtil.formatDefaultDate(gameInfo.getReleaseDate()) + "</li>\n");
+                }
+                if (gameInfo.getReview() != null) {
+                    descriptionHtmlFragment.append("\t\t\t\t<li>Review: " + gameInfo.getReview() + "</li>{/if}\n");
+                }
+                descriptionHtmlFragment.append("\t\t\t</ul>\n").append("\t\t</li>\n");
+            }
+        }
+
+        descriptionHtmlFragment.append("\t</ul>\n").append("\t\n")
+                .append("\t</div>\n").append("\t<div style=\"clear:both;\">");
+
+        return descriptionHtmlFragment.toString();
+    }
+
     public Releases getReleases() {
         return releases;
     }
@@ -334,5 +563,45 @@ public class SearchService {
 
     public void setSiteDAO(SiteDAO siteDAO) {
         this.siteDAO = siteDAO;
+    }
+
+    public ConsoleInfoDAO getConsoleInfoDAO() {
+        return consoleInfoDAO;
+    }
+
+    public void setConsoleInfoDAO(ConsoleInfoDAO consoleInfoDAO) {
+        this.consoleInfoDAO = consoleInfoDAO;
+    }
+
+    public GenreDAO getGenreDAO() {
+        return genreDAO;
+    }
+
+    public void setGenreDAO(GenreDAO genreDAO) {
+        this.genreDAO = genreDAO;
+    }
+
+    public MovieInfoDAO getMovieInfoDAO() {
+        return movieInfoDAO;
+    }
+
+    public void setMovieInfoDAO(MovieInfoDAO movieInfoDAO) {
+        this.movieInfoDAO = movieInfoDAO;
+    }
+
+    public MusicInfoDAO getMusicInfoDAO() {
+        return musicInfoDAO;
+    }
+
+    public void setMusicInfoDAO(MusicInfoDAO musicInfoDAO) {
+        this.musicInfoDAO = musicInfoDAO;
+    }
+
+    public TvRageDAO getTvRageDAO() {
+        return tvRageDAO;
+    }
+
+    public void setTvRageDAO(TvRageDAO tvRageDAO) {
+        this.tvRageDAO = tvRageDAO;
     }
 }

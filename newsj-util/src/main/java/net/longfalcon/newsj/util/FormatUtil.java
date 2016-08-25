@@ -16,21 +16,20 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package net.longfalcon.newsj.persistence;
-
-import net.longfalcon.newsj.model.Genre;
-
-import java.util.List;
+package net.longfalcon.newsj.util;
 
 /**
  * User: Sten Martinez
- * Date: 3/10/16
- * Time: 5:22 PM
+ * Date: 8/24/16
+ * Time: 2:50 PM
  */
-public interface GenreDAO {
-    public void updateGenre(Genre genre);
-    public void deleteGenre(Genre genre);
-    public List<Genre> getGenres(int type);
-
-    Genre getGenre(long genreId);
+public class FormatUtil {
+    public static String formatFileSize(long bytes, boolean si) {
+        // thanks stackoverflow
+        int unit = si ? 1000 : 1024;
+        if (bytes < unit) return bytes + " B";
+        int exp = (int) (Math.log(bytes) / Math.log(unit));
+        String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp-1) + (si ? "" : "i");
+        return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
+    }
 }

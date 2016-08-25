@@ -54,4 +54,13 @@ public class GenreDAOImpl extends HibernateDAOImpl implements GenreDAO {
 
         return criteria.list();
     }
+
+    @Override
+    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
+    public Genre getGenre(long genreId) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Genre.class);
+        criteria.add(Restrictions.eq("id", genreId));
+
+        return (Genre) criteria.uniqueResult();
+    }
 }
