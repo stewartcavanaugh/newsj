@@ -27,11 +27,13 @@ public class PbkdfPasswordEncoder implements PasswordEncoder {
 
     @Override
     public boolean matches(CharSequence rawPassword, String encodedPassword) {
+        boolean match = false;
         try {
-            return PasswordHash.validatePassword(rawPassword.toString(), encodedPassword);
+            match = PasswordHash.validatePassword(rawPassword.toString(), encodedPassword);
         } catch (Exception e) {
             _log.error(e.toString(), e);
-            return false;
+
         }
+        return match;
     }
 }

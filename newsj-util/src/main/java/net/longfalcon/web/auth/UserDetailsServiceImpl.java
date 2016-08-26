@@ -27,7 +27,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             throw new UsernameNotFoundException("User " + username + " not found");
         }
         String passwordEnc = user.getPassword();
-        boolean enabled = UserService.ROLE_DISABLED == user.getRole();
+        boolean enabled = UserService.ROLE_DISABLED != user.getRole();
 
         Collection<SimpleGrantedAuthority> authorities = new ArrayList<>(2);
         if (user.getRole() == UserService.ROLE_ADMIN) {
@@ -39,7 +39,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             authorities.add(new SimpleGrantedAuthority("ROLE_GUEST"));
         }
 
-        UserDetails userDetails = new org.springframework.security.core.userdetails.User(username, passwordEnc, enabled, true, true, true, authorities);
+        NewsJUserDetails userDetails = new NewsJUserDetails(username, passwordEnc, user.getId(), enabled, authorities);
         return userDetails;
     }
 
