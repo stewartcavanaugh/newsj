@@ -402,6 +402,6 @@
         <security:intercept-url pattern="/**" access="hasRole('ROLE_USER')" />
         <security:form-login login-page="/login" authentication-success-handler-ref="authenticationSuccessHandler" />
         <security:logout logout-url="/logout"/>
-        <security:logout />
+        <security:remember-me key="newsj" remember-me-parameter="rememberMe" authentication-success-handler-ref="authenticationSuccessHandler"/>
     </security:http>
 </beans>

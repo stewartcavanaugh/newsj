@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 /**
+ * Deprecated by SpringSecurity
  * User: Sten Martinez
  * Date: 11/11/15
  * Time: 4:31 PM
