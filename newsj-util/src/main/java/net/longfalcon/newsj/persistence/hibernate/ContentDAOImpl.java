@@ -47,7 +47,7 @@ public class ContentDAOImpl extends HibernateDAOImpl implements net.longfalcon.n
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public Content getById(long id) {
         Query query = sessionFactory.getCurrentSession().createQuery("from Content c where c.id = :contentId");
         query.setParameter("contentId", id);
@@ -56,7 +56,7 @@ public class ContentDAOImpl extends HibernateDAOImpl implements net.longfalcon.n
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public List<Content> getAllContent() {
         Query query = sessionFactory.getCurrentSession().createQuery("from Content c");
 
@@ -64,7 +64,7 @@ public class ContentDAOImpl extends HibernateDAOImpl implements net.longfalcon.n
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public List<Content> findByTypeAndRole(int type, int roleId, boolean isAdmin) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Content.class);
         criteria.add(Restrictions.eq("showInMenu", 1));
@@ -78,7 +78,7 @@ public class ContentDAOImpl extends HibernateDAOImpl implements net.longfalcon.n
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public List<Content> findByTypeAndRole(int type, int roleId) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Content.class);
         criteria.add(Restrictions.eq("contentType", type));

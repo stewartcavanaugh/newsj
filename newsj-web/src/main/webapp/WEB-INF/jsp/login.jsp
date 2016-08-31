@@ -57,8 +57,10 @@
         <%--START PAGE CONTENT--%>
             <h1>Login</h1>
 
-            <c:if test="${!text:isNull(error)}">
-                <div class="error">${error}</div>
+            <c:if test="${param.containsKey('error')}">
+                <div class="error">
+                    ${sessionScope.SPRING_SECURITY_LAST_EXCEPTION.message}
+                </div>
             </c:if>
 
             <form:form modelAttribute="loginForm"  action="login" method="post">

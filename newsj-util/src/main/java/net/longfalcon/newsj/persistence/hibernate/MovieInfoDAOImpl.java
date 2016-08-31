@@ -96,7 +96,7 @@ public class MovieInfoDAOImpl extends HibernateDAOImpl implements MovieInfoDAO {
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public Long getMovieCount(List<Long> imdbIds, String titleSearch, String genreSearch, String actorsSearch,
                               String directorSearch, String yearSearch) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(MovieInfo.class);
@@ -131,7 +131,7 @@ public class MovieInfoDAOImpl extends HibernateDAOImpl implements MovieInfoDAO {
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public List<MovieInfo> getMovies(List<Long> imdbIds, String titleSearch, String genreSearch, String actorsSearch,
                                          String directorSearch, String yearSearch,
                                          int offset, int pageSize, String orderByField, boolean descending) {

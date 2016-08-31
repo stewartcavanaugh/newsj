@@ -47,7 +47,7 @@ public class UserCartDAOImpl extends HibernateDAOImpl implements UserCartDAO {
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public UserCart findByUserIdAndReleaseId(long userId, long releaseId) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserCart.class);
         criteria.add(Restrictions.eq("userId", userId)).add(Restrictions.eq("releaseId", releaseId));
@@ -55,7 +55,7 @@ public class UserCartDAOImpl extends HibernateDAOImpl implements UserCartDAO {
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public List<UserCart> findByUserId(long userId) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserCart.class);
         criteria.add(Restrictions.eq("userId", userId));
@@ -64,7 +64,7 @@ public class UserCartDAOImpl extends HibernateDAOImpl implements UserCartDAO {
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public UserCart findByCartIdAndUserId(long cartId, long userId) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserCart.class);
         criteria.add(Restrictions.eq("userId", userId)).add(Restrictions.eq("id", cartId));

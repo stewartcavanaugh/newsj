@@ -43,7 +43,7 @@ import java.util.List;
 public class GroupDAOImpl extends HibernateDAOImpl implements net.longfalcon.newsj.persistence.GroupDAO {
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public List<Group> getGroups() {
         return this.sessionFactory.getCurrentSession()
                 .createQuery("from Group group")
@@ -51,7 +51,7 @@ public class GroupDAOImpl extends HibernateDAOImpl implements net.longfalcon.new
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public List<Group> getGroups(int start, int pageSize) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Group.class);
         criteria.setFirstResult(start).setMaxResults(pageSize);
@@ -61,7 +61,7 @@ public class GroupDAOImpl extends HibernateDAOImpl implements net.longfalcon.new
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public List<Group> getGroups(int start, int pageSize, String orderByField, boolean descending) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Group.class);
         criteria.setFirstResult(start).setMaxResults(pageSize);
@@ -76,7 +76,7 @@ public class GroupDAOImpl extends HibernateDAOImpl implements net.longfalcon.new
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public Long getGroupsCount() {
         Criteria criteria = this.sessionFactory.getCurrentSession().createCriteria(Group.class);
         criteria.setProjection(Projections.rowCount());
@@ -84,7 +84,7 @@ public class GroupDAOImpl extends HibernateDAOImpl implements net.longfalcon.new
         return (Long) criteria.uniqueResult();
     }
 
-    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public List<Group> getActiveGroups() {
         return this.sessionFactory.getCurrentSession()
                 .createQuery("from Group group where group.active = true")
@@ -106,7 +106,7 @@ public class GroupDAOImpl extends HibernateDAOImpl implements net.longfalcon.new
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public Group getGroupByName(String name) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Group.class);
         criteria.add(Restrictions.eq("name", name));
@@ -115,7 +115,7 @@ public class GroupDAOImpl extends HibernateDAOImpl implements net.longfalcon.new
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public List<Group> findGroupsByName(String name) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Group.class);
         criteria.add(Restrictions.like("name", name + "%"));
@@ -124,7 +124,7 @@ public class GroupDAOImpl extends HibernateDAOImpl implements net.longfalcon.new
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public Group findGroupByGroupId(long groupId) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Group.class);
         criteria.add(Restrictions.eq("id", groupId));
@@ -133,7 +133,7 @@ public class GroupDAOImpl extends HibernateDAOImpl implements net.longfalcon.new
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public List<Group> findGroupsByIds(Collection<Long> ids) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Group.class);
         criteria.add(Restrictions.in("id", ids));

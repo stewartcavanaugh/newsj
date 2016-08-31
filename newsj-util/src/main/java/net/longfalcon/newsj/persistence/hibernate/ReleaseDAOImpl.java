@@ -48,7 +48,7 @@ import java.util.List;
 public class ReleaseDAOImpl extends HibernateDAOImpl implements net.longfalcon.newsj.persistence.ReleaseDAO {
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public Long countByCategoriesMaxAgeAndGroup(Collection<Integer> categoryIds, Date maxAge,
                                                 Collection<Integer> excludedCategoryIds, Long groupId) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Release.class);
@@ -71,7 +71,7 @@ public class ReleaseDAOImpl extends HibernateDAOImpl implements net.longfalcon.n
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public Long countByGroupId(long groupId) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Release.class);
         criteria.add(Restrictions.eq("groupId", groupId));
@@ -81,7 +81,7 @@ public class ReleaseDAOImpl extends HibernateDAOImpl implements net.longfalcon.n
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public Long countReleasesByRegexId(long regexId) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Release.class);
         criteria.add(Restrictions.eq("regexId", regexId));
@@ -106,7 +106,7 @@ public class ReleaseDAOImpl extends HibernateDAOImpl implements net.longfalcon.n
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public List<Release> findByCategoriesMaxAgeAndGroup(Collection<Integer> categoryIds, Date maxAge,
                                                         Collection<Integer> excludedCategoryIds, Long groupId,
                                                         String orderByField, boolean descending,
@@ -136,7 +136,7 @@ public class ReleaseDAOImpl extends HibernateDAOImpl implements net.longfalcon.n
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public Release findByGuid(String guid) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Release.class);
         criteria.add(Restrictions.eq("guid", guid));
@@ -146,7 +146,7 @@ public class ReleaseDAOImpl extends HibernateDAOImpl implements net.longfalcon.n
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public List<Release> findByGuids(String[] guids) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Release.class);
         criteria.add(Restrictions.in("guid", guids));
@@ -155,7 +155,7 @@ public class ReleaseDAOImpl extends HibernateDAOImpl implements net.longfalcon.n
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public List<Release> findByImdbId(int imdbId) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Release.class);
         criteria.add(Restrictions.eq("imdbId", imdbId));
@@ -164,7 +164,7 @@ public class ReleaseDAOImpl extends HibernateDAOImpl implements net.longfalcon.n
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public Release findByReleaseId(long releaseId) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Release.class);
         criteria.add(Restrictions.eq("id", releaseId));
@@ -178,7 +178,7 @@ public class ReleaseDAOImpl extends HibernateDAOImpl implements net.longfalcon.n
      * @return List of Object[] = {Category,long}
      */
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public List<Object[]> findRecentlyAddedReleaseCategories() {
         Date oneWeekAgo = DateTime.now().minusWeeks(1).toDate();
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Release.class);
@@ -194,7 +194,7 @@ public class ReleaseDAOImpl extends HibernateDAOImpl implements net.longfalcon.n
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public List<Long> findReleaseGroupIds() {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Release.class);
         criteria.setProjection(Projections.distinct(Projections.property("groupId")));
@@ -203,7 +203,7 @@ public class ReleaseDAOImpl extends HibernateDAOImpl implements net.longfalcon.n
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public List<Release> findReleasesBeforeDate(Date before) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Release.class);
         criteria.add(Restrictions.lt("postDate", before));
@@ -213,7 +213,7 @@ public class ReleaseDAOImpl extends HibernateDAOImpl implements net.longfalcon.n
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public List<Release> findReleasesByNameAndDateRange(String relName, Date startDate, Date endDate) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Release.class);
         criteria.add(Restrictions.eq("searchName", relName));
@@ -224,7 +224,7 @@ public class ReleaseDAOImpl extends HibernateDAOImpl implements net.longfalcon.n
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public List<Release> findReleasesByNoImdbIdAndCategoryId(Collection<Integer> categoryIds) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Release.class);
         criteria.add(Restrictions.isNull("imdbId"));
@@ -234,7 +234,7 @@ public class ReleaseDAOImpl extends HibernateDAOImpl implements net.longfalcon.n
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public List<Release> findReleasesByRageIdAndCategoryId(long rageId, Collection<Integer> categoryIds) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Release.class);
         criteria.add(Restrictions.eq("rageId", rageId));
@@ -246,7 +246,7 @@ public class ReleaseDAOImpl extends HibernateDAOImpl implements net.longfalcon.n
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public List<Release> findTopCommentedReleases() {
         Query query = sessionFactory.getCurrentSession().createQuery("select r from Release r where comments > 0 order by comments desc");
         query.setMaxResults(10);
@@ -254,7 +254,7 @@ public class ReleaseDAOImpl extends HibernateDAOImpl implements net.longfalcon.n
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public List<Release> findTopDownloads() {
         Query query = sessionFactory.getCurrentSession().createQuery("select r from Release r where grabs > 0 order by grabs desc");
         query.setMaxResults(10);
@@ -262,7 +262,7 @@ public class ReleaseDAOImpl extends HibernateDAOImpl implements net.longfalcon.n
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public List<Long> getDistinctImdbIds(List<Integer> searchCategories, int maxAgeDays, List<Integer> userExCatIds) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Release.class);
         if (searchCategories != null && !searchCategories.isEmpty()) {
@@ -284,7 +284,7 @@ public class ReleaseDAOImpl extends HibernateDAOImpl implements net.longfalcon.n
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public Date getLastReleaseDateByRegexId(long regexId) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Release.class);
         criteria.add(Restrictions.eq("regexId", regexId));
@@ -294,7 +294,7 @@ public class ReleaseDAOImpl extends HibernateDAOImpl implements net.longfalcon.n
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public List<Release> getReleases(int offset, int pageSize) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Release.class);
         criteria.setFirstResult(offset).setMaxResults(pageSize);
@@ -313,7 +313,7 @@ public class ReleaseDAOImpl extends HibernateDAOImpl implements net.longfalcon.n
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public List<Release> searchByCategoriesMaxAgeAndGroup(String[] searchTokens, Collection<Integer> categoryIds, Date maxAge,
                                                           Collection<Integer> excludedCategoryIds, Long groupId,
                                                           String orderByField, boolean descending,
@@ -346,7 +346,7 @@ public class ReleaseDAOImpl extends HibernateDAOImpl implements net.longfalcon.n
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public Long searchCountByCategoriesMaxAgeAndGroup(String[] searchTokens, Collection<Integer> categoryIds, Date maxAge,
                                                       Collection<Integer> excludedCategoryIds, Long groupId) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Release.class);
@@ -372,7 +372,7 @@ public class ReleaseDAOImpl extends HibernateDAOImpl implements net.longfalcon.n
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public List<Release> searchByCategoriesMaxAgeAndGroup(String[] searchTokens, Long imdbId, Long rageId, String season,
                                                           String episode, Collection<Integer> categoryIds, Date maxAge,
                                                           Collection<Integer> excludedCategoryIds, Long groupId,
@@ -422,7 +422,7 @@ public class ReleaseDAOImpl extends HibernateDAOImpl implements net.longfalcon.n
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public Long searchCountByCategoriesMaxAgeAndGroup(String[] searchTokens, Long imdbId, Long rageId, String season,
                                                       String episode, Collection<Integer> categoryIds, Date maxAge,
                                                       Collection<Integer> excludedCategoryIds, Long groupId) {
@@ -465,7 +465,7 @@ public class ReleaseDAOImpl extends HibernateDAOImpl implements net.longfalcon.n
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public List<Release> searchReleasesByNameExludingCats(List<String> searchTokens, int limit, Collection<Integer> excludedCategoryIds) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Release.class);
         if (!searchTokens.isEmpty()) {
@@ -492,7 +492,7 @@ public class ReleaseDAOImpl extends HibernateDAOImpl implements net.longfalcon.n
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public Long getReleasesCount() {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Release.class);
         criteria.setProjection(Projections.rowCount());

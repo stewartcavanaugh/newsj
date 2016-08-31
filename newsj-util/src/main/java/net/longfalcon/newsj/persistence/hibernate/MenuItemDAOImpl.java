@@ -47,7 +47,7 @@ public class MenuItemDAOImpl extends HibernateDAOImpl implements net.longfalcon.
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public List<MenuItem> getMenuItemsByRole(int roleId, boolean noGuestRole) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(MenuItem.class);
         criteria.add(Restrictions.le("role", roleId));
@@ -60,7 +60,7 @@ public class MenuItemDAOImpl extends HibernateDAOImpl implements net.longfalcon.
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public List<MenuItem> getMenuItems() {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(MenuItem.class);
         criteria.addOrder(Order.asc("role"));
@@ -70,7 +70,7 @@ public class MenuItemDAOImpl extends HibernateDAOImpl implements net.longfalcon.
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public MenuItem findByMenuItemId(long id) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(MenuItem.class);
         criteria.add(Restrictions.eq("id", id));
