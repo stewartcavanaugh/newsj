@@ -11,12 +11,10 @@ DO NOT USE. NON-FUNCTIONAL
 * v1.0 - final release
 
 ## Open Questions before 1.0
-* security implementation: Spring Sec or port the original
 * regex submission
 * ReqId
 * move to templates/Tiles?
 * Job management for update binaries / update releases
-* command line tools for integration with cron,etc.
 
 ### ToDo list
 * refactor "Rage" to "TVData" or similar

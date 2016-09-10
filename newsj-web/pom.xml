@@ -3,7 +3,7 @@
     <parent>
         <artifactId>newsj</artifactId>
         <groupId>net.longfalcon</groupId>
-        <version>0.2-SNAPSHOT</version>
+        <version>0.3-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -22,7 +22,7 @@
         <dependency>
             <groupId>net.longfalcon.newsj</groupId>
             <artifactId>newsj-util</artifactId>
-            <version>0.2-SNAPSHOT</version>
+            <version>0.3-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>javax</groupId>

@@ -362,6 +362,32 @@
         <property name="userInviteDAO" ref="userInviteDAO"/>
     </bean>
 
+    <!-- SCHEDULER -->
+    <bean id="schedulerService" class="net.longfalcon.newsj.service.SchedulerService" init-method="init" destroy-method="destroy">
+        <property name="scheduler" ref="scheduler"/>
+        <property name="updateJobDetail" ref="updateJobDetail"/>
+    </bean>
+    <bean id="updateJobDetail" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+        <property name="jobClass" value="net.longfalcon.newsj.job.NewsUpdateJob"/>
+        <property name="jobDataAsMap">
+            <map>
+                <entry key="binaries" value-ref="binaries"/>
+                <entry key="releases" value-ref="releases"/>
+            </map>
+        </property>
+    </bean>
+    <bean id="scheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="quartzProperties">
+                <value>
+                    org.quartz.scheduler.instanceName = NewsJScheduler
+                    org.quartz.threadPool.threadCount = 1
+                    org.quartz.jobStore.class = org.quartz.simpl.RAMJobStore
+                    org.quartz.plugin.shutdownhook.class = org.quartz.plugins.management.ShutdownHookPlugin
+                    org.quartz.plugin.shutdownhook.cleanShutdown = true
+                </value>
+        </property>
+    </bean>
+
     <!-- WEB SECURITY -->
 
     <bean id="userDetailsService" class="net.longfalcon.web.auth.UserDetailsServiceImpl">

@@ -56,6 +56,9 @@
     <orderEntry type="library" name="Maven: net.sf.ehcache:ehcache-core:2.4.3" level="project" />
     <orderEntry type="library" name="Maven: mysql:mysql-connector-java:5.1.19" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-test:4.3.1.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.quartz-scheduler:quartz:2.2.1" level="project" />
+    <orderEntry type="library" name="Maven: c3p0:c3p0:0.9.1.1" level="project" />
+    <orderEntry type="library" name="Maven: org.quartz-scheduler:quartz-jobs:2.2.1" level="project" />
     <orderEntry type="library" name="Maven: javax.xml.bind:jaxb-api:2.2.7" level="project" />
     <orderEntry type="library" name="Maven: com.sun.xml.bind:jaxb-impl:2.2.7" level="project" />
     <orderEntry type="library" name="Maven: com.sun.xml.bind:jaxb-core:2.2.7" level="project" />
