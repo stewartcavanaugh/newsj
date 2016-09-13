@@ -420,3 +420,12 @@ CREATE UNIQUE INDEX ix_users_rsstoken on users (`rsstoken`);
 -- TODO: verify this works
 -- makes "rageId" EVERYWHERE BUT TVRAGE represent a "tvinfo" id, not a TvRage id specific to the TvRage site
 UPDATE `releases` set rageID = (select tv.ID from tvrage tv where tv.rageID = `releases`.rageID LIMIT 1) where `releases`.rageID > 0;
+
+DROP TABLE IF EXISTS `jobconfig`;
+CREATE TABLE `jobconfig` (
+  `ID` INT PRIMARY KEY NOT NULL ,
+  `JOB_NAME` VARCHAR(255) NOT NULL ,
+  `JOB_FREQ` VARCHAR(255) NOT NULL ,
+  `JOB_CONFIG` VARCHAR(255) NOT NULL
+);
+INSERT INTO `jobconfig` VALUES (1,'UPDATE_JOB','FREQ_NEVER','N/A');

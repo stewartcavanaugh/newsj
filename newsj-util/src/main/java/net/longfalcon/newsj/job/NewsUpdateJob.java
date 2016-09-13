@@ -69,7 +69,7 @@ public class NewsUpdateJob extends QuartzJobBean {
 
         try {
             // binaries.updateAllGroups();
-            Thread.sleep(100000);
+            Thread.sleep(100);
         } catch (InterruptedException e) {
             _log.error("Thread interrupted");
         }
@@ -79,7 +79,7 @@ public class NewsUpdateJob extends QuartzJobBean {
 
         try {
             // releases.processReleases();
-            Thread.sleep(100000);
+            Thread.sleep(100);
         } catch (InterruptedException e) {
             _log.error("Thread interrupted");
         }

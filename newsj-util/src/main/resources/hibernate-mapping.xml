@@ -182,6 +182,19 @@
         <property name="description" column="description"/>
         <property name="releaseCount" formula="(select count(*) from releases r where r.groupID = ID)"/>
     </class>
+    <class name="JobConfig" table="jobconfig">
+        <id name="id" column="ID">
+            <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+                <param name="sequence_name">Newsj_SEQ</param>
+                <param name="optimizer">pooled</param>
+                <param name="initial_value">1</param>
+                <param name="increment_size">100</param>
+            </generator>
+        </id>
+        <property name="jobName" column="JOB_NAME" unique="true"/>
+        <property name="jobFrequency" column="JOB_FREQ"/>
+        <property name="frequencyConfig" column="JOB_CONFIG"/>
+    </class>
     <class name="MenuItem" table="menu">
         <id name="id" column="ID">
             <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">

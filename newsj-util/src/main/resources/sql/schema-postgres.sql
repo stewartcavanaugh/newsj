@@ -9,6 +9,7 @@ DROP TABLE "CONTENT" cascade ;
 DROP TABLE "FORUMPOST" cascade ;
 DROP TABLE "GENRES" cascade ;
 DROP TABLE "GROUPS" cascade ;
+DROP TABLE "JOBCONFIG" CASCADE ;
 DROP TABLE "MENU" cascade ;
 DROP TABLE "MOVIEINFO" cascade ;
 DROP TABLE "MUSICINFO" cascade ;
@@ -250,6 +251,17 @@ CREATE TABLE "GROUPS"
    "MINFILESTOFORMRELEASE" INT,
    "ACTIVE" BOOLEAN NOT NULL DEFAULT 0,
    "DESCRIPTION" VARCHAR(255)
+);
+--------------------------------------------------------
+--  DDL for Table JOBCONFIG
+--------------------------------------------------------
+
+CREATE TABLE "JOBCONFIG"
+(
+  "ID" INT PRIMARY KEY NOT NULL ,
+  "JOB_NAME" VARCHAR(255) NOT NULL ,
+  "JOB_FREQ" VARCHAR(255) NOT NULL ,
+  "JOB_CONFIG" VARCHAR(255) NOT NULL
 );
 --------------------------------------------------------
 --  DDL for Table MENU
@@ -699,6 +711,11 @@ CREATE INDEX "IX_RELEASES_GROUPID" ON "RELEASES" ("GROUPID");
 --------------------------------------------------------
 
 CREATE INDEX "IX_TVRAGE_TRAKTID" ON "TVRAGE" ("TRAKTID");
+--------------------------------------------------------
+--  DDL for Index IX_JOB_NAME
+--------------------------------------------------------
+
+CREATE UNIQUE INDEX IX_JOB_NAME ON "JOBCONFIG" ("JOB_NAME");
 --------------------------------------------------------
 --  Constraints for Table FORUMPOST
 --------------------------------------------------------
