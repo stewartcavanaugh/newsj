@@ -195,6 +195,10 @@
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
 
+    <bean id="jobConfigDAO" class="net.longfalcon.newsj.persistence.hibernate.JobConfigDAOImpl">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+
     <!-- Services -->
     <bean id="backfill" class="net.longfalcon.newsj.Backfill">
         <property name="fetchBinaries" ref="fetchBinaries"/>
@@ -366,6 +370,7 @@
     <bean id="schedulerService" class="net.longfalcon.newsj.service.SchedulerService" init-method="init" destroy-method="destroy">
         <property name="scheduler" ref="scheduler"/>
         <property name="updateJobDetail" ref="updateJobDetail"/>
+        <property name="jobConfigDAO" ref="jobConfigDAO"/>
     </bean>
     <bean id="updateJobDetail" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
         <property name="jobClass" value="net.longfalcon.newsj.job.NewsUpdateJob"/>

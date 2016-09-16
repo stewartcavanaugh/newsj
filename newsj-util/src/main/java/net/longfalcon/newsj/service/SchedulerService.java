@@ -18,11 +18,16 @@
 
 package net.longfalcon.newsj.service;
 
+import net.longfalcon.newsj.job.JobConfigKeys;
+import net.longfalcon.newsj.model.JobConfig;
+import net.longfalcon.newsj.persistence.JobConfigDAO;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.quartz.CronScheduleBuilder;
 import org.quartz.DateBuilder;
 import org.quartz.JobDetail;
 import org.quartz.JobKey;
+import org.quartz.ScheduleBuilder;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.SimpleScheduleBuilder;
@@ -35,20 +40,12 @@ import org.quartz.TriggerBuilder;
  * Time: 2:17 PM
  */
 public class SchedulerService {
+    public static final String TRIGGER_GROUP = "NewsJ-1";
     public static final String UPDATE_TRIGGER_NAME = "updateTrigger";
-    public static final String TRIGGER_GROUP = "newsJ-1";
     private static final Log _log = LogFactory.getLog(SchedulerService.class);
-
+    private JobConfigDAO jobConfigDAO;
     private Scheduler scheduler;
     private JobDetail updateJobDetail;
-
-    public void init() {
-        try {
-            scheduler.scheduleJob(updateJobDetail, getTrigger());
-        } catch (SchedulerException e) {
-            _log.error(e.toString(), e);
-        }
-    }
 
     public void destroy() {
         try {
@@ -58,15 +55,53 @@ public class SchedulerService {
         }
     }
 
-    private Trigger getTrigger() {
-        Trigger trigger = TriggerBuilder.newTrigger()
+    public void init() {
+        try {
+            Trigger trigger = getUpdateJobTrigger();
+            if (trigger != null) {
+                scheduler.scheduleJob(updateJobDetail, trigger);
+            }
+        } catch (SchedulerException e) {
+            _log.error(e.toString(), e);
+        }
+    }
+
+    private Trigger getUpdateJobTrigger() {
+        JobConfig updateJobConfig = jobConfigDAO.getJobConfigByJobName(JobConfigKeys.UPDATE_JOB_KEY);
+        Trigger trigger;
+        ScheduleBuilder scheduleBuilder;
+        if (updateJobConfig.getFrequencyConfig().equals(JobConfigKeys.FREQ_SCHEDULED)) {
+            String cronExpression = updateJobConfig.getFrequencyConfig();
+            scheduleBuilder = CronScheduleBuilder.cronSchedule(cronExpression);
+        } else if (updateJobConfig.getFrequencyConfig().equals(JobConfigKeys.FREQ_PERIODIC)) {
+            int interval = Integer.parseInt(updateJobConfig.getFrequencyConfig());
+            scheduleBuilder = SimpleScheduleBuilder.simpleSchedule()
+                    .withIntervalInMilliseconds(interval)
+                    .repeatForever();
+        } else {
+            return null;
+        }
+
+        // always start 5 minutes after startup
+        trigger = TriggerBuilder.newTrigger()
                 .withIdentity(UPDATE_TRIGGER_NAME, TRIGGER_GROUP)
                 .startAt(DateBuilder.futureDate(5, DateBuilder.IntervalUnit.MINUTE))
-                .withSchedule(SimpleScheduleBuilder.simpleSchedule()
-                        .withIntervalInMinutes(2)
-                        .repeatForever())
+                .withSchedule(scheduleBuilder)
                 .build();
         return trigger;
+    }
+
+    public void schedule(String jobKey) {
+        try {
+            if (JobConfigKeys.UPDATE_JOB_KEY.equals(jobKey)) {
+                Trigger trigger = getUpdateJobTrigger();
+                if (trigger != null) {
+                    scheduler.scheduleJob(updateJobDetail, trigger);
+                }
+            }
+        } catch (SchedulerException e) {
+            _log.error(e.toString(), e);
+        }
     }
 
     public void stopUpdateTask() {
@@ -75,6 +110,15 @@ public class SchedulerService {
 
         } catch (SchedulerException e) {
             _log.error(e.toString(), e);
+        }
+    }
+
+    public boolean isUpdateJobScheduled() {
+        try {
+            return scheduler.checkExists(new JobKey(UPDATE_TRIGGER_NAME, TRIGGER_GROUP));
+        } catch (SchedulerException e) {
+            _log.error(e.toString(), e);
+            return false;
         }
     }
 
@@ -92,5 +136,13 @@ public class SchedulerService {
 
     public void setUpdateJobDetail(JobDetail updateJobDetail) {
         this.updateJobDetail = updateJobDetail;
+    }
+
+    public JobConfigDAO getJobConfigDAO() {
+        return jobConfigDAO;
+    }
+
+    public void setJobConfigDAO(JobConfigDAO jobConfigDAO) {
+        this.jobConfigDAO = jobConfigDAO;
     }
 }

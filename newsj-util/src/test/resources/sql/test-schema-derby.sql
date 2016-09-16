@@ -218,6 +218,17 @@ CREATE TABLE "GROUPS"
    "DESCRIPTION" VARCHAR(255)
 );
 --------------------------------------------------------
+--  DDL for Table JOBCONFIG
+--------------------------------------------------------
+
+CREATE TABLE "JOBCONFIG"
+(
+  "ID" INT PRIMARY KEY NOT NULL ,
+  "JOB_NAME" VARCHAR(255) NOT NULL ,
+  "JOB_FREQ" VARCHAR(255) NOT NULL ,
+  "JOB_CONFIG" VARCHAR(255) NOT NULL
+);
+--------------------------------------------------------
 --  DDL for Table MENU
 --------------------------------------------------------
 
