@@ -178,7 +178,7 @@ public class AdminJobConfigController extends BaseController {
             jobConfig.setFrequencyConfig(String.valueOf(period));
         } else if (JobConfigKeys.FREQ_SCHEDULED.equals(jobFrequency)) {
             jobConfig.setJobFrequency(jobFrequency);
-            String[] cronElements = new String[5];
+            String[] cronElements = new String[6];
             // there will be six.
             cronElements[0] = "0";
             cronElements[1] = String.valueOf(jobConfigView.getScheduledMinutes());
