@@ -20,6 +20,8 @@ package net.longfalcon.newsj.persistence;
 
 import net.longfalcon.newsj.model.JobConfig;
 
+import java.util.List;
+
 /**
  * User: Sten Martinez
  * Date: 9/14/16
@@ -29,4 +31,5 @@ public interface JobConfigDAO {
     void update(JobConfig jobConfig);
     void delete(JobConfig jobConfig);
     JobConfig getJobConfigByJobName(String jobName);
+    List<JobConfig> getAllJobConfig();
 }

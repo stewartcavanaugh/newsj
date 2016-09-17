@@ -25,6 +25,8 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 /**
  * User: Sten Martinez
  * Date: 9/14/16
@@ -49,5 +51,13 @@ public class JobConfigDAOImpl extends HibernateDAOImpl implements JobConfigDAO {
         criteria.add(Restrictions.eq("jobName", jobName));
 
         return (JobConfig) criteria.uniqueResult();
+    }
+
+    @Override
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
+    public List<JobConfig> getAllJobConfig() {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(JobConfig.class);
+
+        return criteria.list();
     }
 }

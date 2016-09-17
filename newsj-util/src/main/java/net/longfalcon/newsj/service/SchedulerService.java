@@ -21,18 +21,21 @@ package net.longfalcon.newsj.service;
 import net.longfalcon.newsj.job.JobConfigKeys;
 import net.longfalcon.newsj.model.JobConfig;
 import net.longfalcon.newsj.persistence.JobConfigDAO;
+import net.longfalcon.newsj.util.DateUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.quartz.CronScheduleBuilder;
 import org.quartz.DateBuilder;
 import org.quartz.JobDetail;
-import org.quartz.JobKey;
 import org.quartz.ScheduleBuilder;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.SimpleScheduleBuilder;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
+import org.quartz.TriggerKey;
+
+import java.util.Date;
 
 /**
  * User: Sten Martinez
@@ -59,7 +62,8 @@ public class SchedulerService {
         try {
             Trigger trigger = getUpdateJobTrigger();
             if (trigger != null) {
-                scheduler.scheduleJob(updateJobDetail, trigger);
+                Date nextRun = scheduler.scheduleJob(updateJobDetail, trigger);
+                _log.info(trigger.getKey().getName() + " is scheduled for " + DateUtil.formatDefaultDate(nextRun));
             }
         } catch (SchedulerException e) {
             _log.error(e.toString(), e);
@@ -70,10 +74,10 @@ public class SchedulerService {
         JobConfig updateJobConfig = jobConfigDAO.getJobConfigByJobName(JobConfigKeys.UPDATE_JOB_KEY);
         Trigger trigger;
         ScheduleBuilder scheduleBuilder;
-        if (updateJobConfig.getFrequencyConfig().equals(JobConfigKeys.FREQ_SCHEDULED)) {
+        if (updateJobConfig.getJobFrequency().equals(JobConfigKeys.FREQ_SCHEDULED)) {
             String cronExpression = updateJobConfig.getFrequencyConfig();
             scheduleBuilder = CronScheduleBuilder.cronSchedule(cronExpression);
-        } else if (updateJobConfig.getFrequencyConfig().equals(JobConfigKeys.FREQ_PERIODIC)) {
+        } else if (updateJobConfig.getJobFrequency().equals(JobConfigKeys.FREQ_PERIODIC)) {
             int interval = Integer.parseInt(updateJobConfig.getFrequencyConfig());
             scheduleBuilder = SimpleScheduleBuilder.simpleSchedule()
                     .withIntervalInMilliseconds(interval)
@@ -82,10 +86,10 @@ public class SchedulerService {
             return null;
         }
 
-        // always start 5 minutes after startup
+        // always start 2 minutes after startup
         trigger = TriggerBuilder.newTrigger()
                 .withIdentity(UPDATE_TRIGGER_NAME, TRIGGER_GROUP)
-                .startAt(DateBuilder.futureDate(5, DateBuilder.IntervalUnit.MINUTE))
+                .startAt(DateBuilder.futureDate(2, DateBuilder.IntervalUnit.MINUTE))
                 .withSchedule(scheduleBuilder)
                 .build();
         return trigger;
@@ -96,7 +100,8 @@ public class SchedulerService {
             if (JobConfigKeys.UPDATE_JOB_KEY.equals(jobKey)) {
                 Trigger trigger = getUpdateJobTrigger();
                 if (trigger != null) {
-                    scheduler.scheduleJob(updateJobDetail, trigger);
+                    Date nextRun = scheduler.scheduleJob(updateJobDetail, trigger);
+                    _log.info(trigger.getKey().getName() + " is scheduled for " + DateUtil.formatDefaultDate(nextRun));
                 }
             }
         } catch (SchedulerException e) {
@@ -104,9 +109,26 @@ public class SchedulerService {
         }
     }
 
-    public void stopUpdateTask() {
+    public void reset(String jobKey) {
+        if (JobConfigKeys.UPDATE_JOB_KEY.equals(jobKey)) {
+            Trigger newTrigger = getUpdateJobTrigger();
+            try {
+                if (isUpdateJobScheduled()) {
+                    Date nextRun = scheduler.rescheduleJob(new TriggerKey(UPDATE_TRIGGER_NAME, TRIGGER_GROUP), newTrigger);
+                    _log.info(newTrigger.getKey().getName() + " is scheduled for " + DateUtil.formatDefaultDate(nextRun));
+                } else {
+                    Date nextRun = scheduler.scheduleJob(updateJobDetail, newTrigger);
+                    _log.info(newTrigger.getKey().getName() + " is scheduled for " + DateUtil.formatDefaultDate(nextRun));
+                }
+            } catch (SchedulerException e) {
+                _log.error(e.toString(), e);
+            }
+        }
+    }
+
+    public void pauseUpdateTask() {
         try {
-            scheduler.pauseJob(new JobKey(UPDATE_TRIGGER_NAME, TRIGGER_GROUP));
+            scheduler.pauseTrigger(new TriggerKey(UPDATE_TRIGGER_NAME, TRIGGER_GROUP));
 
         } catch (SchedulerException e) {
             _log.error(e.toString(), e);
@@ -115,7 +137,7 @@ public class SchedulerService {
 
     public boolean isUpdateJobScheduled() {
         try {
-            return scheduler.checkExists(new JobKey(UPDATE_TRIGGER_NAME, TRIGGER_GROUP));
+            return scheduler.checkExists(new TriggerKey(UPDATE_TRIGGER_NAME, TRIGGER_GROUP));
         } catch (SchedulerException e) {
             _log.error(e.toString(), e);
             return false;
