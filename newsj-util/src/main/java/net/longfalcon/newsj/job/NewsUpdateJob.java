@@ -20,6 +20,8 @@ package net.longfalcon.newsj.job;
 
 import net.longfalcon.newsj.Binaries;
 import net.longfalcon.newsj.Releases;
+import net.longfalcon.newsj.model.JobLog;
+import net.longfalcon.newsj.service.JobLogService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.quartz.JobExecutionContext;
@@ -27,6 +29,7 @@ import org.quartz.JobExecutionException;
 import org.quartz.SchedulerException;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -39,6 +42,7 @@ public class NewsUpdateJob extends QuartzJobBean {
 
     private Binaries binaries;
     private Releases releases;
+    private JobLogService jobLogService;
 
     @Override
     protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
@@ -60,29 +64,27 @@ public class NewsUpdateJob extends QuartzJobBean {
             throw new JobExecutionException("services were null");
         }
         _log.info("Starting UpdateJob");
-        doBinariesUpdate();
-        doReleasesUpdate();
+        JobLog jobLog = jobLogService.createJobLog(JobConfigKeys.UPDATE_JOB_KEY, new Date());
+        try {
+            doBinariesUpdate();
+            doReleasesUpdate();
+            jobLog.setResult("Success");
+        } catch (Exception e) {
+            _log.error(e.toString(), e);
+            jobLog.setResult("Failed");
+            jobLog.setNotes(e.toString());
+        }
         _log.info("UpdateJob complete");
+        jobLog.setEndDate(new Date());
+        jobLogService.updateJobLog(jobLog);
     }
 
     private void doBinariesUpdate() {
-
-        try {
-            // binaries.updateAllGroups();
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            _log.error("Thread interrupted");
-        }
+        binaries.updateAllGroups();
     }
 
     private void doReleasesUpdate() {
-
-        try {
-            // releases.processReleases();
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            _log.error("Thread interrupted");
-        }
+        releases.processReleases();
     }
 
     public Binaries getBinaries() {
@@ -99,5 +101,13 @@ public class NewsUpdateJob extends QuartzJobBean {
 
     public void setReleases(Releases releases) {
         this.releases = releases;
+    }
+
+    public JobLogService getJobLogService() {
+        return jobLogService;
+    }
+
+    public void setJobLogService(JobLogService jobLogService) {
+        this.jobLogService = jobLogService;
     }
 }

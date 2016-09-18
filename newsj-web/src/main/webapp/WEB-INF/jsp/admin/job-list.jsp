@@ -73,7 +73,23 @@
 
             <h2>Job History</h2>
 
-            TODO
+            <table style="width:100%;margin-top:10px;" class="data highlight">
+                <tr>
+                    <th>Job Name</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Result</th>
+                </tr>
+
+                <c:forEach items="${jobLogList}" var="jobLog" varStatus="rowNum">
+                    <tr class='${(rowNum.count % 2 == 0) ? "" : "alt"}'>
+                        <td>${jobLog.jobName}</td>
+                        <td>${date:formatDate(jobLog.startDate)}</td>
+                        <td>${date:formatDate(jobLog.endDate)}</td>
+                        <td>${jobLog.result}</td>
+                    </tr>
+                </c:forEach>
+            </table>
         <%--END PAGE CONTENT--%>
     </div>
     <!-- end #content -->

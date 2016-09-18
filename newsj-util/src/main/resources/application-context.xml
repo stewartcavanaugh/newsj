@@ -198,6 +198,10 @@
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
 
+    <bean id="jobLogDAO" class="net.longfalcon.newsj.persistence.hibernate.JobLogDAOImpl">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+
     <!-- Services -->
     <bean id="backfill" class="net.longfalcon.newsj.Backfill">
         <property name="fetchBinaries" ref="fetchBinaries"/>
@@ -268,6 +272,9 @@
         <property name="fileSystemService" ref="fileSystemService"/>
         <property name="siteDAO" ref="siteDAO"/>
         <property name="config" ref="config"/>
+    </bean>
+    <bean id="jobLogService" class="net.longfalcon.newsj.service.JobLogService">
+        <property name="jobLogDAO" ref="jobLogDAO"/>
     </bean>
     <bean id="menuService" class="net.longfalcon.newsj.service.MenuService">
         <property name="menuItemDAO" ref="menuItemDAO"/>
@@ -377,6 +384,7 @@
             <map>
                 <entry key="binaries" value-ref="binaries"/>
                 <entry key="releases" value-ref="releases"/>
+                <entry key="jobLogService" value-ref="jobLogService"/>
             </map>
         </property>
     </bean>

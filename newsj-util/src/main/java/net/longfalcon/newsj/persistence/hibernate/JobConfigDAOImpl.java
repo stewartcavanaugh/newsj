@@ -22,6 +22,7 @@ import net.longfalcon.newsj.model.JobConfig;
 import net.longfalcon.newsj.persistence.JobConfigDAO;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,6 +33,7 @@ import java.util.List;
  * Date: 9/14/16
  * Time: 4:38 PM
  */
+@Repository
 public class JobConfigDAOImpl extends HibernateDAOImpl implements JobConfigDAO {
 
     @Transactional

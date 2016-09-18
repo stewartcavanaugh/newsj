@@ -19,7 +19,9 @@ package net.longfalcon.web;
 
 import net.longfalcon.newsj.job.JobConfigKeys;
 import net.longfalcon.newsj.model.JobConfig;
+import net.longfalcon.newsj.model.JobLog;
 import net.longfalcon.newsj.persistence.JobConfigDAO;
+import net.longfalcon.newsj.persistence.JobLogDAO;
 import net.longfalcon.newsj.service.SchedulerService;
 import net.longfalcon.newsj.util.ArrayUtil;
 import net.longfalcon.newsj.util.Time;
@@ -54,6 +56,9 @@ public class AdminJobConfigController extends BaseController {
     JobConfigDAO jobConfigDAO;
 
     @Autowired
+    JobLogDAO jobLogDAO;
+
+    @Autowired
     SchedulerService schedulerService;
 
     @RequestMapping("/admin/job-list")
@@ -76,8 +81,11 @@ public class AdminJobConfigController extends BaseController {
             }
         }
 
+        List<JobLog> jobLogList = jobLogDAO.getAllJobLogs();
+
         model.addAttribute("title", "Scheduled Jobs");
         model.addAttribute("jobStatusViewList", jobStatusViewList);
+        model.addAttribute("jobLogList", jobLogList);
         model.addAttribute("pageMetaTitle", "Scheduled Jobs");
         model.addAttribute("pageMetaKeywords", "scheduled,jobs,update");
         model.addAttribute("pageMetaDescription", "List Scheduled Jobs");
