@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 <!--
-  ~ Copyright (c) 2015. Sten Martinez
-  ~
+  ~ Copyright (c) 2016. Sten Martinez
   ~ This program is free software; you can redistribute it and/or modify
   ~ it under the terms of the GNU General Public License as published by
   ~ the Free Software Foundation; either version 2 of the License, or
@@ -194,6 +193,21 @@
         <property name="jobName" column="JOB_NAME" unique="true"/>
         <property name="jobFrequency" column="JOB_FREQ"/>
         <property name="frequencyConfig" column="JOB_CONFIG"/>
+    </class>
+    <class name="JobLog" table="joblog">
+        <id name="id" column="ID">
+            <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+                <param name="sequence_name">Newsj_SEQ</param>
+                <param name="optimizer">pooled</param>
+                <param name="initial_value">1</param>
+                <param name="increment_size">100</param>
+            </generator>
+        </id>
+        <property name="jobName" column="JOB_NAME"/>
+        <property name="startDate" column="START_DATE"/>
+        <property name="endDate" column="END_DATE"/>
+        <property name="result" column="RESULT"/>
+        <property name="notes" column="NOTES"/>
     </class>
     <class name="MenuItem" table="menu">
         <id name="id" column="ID">

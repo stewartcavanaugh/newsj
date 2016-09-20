@@ -10,6 +10,7 @@ DROP TABLE "FORUMPOST" cascade ;
 DROP TABLE "GENRES" cascade ;
 DROP TABLE "GROUPS" cascade ;
 DROP TABLE "JOBCONFIG" CASCADE ;
+DROP TABLE "JOBLOG" CASCADE ;
 DROP TABLE "MENU" cascade ;
 DROP TABLE "MOVIEINFO" cascade ;
 DROP TABLE "MUSICINFO" cascade ;
@@ -262,6 +263,17 @@ CREATE TABLE "JOBCONFIG"
   "JOB_NAME" VARCHAR(255) NOT NULL ,
   "JOB_FREQ" VARCHAR(255) NOT NULL ,
   "JOB_CONFIG" VARCHAR(255) NOT NULL
+);
+--------------------------------------------------------
+--  DDL for Table JOBLOG
+--------------------------------------------------------
+CREATE TABLE "JOBLOG" (
+  "ID" INT PRIMARY KEY NOT NULL ,
+  "JOB_NAME" VARCHAR(255) NOT NULL ,
+  "START_DATE" TIMESTAMP DEFAULT NULL,
+  "END_DATE" TIMESTAMP DEFAULT NULL,
+  "RESULT" VARCHAR(255) DEFAULT NULL,
+  "NOTES" VARCHAR(2000) DEFAULT NULL
 );
 --------------------------------------------------------
 --  DDL for Table MENU

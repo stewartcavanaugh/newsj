@@ -229,6 +229,17 @@ CREATE TABLE "JOBCONFIG"
   "JOB_CONFIG" VARCHAR(255) NOT NULL
 );
 --------------------------------------------------------
+--  DDL for Table JOBLOG
+--------------------------------------------------------
+CREATE TABLE "JOBLOG" (
+  "ID" INT PRIMARY KEY NOT NULL ,
+  "JOB_NAME" VARCHAR(255) NOT NULL ,
+  "START_DATE" TIMESTAMP DEFAULT NULL,
+  "END_DATE" TIMESTAMP DEFAULT NULL,
+  "RESULT" VARCHAR(255) NOT NULL,
+  "NOTES" VARCHAR(2000) DEFAULT NULL
+);
+--------------------------------------------------------
 --  DDL for Table MENU
 --------------------------------------------------------
 

@@ -29,7 +29,7 @@
 <title>${site.title} - ${pageMetaTitle}</title>
 <link href="${pageContext.request.contextPath}/resources/styles/style.css" rel="stylesheet" type="text/css" media="screen" />
 <link href="${pageContext.request.contextPath}/resources/styles/admin.css" rel="stylesheet" type="text/css" media="screen" />
-<c:if test="${(site.style != '') && (site.style != '/')}">
+<c:if test="${(site.style != '') && (site.style != '/') && (site.style != ' ')}">
     <link href="${pageContext.request.contextPath}/resources/themes/${site.style}/style.css" rel="stylesheet" type="text/css" media="screen" />
     <link href="${pageContext.request.contextPath}/resources/themes/${site.style}/admin.css" rel="stylesheet" type="text/css" media="screen" />
 </c:if>
