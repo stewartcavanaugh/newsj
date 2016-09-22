@@ -3,11 +3,6 @@
 <%@ taglib prefix="date" uri="http://java.longfalcon.net/jsp/jstl/date" %>
 <%@ taglib prefix="tags" tagdir="/WEB-INF/tags" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%--@elvariable id="isAdmin" type="boolean"--%>
-<%--@elvariable id="loggedIn" type="boolean"--%>
-<%--@elvariable id="userId" type="java.lang.String"--%>
-<%--@elvariable id="site" type="net.longfalcon.newsj.model.Site"--%>
-<%--@elvariable id="userData" type="net.longfalcon.view.UserData"--%>
 <%--
   ~ Copyright (c) 2016. Sten Martinez
   ~
@@ -25,6 +20,13 @@
   ~ with this program; if not, write to the Free Software Foundation, Inc.,
   ~ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
   --%>
+
+<%--@elvariable id="isAdmin" type="boolean"--%>
+<%--@elvariable id="loggedIn" type="boolean"--%>
+<%--@elvariable id="userId" type="java.lang.String"--%>
+<%--@elvariable id="site" type="net.longfalcon.newsj.model.Site"--%>
+<%--@elvariable id="userData" type="net.longfalcon.view.UserData"--%>
+
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -56,6 +58,34 @@
 
     <div id="content">
         <%--START PAGE CONTENT--%>
+            <h1>${title}</h1>
+
+            <table>
+                <c:set var="last_type" scope="request" value=""/>
+                <c:forEach items="${sitemapItems}" var="sitemapItem">
+                    <c:choose>
+                        <c:when test="${last_type != sitemapItem.type}">
+                            <c:set var="last_type" scope="request" value="${sitemapItem.type}"/>
+                            <tr><td>&nbsp;</td></tr>
+                            <tr>
+                                <td>
+                                    ${sitemapItem.type} \
+                                </td>
+                        </c:when>
+                        <c:otherwise>
+                            <tr>
+                                <td>
+                                </td>
+                        </c:otherwise>
+                    </c:choose>
+                        <td>
+                            <a title="${sitemapItem.type} - ${sitemapItem.name}" href="${pageContext.request.contextPath}${sitemapItem.location}">${sitemapItem.name}</a>
+
+                        </td>
+                    </tr>
+                </c:forEach>
+            </table>
+
         <%--END PAGE CONTENT--%>
     </div>
 
@@ -76,10 +106,10 @@
         ${site.footer}
         <br /><br /><br />
         <a title="Newznab - A usenet indexing web application with community features." href="http://www.newznab.com/">Newznab</a> is released under GPL. All rights reserved ${year}.
-            <br/>
-            <a title="Chat about newznab" href="http://www.newznab.com/chat.html">Newznab Chat</a>
-            <br/>
-            <a href="${pageContext.request.contextPath}/terms-and-conditions">${site.title} Terms and Conditions</a>
+        <br/>
+        <a title="Chat about newznab" href="http://www.newznab.com/chat.html">Newznab Chat</a>
+        <br/>
+        <a href="${pageContext.request.contextPath}/terms-and-conditions">${site.title} Terms and Conditions</a>
     </p>
 </div>
 
