@@ -9,6 +9,8 @@ DROP TABLE "CONTENT" ;
 DROP TABLE "FORUMPOST";
 DROP TABLE "GENRES";
 DROP TABLE "GROUPS";
+DROP TABLE "JOBCONFIG";
+DROP TABLE "JOBLOG";
 DROP TABLE "MENU";
 DROP TABLE "MOVIEINFO";
 DROP TABLE "MUSICINFO" ;
@@ -250,6 +252,28 @@ CREATE TABLE "GROUPS"
    "MINFILESTOFORMRELEASE" INT,
    "ACTIVE" BOOLEAN NOT NULL DEFAULT FALSE,
    "DESCRIPTION" VARCHAR(255)
+);
+--------------------------------------------------------
+--  DDL for Table JOBCONFIG
+--------------------------------------------------------
+
+CREATE TABLE "JOBCONFIG"
+(
+  "ID" INT PRIMARY KEY NOT NULL ,
+  "JOB_NAME" VARCHAR(255) NOT NULL ,
+  "JOB_FREQ" VARCHAR(255) NOT NULL ,
+  "JOB_CONFIG" VARCHAR(255) NOT NULL
+);
+--------------------------------------------------------
+--  DDL for Table JOBLOG
+--------------------------------------------------------
+CREATE TABLE "JOBLOG" (
+"ID" INT PRIMARY KEY NOT NULL ,
+"JOB_NAME" VARCHAR(255) NOT NULL ,
+"START_DATE" TIMESTAMP DEFAULT NULL,
+"END_DATE" TIMESTAMP DEFAULT NULL,
+"RESULT" VARCHAR(255) DEFAULT NULL,
+"NOTES" VARCHAR(2000) DEFAULT NULL
 );
 --------------------------------------------------------
 --  DDL for Table MENU
@@ -699,6 +723,12 @@ CREATE INDEX "IX_RELEASES_GROUPID" ON "RELEASES" ("GROUPID");
 --------------------------------------------------------
 
 CREATE INDEX "IX_TVRAGE_TRAKTID" ON "TVRAGE" ("TRAKTID");
+
+--------------------------------------------------------
+--  DDL for Index IX_JOB_NAME
+--------------------------------------------------------
+
+CREATE UNIQUE INDEX IX_JOB_NAME ON "JOBCONFIG" ("JOB_NAME");
 --------------------------------------------------------
 --  Constraints for Table FORUMPOST
 --------------------------------------------------------

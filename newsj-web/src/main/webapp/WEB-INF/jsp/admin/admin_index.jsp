@@ -66,7 +66,7 @@
 
             <p>
                 Welcome to newznab. In this area you will be able to configure many aspects of your site.<br>
-                If this is your first time here, you need to start the scripts which will fill newznab.
+                If this is your first time here, you need to configure the jobs which will fill newznab.
             </p>
 
             <ol style="list-style-type:decimal; line-height: 180%;">

@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2016. Sten Martinez
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -15,30 +16,16 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package net.longfalcon.newsj.persistence.hibernate;
-
-import net.longfalcon.newsj.model.Binary;
-import net.longfalcon.newsj.persistence.BinaryDAO;
-import net.longfalcon.newsj.test.BaseFsTestSupport;
-import org.junit.Assert;
-import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.jdbc.Sql;
+package net.longfalcon.newsj.job;
 
 /**
  * User: Sten Martinez
- * Date: 4/30/16
- * Time: 5:40 PM
+ * Date: 9/12/16
+ * Time: 4:31 PM
  */
-public class BinaryDAOImplTest extends BaseFsTestSupport {
-
-    @Autowired
-    BinaryDAO binaryDAO;
-
-    @Test
-    @Sql("/sql/binaries/binaries-test-data.sql")
-    public void testFindByBinaryHash() throws Exception {
-        Binary binary = binaryDAO.findByBinaryHash("abcd1234");
-        Assert.assertNotNull(binary);
-    }
+public class JobConfigKeys {
+    public static final String UPDATE_JOB_KEY = "UPDATE_JOB";
+    public static final String FREQ_PERIODIC = "FREQ_PERIODIC";
+    public static final String FREQ_SCHEDULED = "FREQ_SCHEDULED";
+    public static final String FREQ_NEVER = "FREQ_NEVER";
 }

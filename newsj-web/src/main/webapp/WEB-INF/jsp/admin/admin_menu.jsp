@@ -98,4 +98,7 @@
     <li>
         <a href="${pageContext.request.contextPath}/admin/site-stats">Site Stats</a>
     </li>
+    <li>
+        <a href="${pageContext.request.contextPath}/admin/job-list">Scheduled Jobs</a>
+    </li>
 </ul>

@@ -9,6 +9,8 @@ DROP TABLE "CONTENT" cascade constraints;
 DROP TABLE "FORUMPOST" cascade constraints;
 DROP TABLE "GENRES" cascade constraints;
 DROP TABLE "GROUPS" cascade constraints;
+DROP TABLE "JOBCONFIG" cascade constraints;
+DROP TABLE "JOBLOG" CASCADE CONSTRAINTS;
 DROP TABLE "MENU" cascade constraints;
 DROP TABLE "MOVIEINFO" cascade constraints;
 DROP TABLE "MUSICINFO" cascade constraints;
@@ -281,6 +283,31 @@ CREATE TABLE GROUPS
 );
 CREATE UNIQUE INDEX IX_NAME ON GROUPS (NAME_);
 CREATE INDEX ACTIVE ON GROUPS (ACTIVE);
+
+--------------------------------------------------------
+--  DDL for Table JOBCONFIG
+--------------------------------------------------------
+
+CREATE TABLE JOBCONFIG
+(
+  ID INTEGER PRIMARY KEY NOT NULL ,
+  JOB_NAME VARCHAR2(255) NOT NULL ,
+  JOB_FREQ VARCHAR2(255) NOT NULL ,
+  JOB_CONFIG VARCHAR2(255) NOT NULL
+);
+CREATE UNIQUE INDEX IX_JOB_NAME ON JOBCONFIG (JOB_NAME);
+
+--------------------------------------------------------
+--  DDL for Table JOBLOG
+--------------------------------------------------------
+CREATE TABLE "JOBLOG" (
+  "ID" INTEGER PRIMARY KEY NOT NULL ,
+  "JOB_NAME" VARCHAR(255) NOT NULL ,
+  "START_DATE" DATE DEFAULT NULL,
+  "END_DATE" DATE DEFAULT NULL,
+  "RESULT" VARCHAR(255) DEFAULT NULL,
+  "NOTES" VARCHAR(2000) DEFAULT NULL
+);
 
 --------------------------------------------------------
 --  DDL for Table MENU
