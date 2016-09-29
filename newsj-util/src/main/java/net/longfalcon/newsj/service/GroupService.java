@@ -41,6 +41,8 @@ public class GroupService {
 
     @Transactional
     public void delete(int groupId) {
+        releaseDAO.deleteByGroupId(groupId);
+        binaryDAO.deleteByGroupId(groupId);
         Group group = groupDAO.findGroupByGroupId(groupId);
         groupDAO.delete(group);
     }
