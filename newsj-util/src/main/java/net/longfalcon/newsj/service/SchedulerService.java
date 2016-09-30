@@ -18,6 +18,8 @@
 
 package net.longfalcon.newsj.service;
 
+import net.longfalcon.newsj.Backfill;
+import net.longfalcon.newsj.job.BackfillGroupJob;
 import net.longfalcon.newsj.job.JobConfigKeys;
 import net.longfalcon.newsj.model.JobConfig;
 import net.longfalcon.newsj.persistence.JobConfigDAO;
@@ -26,6 +28,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.quartz.CronScheduleBuilder;
 import org.quartz.DateBuilder;
+import org.quartz.JobBuilder;
+import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
 import org.quartz.ScheduleBuilder;
 import org.quartz.Scheduler;
@@ -36,6 +40,8 @@ import org.quartz.TriggerBuilder;
 import org.quartz.TriggerKey;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * User: Sten Martinez
@@ -49,6 +55,8 @@ public class SchedulerService {
     private JobConfigDAO jobConfigDAO;
     private Scheduler scheduler;
     private JobDetail updateJobDetail;
+    private Backfill backfill;
+    private JobLogService jobLogService;
 
     public void destroy() {
         try {
@@ -95,15 +103,20 @@ public class SchedulerService {
         return trigger;
     }
 
-    public void schedule(String jobKey) {
+    public void scheduleBackfillJob(String groupName) {
         try {
-            if (JobConfigKeys.UPDATE_JOB_KEY.equals(jobKey)) {
-                Trigger trigger = getUpdateJobTrigger();
-                if (trigger != null) {
-                    Date nextRun = scheduler.scheduleJob(updateJobDetail, trigger);
-                    _log.info(trigger.getKey().getName() + " is scheduled for " + DateUtil.formatDefaultDate(nextRun));
-                }
-            }
+            Map<String,Object> jobDataMap = new HashMap<>();
+            jobDataMap.put("groupName", groupName);
+            jobDataMap.put("backfill", backfill);
+            jobDataMap.put("jobLogService", jobLogService);
+            JobDetail backfillJobDetail = JobBuilder.newJob().ofType(BackfillGroupJob.class)
+                    .usingJobData(new JobDataMap(jobDataMap))
+                    .build();
+             Trigger trigger = TriggerBuilder.newTrigger()
+                     .withIdentity("BACKFILL-" + groupName, "BACKFILL_JOBS")
+                     .startNow()
+                     .build();
+            scheduler.scheduleJob(backfillJobDetail,trigger);
         } catch (SchedulerException e) {
             _log.error(e.toString(), e);
         }
@@ -174,5 +187,21 @@ public class SchedulerService {
 
     public void setJobConfigDAO(JobConfigDAO jobConfigDAO) {
         this.jobConfigDAO = jobConfigDAO;
+    }
+
+    public Backfill getBackfill() {
+        return backfill;
+    }
+
+    public void setBackfill(Backfill backfill) {
+        this.backfill = backfill;
+    }
+
+    public JobLogService getJobLogService() {
+        return jobLogService;
+    }
+
+    public void setJobLogService(JobLogService jobLogService) {
+        this.jobLogService = jobLogService;
     }
 }

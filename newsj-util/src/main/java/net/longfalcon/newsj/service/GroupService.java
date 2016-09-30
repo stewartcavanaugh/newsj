@@ -38,6 +38,7 @@ public class GroupService {
     private GroupDAO groupDAO;
     private ReleaseDAO releaseDAO;
     private BinaryDAO binaryDAO;
+    private SchedulerService schedulerService;
 
     @Transactional
     public void delete(int groupId) {
@@ -45,6 +46,42 @@ public class GroupService {
         binaryDAO.deleteByGroupId(groupId);
         Group group = groupDAO.findGroupByGroupId(groupId);
         groupDAO.delete(group);
+    }
+
+    @Transactional
+    public void purge(int groupId) {
+        releaseDAO.deleteByGroupId(groupId);
+        binaryDAO.deleteByGroupId(groupId);
+        reset(groupId);
+    }
+
+    @Transactional
+    public void reset(int groupId) {
+        Group group = groupDAO.findGroupByGroupId(groupId);
+        group.setBackfillTarget(0);
+        group.setFirstRecord(0);
+        group.setFirstRecordPostdate(null);
+        group.setLastRecord(0);
+        group.setLastRecordPostdate(null);
+        group.setLastUpdated(null);
+        groupDAO.update(group);
+    }
+
+    public void backfill(int groupId) {
+        Group group = groupDAO.findGroupByGroupId(groupId);
+        schedulerService.scheduleBackfillJob(group.getName());
+    }
+
+    @Transactional
+    public void update(Group group) {
+        groupDAO.update(group);
+    }
+
+    @Transactional
+    public void updateGroupStatus(long groupId, boolean active) {
+        Group group = groupDAO.findGroupByGroupId(groupId);
+        group.setActive(active);
+        groupDAO.update(group);
     }
 
     public BinaryDAO getBinaryDAO() {
@@ -79,34 +116,11 @@ public class GroupService {
         return releaseDAO.countByGroupId(group.getId());
     }
 
-    @Transactional
-    public void purge(int groupId) {
-        releaseDAO.deleteByGroupId(groupId);
-        binaryDAO.deleteByGroupId(groupId);
-        reset(groupId);
+    public SchedulerService getSchedulerService() {
+        return schedulerService;
     }
 
-    @Transactional
-    public void reset(int groupId) {
-        Group group = groupDAO.findGroupByGroupId(groupId);
-        group.setBackfillTarget(0);
-        group.setFirstRecord(0);
-        group.setFirstRecordPostdate(null);
-        group.setLastRecord(0);
-        group.setLastRecordPostdate(null);
-        group.setLastUpdated(null);
-        groupDAO.update(group);
-    }
-
-    @Transactional
-    public void update(Group group) {
-        groupDAO.update(group);
-    }
-
-    @Transactional
-    public void updateGroupStatus(long groupId, boolean active) {
-        Group group = groupDAO.findGroupByGroupId(groupId);
-        group.setActive(active);
-        groupDAO.update(group);
+    public void setSchedulerService(SchedulerService schedulerService) {
+        this.schedulerService = schedulerService;
     }
 }

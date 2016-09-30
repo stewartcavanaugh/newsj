@@ -98,6 +98,10 @@ public class AdminGroupController extends BaseController {
                 groupService.purge(groupId);
                 return String.format("Group %d purged.", groupId);
             }
+            if (action.equals("5")) {
+                groupService.backfill(groupId);
+                return String.format("Backfill job started for Group %d", groupId);
+            }
         } else {
             if (ValidatorUtil.isNotNull(groupId)) {
                 boolean active = groupStatus == 1;

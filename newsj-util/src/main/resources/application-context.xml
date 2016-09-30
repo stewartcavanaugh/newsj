@@ -22,7 +22,6 @@
        xmlns:tx="http://www.springframework.org/schema/tx"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:util="http://www.springframework.org/schema/util"
-       xmlns:security="http://www.springframework.org/schema/security"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/tx
@@ -32,9 +31,7 @@
         http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context.xsd
         http://www.springframework.org/schema/util
-        http://www.springframework.org/schema/util/spring-util.xsd
-        http://www.springframework.org/schema/security
-        http://www.springframework.org/schema/security/spring-security.xsd">
+        http://www.springframework.org/schema/util/spring-util.xsd">
 
     <tx:annotation-driven transaction-manager="transactionManager"/>
 
@@ -267,6 +264,7 @@
         <property name="groupDAO" ref="groupDAO"/>
         <property name="releaseDAO" ref="releaseDAO"/>
         <property name="binaryDAO" ref="binaryDAO"/>
+        <property name="schedulerService" ref="schedulerService"/>
     </bean>
     <bean id="installerService" class="net.longfalcon.newsj.service.InstallerService">
         <property name="fileSystemService" ref="fileSystemService"/>
@@ -377,6 +375,8 @@
         <property name="scheduler" ref="scheduler"/>
         <property name="updateJobDetail" ref="updateJobDetail"/>
         <property name="jobConfigDAO" ref="jobConfigDAO"/>
+        <property name="backfill" ref="backfill"/>
+        <property name="jobLogService" ref="jobLogService"/>
     </bean>
     <bean id="updateJobDetail" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
         <property name="jobClass" value="net.longfalcon.newsj.job.NewsUpdateJob"/>
@@ -392,7 +392,7 @@
         <property name="quartzProperties">
                 <value>
                     org.quartz.scheduler.instanceName = NewsJScheduler
-                    org.quartz.threadPool.threadCount = 1
+                    org.quartz.threadPool.threadCount = 2
                     org.quartz.jobStore.class = org.quartz.simpl.RAMJobStore
                     org.quartz.plugin.shutdownhook.class = org.quartz.plugins.management.ShutdownHookPlugin
                     org.quartz.plugin.shutdownhook.cleanShutdown = true

@@ -25,6 +25,7 @@ package net.longfalcon.newsj.job;
  */
 public class JobConfigKeys {
     public static final String UPDATE_JOB_KEY = "UPDATE_JOB";
+    public static final String BACKFILL_JOB_KEY = "BACKFILL_JOB";
     public static final String FREQ_PERIODIC = "FREQ_PERIODIC";
     public static final String FREQ_SCHEDULED = "FREQ_SCHEDULED";
     public static final String FREQ_NEVER = "FREQ_NEVER";
