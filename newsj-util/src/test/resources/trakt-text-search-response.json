@@ -1,0 +1,370 @@
+[
+  {
+    "type": "movie",
+    "score": 57.661003,
+    "movie": {
+      "title": "Howard the Duck",
+      "overview": "A scientific experiment unknowingly brings extraterrestrial life forms to the Earth through a laser beam. First is the cigar smoking drake Howard from the duck's planet. A few kids try to keep him from the greedy scientists and help him back to his planet. But then a much less friendly being arrives through the beam...",
+      "year": 1986,
+      "images": {
+        "poster": {
+          "full": "https://walter.trakt.us/images/movies/000/005/832/posters/original/3efa1ed548.jpg",
+          "medium": "https://walter.trakt.us/images/movies/000/005/832/posters/medium/3efa1ed548.jpg",
+          "thumb": "https://walter.trakt.us/images/movies/000/005/832/posters/thumb/3efa1ed548.jpg"
+        },
+        "fanart": {
+          "full": "https://walter.trakt.us/images/movies/000/005/832/fanarts/original/6d886e088e.jpg",
+          "medium": "https://walter.trakt.us/images/movies/000/005/832/fanarts/medium/6d886e088e.jpg",
+          "thumb": "https://walter.trakt.us/images/movies/000/005/832/fanarts/thumb/6d886e088e.jpg"
+        }
+      },
+      "ids": {
+        "trakt": 5832,
+        "slug": "howard-the-duck-1986",
+        "imdb": "tt0091225",
+        "tmdb": 10658
+      }
+    }
+  },
+  {
+    "type": "episode",
+    "score": 36.038124,
+    "episode": {
+      "season": 1,
+      "number": 48,
+      "title": "Howard the Duck",
+      "overview": "The Nostalgia Critic reviews Howard the Duck, a movie with weird interactions between an anthropomorphic duck and humans. With a movie about a human girl falling in love with a duck, as well as having dark themes for a silly premise, he finds it more confusing than funny or entertaining.",
+      "images": {
+        "screenshot": {
+          "full": "https://walter.trakt.us/images/episodes/000/795/784/screenshots/original/b3ca884ec6.jpg",
+          "medium": "https://walter.trakt.us/images/episodes/000/795/784/screenshots/medium/b3ca884ec6.jpg",
+          "thumb": "https://walter.trakt.us/images/episodes/000/795/784/screenshots/thumb/b3ca884ec6.jpg"
+        }
+      },
+      "ids": {
+        "trakt": 795784,
+        "tvdb": 1935291,
+        "imdb": null,
+        "tmdb": 788290,
+        "tvrage": 0
+      }
+    },
+    "show": {
+      "title": "The Nostalgia Critic",
+      "year": "2008",
+      "ids": {
+        "trakt": 34407,
+        "slug": "the-nostalgia-critic"
+      },
+      "images": {
+        "poster": {
+          "full": "https://walter.trakt.us/images/shows/000/034/407/posters/original/81a7e1023d.jpg",
+          "medium": "https://walter.trakt.us/images/shows/000/034/407/posters/medium/81a7e1023d.jpg",
+          "thumb": "https://walter.trakt.us/images/shows/000/034/407/posters/thumb/81a7e1023d.jpg"
+        },
+        "fanart": {
+          "full": null,
+          "medium": "https://walter.trakt.us/images/shows/000/034/407/fanarts/medium/81cd6ba659.jpg",
+          "thumb": "https://walter.trakt.us/images/shows/000/034/407/fanarts/thumb/81cd6ba659.jpg"
+        }
+      }
+    }
+  },
+  {
+    "type": "episode",
+    "score": 28.830502,
+    "episode": {
+      "season": 3,
+      "number": 8,
+      "title": "How BAD is Howard the Duck???",
+      "images": {
+        "screenshot": {
+          "full": "https://walter.trakt.us/images/episodes/001/925/061/screenshots/original/da9d298130.jpg",
+          "medium": "https://walter.trakt.us/images/episodes/001/925/061/screenshots/medium/da9d298130.jpg",
+          "thumb": "https://walter.trakt.us/images/episodes/001/925/061/screenshots/thumb/da9d298130.jpg"
+        }
+      },
+      "ids": {
+        "trakt": 1925061,
+        "tvdb": 5272306,
+        "imdb": null,
+        "tmdb": null,
+        "tvrage": null
+      }
+    },
+    "show": {
+      "title": "FanboyFlicks",
+      "year": "2011",
+      "ids": {
+        "trakt": 100352,
+        "slug": "fanboyflicks"
+      },
+      "images": {
+        "poster": {
+          "full": null,
+          "medium": null,
+          "thumb": null
+        },
+        "fanart": {
+          "full": null,
+          "medium": null,
+          "thumb": null
+        }
+      }
+    }
+  },
+  {
+    "type": "episode",
+    "score": 28.830502,
+    "episode": {
+      "season": 2014,
+      "number": 61,
+      "title": "Marvel Comics - Howard the Duck",
+      "images": {
+        "screenshot": {
+          "full": null,
+          "medium": null,
+          "thumb": null
+        }
+      },
+      "ids": {
+        "trakt": 2137929,
+        "tvdb": 5497034,
+        "imdb": null,
+        "tmdb": null,
+        "tvrage": null
+      }
+    },
+    "show": {
+      "title": "ComicsExplained",
+      "year": "2013",
+      "ids": {
+        "trakt": 105226,
+        "slug": "comicsexplained"
+      },
+      "images": {
+        "poster": {
+          "full": null,
+          "medium": null,
+          "thumb": null
+        },
+        "fanart": {
+          "full": null,
+          "medium": null,
+          "thumb": null
+        }
+      }
+    }
+  },
+  {
+    "type": "episode",
+    "score": 28.830502,
+    "episode": {
+      "season": 6,
+      "number": 80,
+      "title": "Origins - Gwenpool (Howard the Duck)",
+      "images": {
+        "screenshot": {
+          "full": null,
+          "medium": null,
+          "thumb": null
+        }
+      },
+      "ids": {
+        "trakt": 2144265,
+        "tvdb": 5505916,
+        "imdb": null,
+        "tmdb": null,
+        "tvrage": null
+      }
+    },
+    "show": {
+      "title": "Comicstorian",
+      "year": "2014",
+      "ids": {
+        "trakt": 105295,
+        "slug": "comicstorian"
+      },
+      "images": {
+        "poster": {
+          "full": null,
+          "medium": null,
+          "thumb": null
+        },
+        "fanart": {
+          "full": null,
+          "medium": null,
+          "thumb": null
+        }
+      }
+    }
+  },
+  {
+    "type": "movie",
+    "score": 27.502787,
+    "movie": {
+      "title": "Mister Drake's Duck",
+      "overview": "Mr. Drake and his wife live a nice, quiet life on their Sussex farm, until one of their ducks lays a radioactive egg made of uranium! When the government finds out about this, the Armed Forces storm onto the farm in a frantic search for the duck responsible.",
+      "year": 1951,
+      "images": {
+        "poster": {
+          "full": "https://walter.trakt.us/images/movies/000/080/748/posters/original/04d8769ba0.jpg",
+          "medium": "https://walter.trakt.us/images/movies/000/080/748/posters/medium/04d8769ba0.jpg",
+          "thumb": "https://walter.trakt.us/images/movies/000/080/748/posters/thumb/04d8769ba0.jpg"
+        },
+        "fanart": {
+          "full": null,
+          "medium": null,
+          "thumb": null
+        }
+      },
+      "ids": {
+        "trakt": 80748,
+        "slug": "mister-drake-s-duck-1951",
+        "imdb": "tt0043821",
+        "tmdb": 115625
+      }
+    }
+  },
+  {
+    "type": "movie",
+    "score": 26.310629,
+    "movie": {
+      "title": "Queer Duck: The Movie",
+      "overview": "Queer Duck: The Movie is the relentlessly funny, feature-length extension of the animated series Queer Duck, created by frequent The Simpsons scripter Mike Reiss. Sexually scandalous yet sweet, the movie is a cascade of pop-culture stereotypes of gays in America, punctuated by rapid-fire references (as with The Simpsons) to, well, just about everything: classic movies, game shows, Gilbert and Sullivan, Paul Lynde. Hey, there's even a storyline: Queer Duck (voiced by Jim J. Bullock) and his partner of 18 months (\"That's a lifetime in gay years\"), Harvey Fierstein sound-alike Stephen Arlo \"Openly\" Gator (Kevin Michael Richardson), hit a relationship crisis when the fey fowl is wooed by a brassy Broadway broad. Queer Duck wonders if he'd be happier being straight. While Gator the waiter spills his problems to a compassionate Conan O'Brien (thanks for the cameo)...",
+      "year": 2006,
+      "images": {
+        "poster": {
+          "full": "https://walter.trakt.us/images/movies/000/022/168/posters/original/7397f48855.jpg",
+          "medium": "https://walter.trakt.us/images/movies/000/022/168/posters/medium/7397f48855.jpg",
+          "thumb": "https://walter.trakt.us/images/movies/000/022/168/posters/thumb/7397f48855.jpg"
+        },
+        "fanart": {
+          "full": "https://walter.trakt.us/images/movies/000/022/168/fanarts/original/b6dfab380a.jpg",
+          "medium": "https://walter.trakt.us/images/movies/000/022/168/fanarts/medium/b6dfab380a.jpg",
+          "thumb": "https://walter.trakt.us/images/movies/000/022/168/fanarts/thumb/b6dfab380a.jpg"
+        }
+      },
+      "ids": {
+        "trakt": 22168,
+        "slug": "queer-duck-the-movie-2006",
+        "imdb": "tt0485288",
+        "tmdb": 34728
+      }
+    }
+  },
+  {
+    "type": "movie",
+    "score": 25.533024,
+    "movie": {
+      "title": "Down and Dirty Duck",
+      "overview": "Willard, a mild mannered insurance adjuster, teams up with a foul-mouthed fowl who takes Willard on a surreal quest to become less uptight - and possibly get laid in the process.",
+      "year": 1974,
+      "images": {
+        "poster": {
+          "full": "https://walter.trakt.us/images/movies/000/067/131/posters/original/5d2b344ee1.jpg",
+          "medium": "https://walter.trakt.us/images/movies/000/067/131/posters/medium/5d2b344ee1.jpg",
+          "thumb": "https://walter.trakt.us/images/movies/000/067/131/posters/thumb/5d2b344ee1.jpg"
+        },
+        "fanart": {
+          "full": null,
+          "medium": null,
+          "thumb": null
+        }
+      },
+      "ids": {
+        "trakt": 67131,
+        "slug": "down-and-dirty-duck-1974",
+        "imdb": "tt0072882",
+        "tmdb": 90110
+      }
+    }
+  },
+  {
+    "type": "episode",
+    "score": 25.226688,
+    "episode": {
+      "season": 11,
+      "number": 30,
+      "title": "Terrence Howard; the cast of “Duck Dynasty”; Morrissey",
+      "overview": "From \"Dead Man Down\", actor Terrence Howard; the cast of \"Duck Dynasty\", Phil, Si, Willie & Jase Robertson; musical guest Morrissey.",
+      "images": {
+        "screenshot": {
+          "full": null,
+          "medium": null,
+          "thumb": null
+        }
+      },
+      "ids": {
+        "trakt": 83329,
+        "tvdb": 4502282,
+        "imdb": null,
+        "tmdb": 72337,
+        "tvrage": 0
+      }
+    },
+    "show": {
+      "title": "Jimmy Kimmel Live!",
+      "year": "2003",
+      "ids": {
+        "trakt": 1480,
+        "slug": "jimmy-kimmel-live"
+      },
+      "images": {
+        "poster": {
+          "full": "https://walter.trakt.us/images/shows/000/001/480/posters/original/296a3a75f1.jpg",
+          "medium": "https://walter.trakt.us/images/shows/000/001/480/posters/medium/296a3a75f1.jpg",
+          "thumb": "https://walter.trakt.us/images/shows/000/001/480/posters/thumb/296a3a75f1.jpg"
+        },
+        "fanart": {
+          "full": null,
+          "medium": "https://walter.trakt.us/images/shows/000/001/480/fanarts/medium/6744d84bf1.jpg",
+          "thumb": "https://walter.trakt.us/images/shows/000/001/480/fanarts/thumb/6744d84bf1.jpg"
+        }
+      }
+    }
+  },
+  {
+    "type": "episode",
+    "score": 25.226688,
+    "episode": {
+      "season": 4,
+      "number": 463,
+      "title": " Howard The Duck: A Vox-O-Rox Adventure",
+      "images": {
+        "screenshot": {
+          "full": null,
+          "medium": null,
+          "thumb": null
+        }
+      },
+      "ids": {
+        "trakt": 1343748,
+        "tvdb": 2787731,
+        "imdb": null,
+        "tmdb": null,
+        "tvrage": null
+      }
+    },
+    "show": {
+      "title": "Rifftrax",
+      "year": "2006",
+      "ids": {
+        "trakt": 61263,
+        "slug": "rifftrax"
+      },
+      "images": {
+        "poster": {
+          "full": "https://walter.trakt.us/images/shows/000/061/263/posters/original/416281fecb.jpg",
+          "medium": "https://walter.trakt.us/images/shows/000/061/263/posters/medium/416281fecb.jpg",
+          "thumb": "https://walter.trakt.us/images/shows/000/061/263/posters/thumb/416281fecb.jpg"
+        },
+        "fanart": {
+          "full": null,
+          "medium": "https://walter.trakt.us/images/shows/000/061/263/fanarts/medium/e7135a67e2.jpg",
+          "thumb": "https://walter.trakt.us/images/shows/000/061/263/fanarts/thumb/e7135a67e2.jpg"
+        }
+      }
+    }
+  }
+]

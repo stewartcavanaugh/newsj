@@ -18,6 +18,7 @@
 
 package net.longfalcon.web;
 
+import net.longfalcon.newsj.TVRageService;
 import net.longfalcon.newsj.model.TvRage;
 import net.longfalcon.newsj.persistence.ReleaseDAO;
 import net.longfalcon.newsj.persistence.TvRageDAO;
@@ -56,6 +57,9 @@ public class AdminTvInfoController extends BaseController {
     @Autowired
     TvRageDAO tvRageDAO;
 
+    @Autowired
+    TVRageService tvRageService;
+
     @RequestMapping("/admin/rage-list")
     public String listTvInfoView(@RequestParam(value = "offset", required = false, defaultValue = "0")Integer offset,
                                  @RequestParam(value = "rageSearch", required = false, defaultValue = "")String rageSearch,
@@ -91,7 +95,7 @@ public class AdminTvInfoController extends BaseController {
                                  Model model) throws NoSuchResourceException {
         TvRage tvRage;
         if (id != null && id > 0) {
-            tvRage = tvRageDAO.findByTvRageId(id);
+            tvRage = tvRageDAO.findById(id);
             if (tvRage == null) {
                 throw new NoSuchResourceException();
             }
@@ -136,7 +140,7 @@ public class AdminTvInfoController extends BaseController {
 
     @RequestMapping(value = "/admin/rage-delete", method = RequestMethod.POST)
     public View deleteTvInfoPost(@RequestParam("id") long id) throws NoSuchResourceException {
-        TvRage tvRage = tvRageDAO.findByTvRageId(id);
+        TvRage tvRage = tvRageDAO.findById(id);
         if (tvRage == null) {
             throw new NoSuchResourceException();
         }
@@ -148,12 +152,24 @@ public class AdminTvInfoController extends BaseController {
 
     @RequestMapping(value = "/admin/rage-remove", method = RequestMethod.POST)
     public View removeTvInfoPost(@RequestParam("id") long id) throws NoSuchResourceException {
-        TvRage tvRage = tvRageDAO.findByTvRageId(id);
+        TvRage tvRage = tvRageDAO.findById(id);
         if (tvRage == null) {
             throw new NoSuchResourceException();
         }
 
         releaseDAO.resetReleaseTvRageId(id);
+
+        return safeRedirect("/admin/rage-list");
+    }
+
+    @RequestMapping(value = "/admin/rage-rebuild", method = RequestMethod.POST)
+    public View rebuildTvInfoPost(@RequestParam("id") long id) throws NoSuchResourceException {
+        TvRage tvRage = tvRageDAO.findById(id);
+        if (tvRage == null) {
+            throw new NoSuchResourceException();
+        }
+
+        tvRageService.rebuildTvInfo(tvRage);
 
         return safeRedirect("/admin/rage-list");
     }

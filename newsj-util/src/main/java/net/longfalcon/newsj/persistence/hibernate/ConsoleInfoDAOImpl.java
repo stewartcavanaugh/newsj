@@ -48,7 +48,7 @@ public class ConsoleInfoDAOImpl extends HibernateDAOImpl implements ConsoleInfoD
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public List<ConsoleInfo> getConsoleInfos(int start, int pageSize) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ConsoleInfo.class);
         criteria.setFirstResult(start).setMaxResults(pageSize);
@@ -57,7 +57,7 @@ public class ConsoleInfoDAOImpl extends HibernateDAOImpl implements ConsoleInfoD
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public Long countConsoleInfos() {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ConsoleInfo.class);
         criteria.setProjection(Projections.count("id"));
@@ -66,7 +66,7 @@ public class ConsoleInfoDAOImpl extends HibernateDAOImpl implements ConsoleInfoD
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public ConsoleInfo findByConsoleInfoId(long id) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ConsoleInfo.class);
         criteria.add(Restrictions.eq("id", id));

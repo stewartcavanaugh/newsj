@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015. Sten Martinez
+ * Copyright (c) 2016. Sten Martinez
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,9 +37,13 @@ public interface CategoryDAO {
 
     List<Category> getForMenu(Set<Integer> userExcludedCategoryIds, Integer parentId);
 
+    List<Category> getParentCategories();
+
     List<Category> getChildCategories();
 
     List<Category> getAllCategories(boolean activeOnly);
+
+    List<Integer> getCategoryChildrenIds(int categoryParentId);
 
     void updateCategory(Category category);
 }

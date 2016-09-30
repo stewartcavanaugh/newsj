@@ -9,6 +9,8 @@ DROP TABLE "CONTENT" cascade ;
 DROP TABLE "FORUMPOST" cascade ;
 DROP TABLE "GENRES" cascade ;
 DROP TABLE "GROUPS" cascade ;
+DROP TABLE "JOBCONFIG" CASCADE ;
+DROP TABLE "JOBLOG" CASCADE ;
 DROP TABLE "MENU" cascade ;
 DROP TABLE "MOVIEINFO" cascade ;
 DROP TABLE "MUSICINFO" cascade ;
@@ -252,6 +254,28 @@ CREATE TABLE "GROUPS"
    "DESCRIPTION" VARCHAR(255)
 );
 --------------------------------------------------------
+--  DDL for Table JOBCONFIG
+--------------------------------------------------------
+
+CREATE TABLE "JOBCONFIG"
+(
+  "ID" INT PRIMARY KEY NOT NULL ,
+  "JOB_NAME" VARCHAR(255) NOT NULL ,
+  "JOB_FREQ" VARCHAR(255) NOT NULL ,
+  "JOB_CONFIG" VARCHAR(255) NOT NULL
+);
+--------------------------------------------------------
+--  DDL for Table JOBLOG
+--------------------------------------------------------
+CREATE TABLE "JOBLOG" (
+  "ID" INT PRIMARY KEY NOT NULL ,
+  "JOB_NAME" VARCHAR(255) NOT NULL ,
+  "START_DATE" TIMESTAMP DEFAULT NULL,
+  "END_DATE" TIMESTAMP DEFAULT NULL,
+  "RESULT" VARCHAR(255) DEFAULT NULL,
+  "NOTES" VARCHAR(2000) DEFAULT NULL
+);
+--------------------------------------------------------
 --  DDL for Table MENU
 --------------------------------------------------------
 
@@ -276,7 +300,7 @@ CREATE TABLE "MOVIEINFO"
    "TAGLINE" VARCHAR(255) NOT NULL,
    "RATING" VARCHAR(4) NOT NULL,
    "PLOT" VARCHAR(255) NOT NULL,
-   "YEAR" VARCHAR(4) NOT NULL,
+   "YEAR_" VARCHAR(4) NOT NULL,
    "GENRE" VARCHAR(64) NOT NULL,
    "DIRECTOR" VARCHAR(64) NOT NULL,
    "ACTORS" VARCHAR(255) NOT NULL,
@@ -300,7 +324,7 @@ CREATE TABLE "MUSICINFO"
    "PUBLISHER" VARCHAR(255),
    "RELEASEDATE" DATE,
    "REVIEW" VARCHAR(2000),
-   "YEAR" VARCHAR(4) NOT NULL,
+   "YEAR_" VARCHAR(4) NOT NULL,
    "GENREID" INT,
    "TRACKS" VARCHAR(2000),
    "COVER" BOOLEAN NOT NULL DEFAULT 0,
@@ -456,6 +480,7 @@ CREATE TABLE "TVRAGE"
 (	"ID" INT NOT NULL PRIMARY KEY ,
    "RAGEID" INT NOT NULL,
    "TVDBID" INT NOT NULL,
+   "TRAKTID" INT NOT NULL,
    "RELEASETITLE" VARCHAR(255) NOT NULL ,
    "DESCRIPTION" VARCHAR(4000),
    "GENRE" VARCHAR(64),
@@ -674,6 +699,11 @@ CREATE INDEX "IX_BINARY_DATE" ON "BINARIES" ("DATE_");
 
 CREATE INDEX "IX_PARTS_NUMBER" ON "PARTS" ("NUMBER_");
 --------------------------------------------------------
+--  DDL for Index IX_PARTS_MESSAGEID
+--------------------------------------------------------
+
+CREATE INDEX "IX_PARTS_MESSAGEID" ON "PARTS" ("MESSAGEID");
+--------------------------------------------------------
 --  DDL for Index IX_RELEASES_ADDDATE
 --------------------------------------------------------
 
@@ -683,6 +713,21 @@ CREATE INDEX "IX_RELEASES_ADDDATE" ON "RELEASES" ("ADDDATE");
 --------------------------------------------------------
 
 CREATE INDEX "IX_RELEASES_REGEXID" ON "RELEASES" ("REGEXID");
+--------------------------------------------------------
+--  DDL for Index IX_RELEASES_GROUPID
+--------------------------------------------------------
+
+CREATE INDEX "IX_RELEASES_GROUPID" ON "RELEASES" ("GROUPID");
+--------------------------------------------------------
+--  DDL for Index IX_TVRAGE_TRAKTID
+--------------------------------------------------------
+
+CREATE INDEX "IX_TVRAGE_TRAKTID" ON "TVRAGE" ("TRAKTID");
+--------------------------------------------------------
+--  DDL for Index IX_JOB_NAME
+--------------------------------------------------------
+
+CREATE UNIQUE INDEX IX_JOB_NAME ON "JOBCONFIG" ("JOB_NAME");
 --------------------------------------------------------
 --  Constraints for Table FORUMPOST
 --------------------------------------------------------
@@ -770,6 +815,8 @@ CREATE INDEX "IX_RELEASES_REGEXID" ON "RELEASES" ("REGEXID");
 --------------------------------------------------------
 --  Constraints for Table USERS
 --------------------------------------------------------
+
+CREATE UNIQUE INDEX "IX_USERS_RSSTOKEN" on "USERS" ("RSSTOKEN");
 
 --------------------------------------------------------
 --  Constraints for Table RELEASECOMMENT

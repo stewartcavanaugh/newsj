@@ -19,6 +19,7 @@
 package net.longfalcon.taglib;
 
 import net.longfalcon.newsj.util.EncodingUtil;
+import net.longfalcon.newsj.util.FormatUtil;
 import net.longfalcon.newsj.util.ValidatorUtil;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -48,12 +49,7 @@ public class TextFunctions {
     }
 
     public static String formatFileSize(long bytes, boolean si) {
-        // thanks stackoverflow
-        int unit = si ? 1000 : 1024;
-        if (bytes < unit) return bytes + " B";
-        int exp = (int) (Math.log(bytes) / Math.log(unit));
-        String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp-1) + (si ? "" : "i");
-        return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
+        return FormatUtil.formatFileSize(bytes, si);
     }
 
     public static boolean isNull(String s) {
@@ -81,5 +77,9 @@ public class TextFunctions {
 
     public static String wordWrap(String s, int width) {
         return WordUtils.wrap(s, width);
+    }
+
+    public static String formatImdbId(Integer imdbId) {
+        return String.format("%07d", imdbId);
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015. Sten Martinez
+ * Copyright (c) 2016. Sten Martinez
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,7 +46,7 @@ public class Config {
     Properties properties;
     private Site defaultSite;
 
-    @Transactional(propagation = Propagation.SUPPORTS, isolation = Isolation.REPEATABLE_READ)
+    @Transactional(propagation = Propagation.SUPPORTS, isolation = Isolation.READ_COMMITTED)
     public void init() {
         properties = new Properties();
         for (Resource resource : propertyLocations) {
@@ -97,6 +97,18 @@ public class Config {
         }
 
         return fileLocation;
+    }
+
+    public String getTmdbApiUrl() {
+        return properties.getProperty(PropsKeys.TMDB_API_URL);
+    }
+
+    public String getTraktApiUrl() {
+        return properties.getProperty(PropsKeys.TRAKT_API_URL);
+    }
+
+    public String getTraktAppId() {
+        return properties.getProperty(PropsKeys.TRAKT_API_APP_ID);
     }
 
     public int getYear() {

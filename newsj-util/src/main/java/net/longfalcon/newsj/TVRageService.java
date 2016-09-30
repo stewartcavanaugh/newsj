@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015. Sten Martinez
+ * Copyright (c) 2016. Sten Martinez
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,20 +18,40 @@
 
 package net.longfalcon.newsj;
 
+import net.longfalcon.newsj.fs.FileSystemService;
+import net.longfalcon.newsj.fs.model.Directory;
 import net.longfalcon.newsj.model.Category;
 import net.longfalcon.newsj.model.Release;
 import net.longfalcon.newsj.model.TvRage;
 import net.longfalcon.newsj.persistence.CategoryDAO;
 import net.longfalcon.newsj.persistence.ReleaseDAO;
 import net.longfalcon.newsj.persistence.TvRageDAO;
+import net.longfalcon.newsj.service.TraktService;
 import net.longfalcon.newsj.util.ArrayUtil;
 import net.longfalcon.newsj.util.DateUtil;
+import net.longfalcon.newsj.util.StreamUtil;
 import net.longfalcon.newsj.util.ValidatorUtil;
+import net.longfalcon.newsj.ws.trakt.TraktEpisodeResult;
+import net.longfalcon.newsj.ws.trakt.TraktIdSet;
+import net.longfalcon.newsj.ws.trakt.TraktImage;
+import net.longfalcon.newsj.ws.trakt.TraktImages;
+import net.longfalcon.newsj.ws.trakt.TraktResult;
+import net.longfalcon.newsj.ws.trakt.TraktShowResult;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -39,7 +59,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * NOTE: TVRAGE is down, so this is purely to do regex processing until a solution with TVDB is created
+ * NOTE: TVRAGE is no longer a viable API to use. this whole api uses trakt, but tvrage ids. migrate to trakt/tvdb ids
+ * in the future.
  * User: Sten Martinez
  * Date: 10/14/15
  * Time: 2:54 PM
@@ -52,6 +73,10 @@ public class TVRageService {
     private CategoryDAO categoryDAO;
     private TvRageDAO tvRageDAO;
 
+    private TraktService traktService;
+    private FileSystemService fileSystemService;
+
+    @Transactional(propagation = Propagation.SUPPORTS)
     public void processTvReleases(boolean lookupTvRage) {
         List<Category> movieCats = categoryDAO.findByParentId(CategoryService.CAT_PARENT_TV);
         List<Integer> ids = new ArrayList<>();
@@ -63,7 +88,7 @@ public class TVRageService {
         if (!releases.isEmpty()) {
             _log.info("Processing tv for " + releases.size() + " releases");
             if (lookupTvRage) {
-                _log.info("Looking up tv rage from the web");
+                _log.info("Looking up tv info from the web");
             }
         }
 
@@ -73,57 +98,393 @@ public class TVRageService {
                 // update release with season, ep, and airdate info (if available) from releasetitle
                 updateEpInfo(showInfo, release);
 
-                // find the rageID
-                long rageId = getByTitle(showInfo.getCleanName());
+                // find the trakt ID
+                long traktId = 0;
+                String cleanName = showInfo.getCleanName();
+                try {
+                    _log.info("looking up " + cleanName + " in db");
+                    traktId = getByTitle(cleanName);
+                } catch (Exception e) {
+                    _log.error("unable to find tvinfo for " + cleanName + " - " + e.toString(), e);
+                }
 
-                if (rageId == 0 && lookupTvRage) {
+                if (traktId < 0 && traktId > -2 && lookupTvRage) {
                     // if it doesnt exist locally and lookups are allowed lets try to get it
-                    if (_log.isDebugEnabled()) {
-                        _log.debug("didnt find rageid for \""+showInfo.getCleanName()+"\" in local db, checking web...");
-                    }
+                    _log.info("didnt find trakt id for \""+ cleanName +"\" in local db, checking web...");
 
-                    //rageId = getRageMatch(showInfo);
-                    if (rageId > 0) {
-                        //updateRageInfo(rageId, showInfo, release);
+                    traktId = getTraktMatch(showInfo);
+
+                    if (traktId > 0) {
+                        updateRageInfo(traktId, showInfo, release);
                     } else {
                         // no match
                         //add to tvrage with rageID = -2 and cleanName title only
-                       // add(-2, showInfo.getCleanName(), "", "", "", "");
+                        _log.info("no trakt data found for " + cleanName + " - adding placeholder");
+                        TvRage tvRage = new TvRage();
+                        tvRage.setRageId(-2);
+                        tvRage.setTraktId((long) -2);
+                        tvRage.setReleaseTitle(cleanName);
+                        tvRage.setCreateDate(new Date());
+                        tvRage.setDescription("");
+                        tvRageDAO.update(tvRage);
+                        release.setRageId(tvRage.getId());
                     }
-                } else if (rageId > 0) {
+                } else if (traktId > 0) {
                     if (lookupTvRage) {
-                        //getEpisodeInfo(rageId, showInfo.getSeason(), showInfo.getEpisode());
                         // update airdate and ep title
+                        updateEpisodeInfo(traktId, showInfo.getSeason(), showInfo.getEpisode(), release);
                     }
+                    TvRage tvRage = tvRageDAO.findByTvTraktId(traktId);
+                    release.setRageId(tvRage.getId());
 
                 }
-
-                release.setRageId(rageId);
 
             } else {
                 // not a tv episode, so set rageid to n/a
                 release.setRageId((long) -2);
             }
 
-
             releaseDAO.updateRelease(release);
         }
     }
 
+    public void rebuildTvInfo(TvRage tvRage) {
+        try {
+            TraktResult traktResult = getTraktMatch(tvRage.getReleaseTitle());
+            if (traktResult != null) {
+                TraktShowResult showResult = traktResult.getShowResult();
+
+                _log.info("found tvinfo for " + tvRage.getReleaseTitle());
+
+                tvRage.setTraktId(showResult.getIds().getTrakt());
+                tvRage.setRageId(showResult.getIds().getTvrage());
+                tvRage.setTvdbId(showResult.getIds().getTvdb());
+                tvRage.setReleaseTitle(showResult.getTitle());
+                TraktImages traktImages = showResult.getTraktImages();
+                try {
+                    if (traktImages != null) {
+                        TraktImage posterImage = traktImages.getPoster();
+                        if (posterImage != null) {
+                            String posterUrl = posterImage.getMedium();
+                            if (ValidatorUtil.isNotNull(posterUrl)) {
+                                Directory tempDir = fileSystemService.getDirectory("/temp");
+                                File tempFile = tempDir.getTempFile("image_" + String.valueOf(System.currentTimeMillis()));
+                                FileOutputStream fileOutputStream = new FileOutputStream(tempFile);
+                                URL url = new URL(posterUrl);
+                                URLConnection urlConnection = url.openConnection();
+                                urlConnection.setRequestProperty("User-Agent", "Java");
+                                StreamUtil.transferByteArray(urlConnection.getInputStream(), fileOutputStream, 1024);
+                                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                                InputStream tempFileInputStream = new FileInputStream(tempFile);
+                                StreamUtil.transferByteArray(tempFileInputStream, byteArrayOutputStream, 1024);
+                                tvRage.setImgData(byteArrayOutputStream.toByteArray());
+                            }
+                        }
+                    }
+                } catch (Exception e) {
+                    _log.warn("unable to add poster image for " + tvRage.getReleaseTitle(), e);
+                }
+
+                tvRage.setDescription(showResult.getOverview());
+                tvRageDAO.update(tvRage);
+            }
+        } catch (Exception e) {
+            _log.error(e);
+        }
+    }
+
+    // restrict to using trakt id since trakt only allows trakt id or imdb to search by episode
+    private void updateEpisodeInfo(long traktShowId, String season, String episode, Release release) {
+        try {
+            int seasonNumber = 0;
+            if (season.startsWith("S") || season.startsWith("s")) {
+                seasonNumber = Integer.parseInt(season.substring(1));
+            } else {
+                seasonNumber = Integer.parseInt(season);
+            }
+            int episodeNumber = 0;
+            if (episode.startsWith("E") || episode.startsWith("e")) {
+                episodeNumber = Integer.parseInt(episode.substring(1));
+            } else {
+                episodeNumber = Integer.parseInt(episode);
+            }
+            TraktEpisodeResult traktEpisodeResult = null;
+            try {
+                traktEpisodeResult = traktService.getEpisode(traktShowId, seasonNumber, episodeNumber);
+            } catch (Exception e) {
+                _log.error("error fetching episode data for " + release.getSearchName() + " - " + e.toString());
+                _log.debug("",e);
+            }
+            if (traktEpisodeResult != null) {
+                release.setTvAirDate(traktEpisodeResult.getFirstAired());
+                release.setTvTitle(traktEpisodeResult.getTitle());
+                release.setSeason(String.valueOf(traktEpisodeResult.getSeason()));
+                release.setEpisode(String.valueOf(traktEpisodeResult.getNumber()));
+            }
+        } catch (NumberFormatException e) {
+            _log.warn("Parse error: " + e.toString() + " for release " + release.getSearchName(), e);
+        }
+    }
+
+    private TvRage updateRageInfo(long traktId, ShowInfo showInfo, Release release) {
+        // find existing tvRage info
+        String season = showInfo.getSeason();
+        String episode = showInfo.getEpisode();
+
+        _log.info("looking for existing tvinfo with trakt id " + traktId);
+        TvRage tvRage = tvRageDAO.findByTvTraktId(traktId);
+
+        if (tvRage == null) {
+            // try looking by name
+            tvRage = getTvInfoByTitle(showInfo.getCleanName());
+        }
+        if (tvRage == null) {
+            tvRage = new TvRage();
+            tvRage.setCreateDate(new Date());
+        }
+        //add
+        _log.info("no existing tvinfo with trakt Id " + traktId + ", adding from Trakt");
+        TraktResult[] traktResults = new TraktResult[0];
+        try {
+            traktResults = traktService.searchShowByTraktId(traktId);
+        } catch (Exception e) {
+            _log.error("error fetching show data for " + release.getSearchName() + " - " + e.toString());
+            _log.debug("", e);
+        }
+        if (traktResults.length > 0) {
+            TraktResult firstResult = traktResults[0];
+            TraktShowResult showResult = firstResult.getShowResult();
+
+            _log.info("found tvinfo for " + showInfo.getCleanName());
+
+
+            tvRage.setTraktId(showResult.getIds().getTrakt());
+            tvRage.setRageId(showResult.getIds().getTvrage());
+            tvRage.setTvdbId(showResult.getIds().getTvdb());
+            tvRage.setReleaseTitle(showResult.getTitle());
+            // TODO: tvRage.setImgData();
+
+            tvRage.setDescription(showResult.getOverview());
+            tvRage.setCountry(showInfo.getCountry());
+            tvRageDAO.update(tvRage);
+            updateEpisodeInfo(showResult.getIds().getTrakt(), season, episode, release);
+            release.setRageId(tvRage.getId());
+        } else {
+            // trakt id that we found before, didnt work this time. this is highly likely to a connectivity or other
+            // issue that does not relate the release.
+            _log.warn("no results from Trakt found for trakt id " + traktId);
+        }
+
+        releaseDAO.updateRelease(release);
+        return tvRage;
+    }
+
+    private long getRageMatch(ShowInfo showInfo) {
+        String cleanName = showInfo.getCleanName();
+
+        try {
+            TraktResult[] traktResults = new TraktResult[0];
+            try {
+                traktResults = traktService.searchTvShowByName(cleanName.toLowerCase());
+            } catch (Exception e) {
+                _log.error("error fetching show data for " + cleanName + " - " + e.toString());
+                _log.debug("", e);
+            }
+            if (traktResults.length > 0) {
+                TraktResult firstResult = traktResults[0];
+                if (firstResult.getScore() > 50) {
+                    // probably the best match, we wont bother looking elsewhere.
+                    if (firstResult.getShowResult() != null) {
+                        _log.info("found +50% match: " + firstResult.getShowResult().getTitle());
+                        return getRageIdFromTraktResultsSafe(firstResult);
+                    } else {
+                        return -2;// error
+                    }
+                } else if (traktResults.length > 1) {
+                    String firstResultName = firstResult.getShowResult().getTitle();
+                    String secondResultName = traktResults[1].getShowResult().getTitle();
+                    double firstSimilarityScore = StringUtils.getJaroWinklerDistance(cleanName, firstResultName);
+                    double secondSimilarityScore = StringUtils.getJaroWinklerDistance(cleanName, secondResultName);
+                    if (firstSimilarityScore > secondSimilarityScore) {
+                        return getRageIdFromTraktResultsSafe(firstResult);
+                    } else {
+                        return getRageIdFromTraktResultsSafe(traktResults[1]);
+                    }
+                }
+                return getRageIdFromTraktResultsSafe(firstResult);
+            }
+            _log.warn("no trakt show found for name " + cleanName);
+            return -2; // not found
+        } catch (Exception e) {
+            _log.error(e.toString(), e);
+            return -2; // error
+        }
+    }
+
+    private long getTraktMatch(ShowInfo showInfo) {
+        String cleanName = showInfo.getCleanName();
+        _log.info("searching trakt for show " + cleanName);
+        try {
+            TraktResult[] traktResults = new TraktResult[0];
+            try {
+                traktResults = traktService.searchTvShowByName(cleanName.toLowerCase());
+            } catch (Exception e) {
+                _log.error("error fetching show data for " + cleanName + " - " + e.toString());
+                _log.debug("", e);
+            }
+            if (traktResults.length > 0) {
+                TraktResult firstResult = traktResults[0];
+                if (firstResult.getScore() > 50) {
+                    // probably the best match, we wont bother looking elsewhere.
+                    if (firstResult.getShowResult() != null) {
+                        _log.info("found +50% match: " + firstResult.getShowResult().getTitle());
+                        return getTraktIdFromTraktResultsSafe(firstResult);
+                    } else {
+                        return -2;// error
+                    }
+                } else if (traktResults.length > 1) {
+                    String firstResultName = firstResult.getShowResult().getTitle();
+                    String secondResultName = traktResults[1].getShowResult().getTitle();
+                    double firstSimilarityScore = StringUtils.getJaroWinklerDistance(cleanName, firstResultName);
+                    double secondSimilarityScore = StringUtils.getJaroWinklerDistance(cleanName, secondResultName);
+                    if (firstSimilarityScore > secondSimilarityScore) {
+                        return getTraktIdFromTraktResultsSafe(firstResult);
+                    } else {
+                        return getTraktIdFromTraktResultsSafe(traktResults[1]);
+                    }
+                }
+                return getTraktIdFromTraktResultsSafe(firstResult);
+            }
+            return -1; // not found
+        } catch (Exception e) {
+            _log.error(e.toString(), e);
+            return -2; // error
+        }
+    }
+
+    private TraktResult getTraktMatch(String showname) {
+        _log.info("searching trakt for show " + showname);
+        try {
+            TraktResult[] traktResults = new TraktResult[0];
+            try {
+                traktResults = traktService.searchTvShowByName(showname.toLowerCase());
+            } catch (Exception e) {
+                _log.error("error fetching show data for " + showname + " - " + e.toString());
+                _log.debug("", e);
+            }
+            if (traktResults.length > 0) {
+                TraktResult firstResult = traktResults[0];
+                if (firstResult.getScore() > 50) {
+                    // probably the best match, we wont bother looking elsewhere.
+                    if (firstResult.getShowResult() != null) {
+                        _log.info("found +50% match: " + firstResult.getShowResult().getTitle());
+                        return firstResult;
+                    } else {
+                        return null;// error
+                    }
+                } else if (traktResults.length > 1) {
+                    String firstResultName = firstResult.getShowResult().getTitle();
+                    String secondResultName = traktResults[1].getShowResult().getTitle();
+                    double firstSimilarityScore = StringUtils.getJaroWinklerDistance(showname, firstResultName);
+                    double secondSimilarityScore = StringUtils.getJaroWinklerDistance(showname, secondResultName);
+                    if (firstSimilarityScore > secondSimilarityScore) {
+                        return firstResult;
+                    } else {
+                        return traktResults[1];
+                    }
+                }
+                return firstResult;
+            }
+            return null; // not found
+        } catch (Exception e) {
+            _log.error(e.toString(), e);
+            return null; // error
+        }
+    }
+
+    private long getRageIdFromTraktResultsSafe(TraktResult traktResult) {
+        try {
+            if (traktResult == null) {
+                return -2;
+            }
+
+            TraktShowResult showResult = traktResult.getShowResult();
+
+            if (showResult == null) {
+                return -2;
+            }
+
+            TraktIdSet traktIdSet = showResult.getIds();
+
+            if (traktIdSet == null) {
+                return -2;
+            }
+
+            long rageId = traktIdSet.getTvrage();
+            _log.info("found rage id: " + rageId);
+            return rageId;
+        } catch (NullPointerException e) {
+            _log.error(e.toString(), e);
+            return -2;
+        }
+    }
+
+    private long getTraktIdFromTraktResultsSafe(TraktResult traktResult) {
+        try {
+            if (traktResult == null) {
+                return -2;
+            }
+
+            TraktShowResult showResult = traktResult.getShowResult();
+
+            if (showResult == null) {
+                return -2;
+            }
+
+            TraktIdSet traktIdSet = showResult.getIds();
+
+            if (traktIdSet == null) {
+                return -2;
+            }
+
+            long traktId = traktIdSet.getTrakt();
+            _log.info("found trakt id: " + traktId);
+            return traktId;
+        } catch (NullPointerException e) {
+            _log.error(e.toString(), e);
+            return -2;
+        }
+    }
+
     private long getByTitle(String cleanName) {
-        long rageId = -1;
+        long traktId = -1;
         // check if we already have an entry for this show
         TvRage tvRage = tvRageDAO.findByReleaseTitle(cleanName);
         if (tvRage != null) {
-            rageId = tvRage.getRageId();
+            traktId = tvRage.getTraktId();
         } else {
             cleanName = cleanName.replace(" and ", " & ");
             tvRage = tvRageDAO.findByReleaseTitle(cleanName);
             if (tvRage != null) {
-                rageId = tvRage.getRageId();
+                traktId = tvRage.getTraktId();
             }
         }
-        return rageId;
+        return traktId;
+    }
+
+    private TvRage getTvInfoByTitle(String cleanName) {
+        // check if we already have an entry for this show
+        TvRage tvRage = tvRageDAO.findByReleaseTitle(cleanName);
+        if (tvRage != null) {
+            return tvRage;
+        } else {
+            cleanName = cleanName.replace(" and ", " & ");
+            tvRage = tvRageDAO.findByReleaseTitle(cleanName);
+            if (tvRage != null) {
+                return tvRage;
+            }
+        }
+        return null;
     }
 
     private void updateEpInfo(ShowInfo showInfo, Release release) {
@@ -401,6 +762,22 @@ public class TVRageService {
 
     public void setTvRageDAO(TvRageDAO tvRageDAO) {
         this.tvRageDAO = tvRageDAO;
+    }
+
+    public TraktService getTraktService() {
+        return traktService;
+    }
+
+    public void setTraktService(TraktService traktService) {
+        this.traktService = traktService;
+    }
+
+    public FileSystemService getFileSystemService() {
+        return fileSystemService;
+    }
+
+    public void setFileSystemService(FileSystemService fileSystemService) {
+        this.fileSystemService = fileSystemService;
     }
 
     private class ShowInfo{

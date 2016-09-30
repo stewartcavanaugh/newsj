@@ -266,7 +266,9 @@ INSERT INTO `releaseregex` (`ID`, `groupname`, `regex`, `ordinal`, `status`, `de
   (640, 'alt.binaries.hdtv', '/^(?P<name>.*ALANIS) \\[(?P<parts>\\d{2,3}\\/\\d{2,3})/i', 5, 1, '', NULL),
   (641, 'alt.binaries.multimedia', '/^(?P<name>(?!re: ).*?Asphyxiated) \\- \\[(?P<parts>\\d{2}\\/\\d{2})/i', 1, 1, '', NULL),
   (642, 'alt.binaries.(multimedia|teevee|tv|tvseries)', '/^.*\\[lift-?cup\\][\\[\\s-]+(?P<name>(?!re: ).*?)[\\]\\s-]+.*?\\[(?P<parts>\\d{2}\\/\\d{2})/i', 3, 1, '', NULL),
-  (643, 'alt.binaries.*', '/^.*\\[(?P<parts>\\d+\\/\\d+)\\].*"(?P<name>[^"]+(?:S\\d\\d?E\\d\\d?|S\\d\\d|\\d\\d?x|\\d{4}\\W+\\d\\d\\W+\\d\\d|Season\\W+\\d+\\W+|E(?:p?(?:isode)?[\\._ -]*?)\\d+)[^"]+?)(?:\\.(?:part\\d*|vol[\\d+]+))*\\.(?:nfo|nzb|sfv|par2|par|rar|avi|mkv)"\\ yEnc.*$/', 20, 0, '', NULL);
+  (643, 'alt.binaries.*', '/^.*\\[(?P<parts>\\d+\\/\\d+)\\].*"(?P<name>[^"]+(?:S\\d\\d?E\\d\\d?|S\\d\\d|\\d\\d?x|\\d{4}\\W+\\d\\d\\W+\\d\\d|Season\\W+\\d+\\W+|E(?:p?(?:isode)?[\\._ -]*?)\\d+)[^"]+?)(?:\\.(?:part\\d*|vol[\\d+]+))*\\.(?:nfo|nzb|sfv|par2|par|rar|avi|mkv)"\\ yEnc.*$/', 20, 0, '', NULL),
+  (644, 'alt.binaries.sounds.mp3.*', '/^\\[(?P<parts>\\d{1,3}\\/\\d{1,3})\\] \\- \\"(?P<name>.*?)\\.(nfo|vol|par|rar|nzb|sfv|zip)/i', 3, 1, '', 3010),
+  (645, 'alt.binaries.sounds.mp3.*', '^\\[(?P<name>.*?)\\](\\s)+\\((?P<parts>\\d{1,3}\\/\\d{1,3})\\)(\\s)+', 4, 1, '', 3010);
 
 ALTER TABLE `releaseregex`
 MODIFY `ID` int(11) unsigned NOT NULL; -- remove auto increment
@@ -276,7 +278,7 @@ CREATE TABLE IF NOT EXISTS `ReleaseRegex_SEQ` (
   `next_val` BIGINT NOT NULL DEFAULT 0
 ) ENGINE = InnoDB DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ;
 
-INSERT INTO `ReleaseRegex_SEQ` VALUES (10000);
+INSERT INTO `ReleaseRegex_SEQ` VALUES (7000);
 
 DROP TABLE IF EXISTS `Binary_SEQ`;
 CREATE TABLE IF NOT EXISTS `Binary_SEQ` (
@@ -395,7 +397,7 @@ ALTER TABLE `usercart` MODIFY `ID` BIGINT NOT NULL;
 ALTER TABLE `userexcat` MODIFY `ID` BIGINT NOT NULL;
 ALTER TABLE `userinvite` MODIFY `ID` BIGINT NOT NULL;
 
-ALTER TABLE `binaries` CHANGE COLUMN `name` `name_` VARCHAR(255) NOT NULL DEFAULT '';
+ALTER TABLE `binaries` CHANGE COLUMN `name` `name_` VARCHAR(1000) NOT NULL DEFAULT '';
 ALTER TABLE `binaries` CHANGE COLUMN `date` `date_` DATETIME DEFAULT NULL;
 
 ALTER TABLE `releases` CHANGE COLUMN `name` `name_` VARCHAR(255) NOT NULL DEFAULT '';
@@ -406,4 +408,36 @@ ALTER TABLE `groups` CHANGE COLUMN `name` `name_` VARCHAR(255) NOT NULL DEFAULT 
 ALTER TABLE `parts` CHANGE COLUMN `number` `number_` BIGINT UNSIGNED NOT NULL DEFAULT '0';
 ALTER TABLE `parts` CHANGE COLUMN `size` `size_` BIGINT UNSIGNED NOT NULL DEFAULT '0';
 
+ALTER TABLE `movieinfo` CHANGE COLUMN `year` `year_` varchar(4) NOT NULL;
+ALTER TABLE `musicinfo` CHANGE COLUMN `year` `year_` varchar(4) NOT NULL;
+
+ALTER TABLE `tvrage` ADD COLUMN `traktid` INT NOT NULL DEFAULT 0;
+
 CREATE INDEX ix_releases_regexId ON releases (`regexID`);
+CREATE INDEX ix_releases_groupId on releases (`groupID`);
+CREATE INDEX ix_parts_messageId on parts (`messageID`);
+CREATE INDEX ix_tvrage_traktId on tvrage (`traktid`);
+CREATE UNIQUE INDEX ix_users_rsstoken on users (`rsstoken`);
+
+-- TODO: verify this works
+-- makes "rageId" EVERYWHERE BUT TVRAGE represent a "tvinfo" id, not a TvRage id specific to the TvRage site
+UPDATE `releases` set rageID = (select tv.ID from tvrage tv where tv.rageID = `releases`.rageID LIMIT 1) where `releases`.rageID > 0;
+
+DROP TABLE IF EXISTS `jobconfig`;
+CREATE TABLE `jobconfig` (
+  `ID` INT PRIMARY KEY NOT NULL ,
+  `JOB_NAME` VARCHAR(255) NOT NULL ,
+  `JOB_FREQ` VARCHAR(255) NOT NULL ,
+  `JOB_CONFIG` VARCHAR(255) NOT NULL
+);
+INSERT INTO `jobconfig` VALUES (1,'UPDATE_JOB','FREQ_NEVER','N/A');
+
+DROP TABLE IF EXISTS `joblog`;
+CREATE TABLE `joblog` (
+  `ID` INT PRIMARY KEY NOT NULL ,
+  `JOB_NAME` VARCHAR(255) NOT NULL ,
+  `START_DATE` DATETIME DEFAULT NULL,
+  `END_DATE` DATETIME DEFAULT NULL,
+  `RESULT` VARCHAR(255) NULL,
+  `NOTES` LONGTEXT NULL
+);

@@ -22,6 +22,7 @@ import net.longfalcon.newsj.model.ReleaseComment;
 import net.longfalcon.newsj.persistence.ReleaseCommentDAO;
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.transaction.annotation.Isolation;
@@ -38,7 +39,7 @@ import java.util.List;
 public class ReleaseCommentDAOImpl extends HibernateDAOImpl implements ReleaseCommentDAO {
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public Long countReleaseComments() {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ReleaseComment.class);
         criteria.setProjection(Projections.count("id"));
@@ -53,25 +54,30 @@ public class ReleaseCommentDAOImpl extends HibernateDAOImpl implements ReleaseCo
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public ReleaseComment findByReleaseCommentId(long id) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ReleaseComment.class);
         criteria.add(Restrictions.eq("id", id));
+        criteria.setFetchMode("user", FetchMode.JOIN);
+        criteria.setFetchMode("release", FetchMode.JOIN);
 
         return (ReleaseComment) criteria.uniqueResult();
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public List<ReleaseComment> findByReleaseId(long releaseId) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ReleaseComment.class);
         criteria.add(Restrictions.eq("release.id", releaseId));
+        criteria.setFetchMode("user", FetchMode.JOIN);
+        criteria.setFetchMode("release", FetchMode.JOIN);
+        criteria.addOrder(Order.desc("createDate"));
 
         return criteria.list();
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public List<ReleaseComment> getReleaseComments(int start, int pageSize) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ReleaseComment.class);
         criteria.setFirstResult(start).setMaxResults(pageSize);
@@ -79,6 +85,29 @@ public class ReleaseCommentDAOImpl extends HibernateDAOImpl implements ReleaseCo
         criteria.setFetchMode("release", FetchMode.JOIN);
 
         return criteria.list();
+    }
+
+    @Override
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
+    public List<ReleaseComment> getReleaseCommentsByUser(long userId, int start, int pageSize) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ReleaseComment.class);
+        criteria.add(Restrictions.eq("user.id", userId));
+        criteria.setFirstResult(start).setMaxResults(pageSize);
+        criteria.setFetchMode("user",FetchMode.JOIN);
+        criteria.addOrder(Order.desc("createDate"));
+
+        return criteria.list();
+    }
+
+    @Override
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
+    public long countReleaseCommentsByUser(long userId) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ReleaseComment.class);
+        criteria.add(Restrictions.eq("user.id", userId));
+        criteria.setFetchMode("user",FetchMode.JOIN);
+        criteria.setProjection(Projections.rowCount());
+
+        return (Long) criteria.uniqueResult();
     }
 
     @Override

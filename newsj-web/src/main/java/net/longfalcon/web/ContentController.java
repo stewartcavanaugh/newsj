@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015. Sten Martinez
+ * Copyright (c) 2016. Sten Martinez
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@ package net.longfalcon.web;
 import net.longfalcon.newsj.Config;
 import net.longfalcon.newsj.model.Content;
 import net.longfalcon.newsj.persistence.UserDAO;
+import net.longfalcon.web.exception.NoSuchResourceException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Controller;
@@ -48,7 +49,7 @@ public class ContentController extends BaseController {
     }
 
     @RequestMapping("/content/{id:\\d+}/-/**")
-    public String viewContentUrl(@PathVariable long id, HttpServletRequest httpServletRequest, Model model) {
+    public String viewContentUrl(@PathVariable long id, HttpServletRequest httpServletRequest, Model model) throws NoSuchResourceException {
         Content indexContent = contentService.getContent(id);
         String url = httpServletRequest.getRequestURI();
         String[] urlParts = url.split("/-");
@@ -56,11 +57,7 @@ public class ContentController extends BaseController {
         if (urlPart.equals(indexContent.getUrl())) {
             model.addAttribute("content", indexContent);
         } else {
-            model.asMap().clear();
-            model.addAttribute("status", "404");
-            model.addAttribute("request_uri", url);
-            model.addAttribute("reason", "Content page not found");
-            return "error";
+           throw new NoSuchResourceException();
         }
 
 

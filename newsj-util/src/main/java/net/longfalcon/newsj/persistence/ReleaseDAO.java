@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015. Sten Martinez
+ * Copyright (c) 2016. Sten Martinez
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +31,9 @@ import java.util.List;
  */
 public interface ReleaseDAO {
 
+    Long countByCategoriesMaxAgeAndGroup(Collection<Integer> categoryIds, Date maxAge,
+                                         Collection<Integer> excludedCategoryIds, Long groupId);
+
     Long countByGroupId(long groupId);
 
     Long countReleasesByRegexId(long regexId);
@@ -39,11 +42,22 @@ public interface ReleaseDAO {
 
     void deleteRelease(Release release);
 
+    List<Release> findByCategoriesMaxAgeAndGroup(Collection<Integer> categoryIds, Date maxAge,
+                                                 Collection<Integer> excludedCategoryIds, Long groupId,
+                                                 String orderByField, boolean descending,
+                                                 int offset, int pageSize);
+
     Release findByGuid(String guid);
+
+    List<Release> findByGuids(String[] guids);
+
+    List<Release> findByImdbId(int imdbId);
 
     Release findByReleaseId(long releaseId);
 
     List<Object[]> findRecentlyAddedReleaseCategories();
+
+    List<Long> findReleaseGroupIds();
 
     List<Release> findReleasesBeforeDate(Date before);
 
@@ -57,13 +71,35 @@ public interface ReleaseDAO {
 
     List<Release> findTopDownloads();
 
+    List<Long> getDistinctImdbIds(List<Integer> searchCategories, int maxAgeDays, List<Integer> userExCatIds);
+
     Date getLastReleaseDateByRegexId(long regexId);
 
     List<Release> getReleases(int offset, int pageSize);
 
-    Long getReleasesCount();
-
     void resetReleaseTvRageId(long tvRageId);
 
+    List<Release> searchByCategoriesMaxAgeAndGroup(String[] searchTokens, Collection<Integer> categoryIds, Date maxAge,
+                                                   Collection<Integer> excludedCategoryIds, Long groupId,
+                                                   String orderByField, boolean descending,
+                                                   int offset, int pageSize);
+
+    Long searchCountByCategoriesMaxAgeAndGroup(String[] searchTokens, Collection<Integer> categoryIds, Date maxAge,
+                                               Collection<Integer> excludedCategoryIds, Long groupId);
+
+    List<Release> searchByCategoriesMaxAgeAndGroup(String[] searchTokens, Long imdbId, Long rageId, String season,
+                                                   String episode, Collection<Integer> categoryIds, Date maxAge,
+                                                   Collection<Integer> excludedCategoryIds, Long groupId,
+                                                   String orderByField, boolean descending,
+                                                   int offset, int pageSize);
+
+    Long searchCountByCategoriesMaxAgeAndGroup(String[] searchTokens, Long imdbId, Long rageId, String season,
+                                               String episode, Collection<Integer> categoryIds, Date maxAge,
+                                               Collection<Integer> excludedCategoryIds, Long groupId);
+
+    List<Release> searchReleasesByNameExludingCats(List<String> searchTokens, int limit, Collection<Integer> excludedCategoryIds);
+
     void updateRelease(Release release);
+
+    Long getReleasesCount();
 }

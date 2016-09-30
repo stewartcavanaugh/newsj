@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015. Sten Martinez
+ * Copyright (c) 2016. Sten Martinez
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@ import net.longfalcon.newsj.fs.FileSystemService;
 import net.longfalcon.newsj.fs.model.Directory;
 import net.longfalcon.newsj.model.Binary;
 import net.longfalcon.newsj.model.Group;
+import net.longfalcon.newsj.model.MovieInfo;
 import net.longfalcon.newsj.model.Part;
 import net.longfalcon.newsj.model.Release;
 import net.longfalcon.newsj.model.ReleaseNfo;
@@ -31,6 +32,7 @@ import net.longfalcon.newsj.persistence.BinaryDAO;
 import net.longfalcon.newsj.persistence.GroupDAO;
 import net.longfalcon.newsj.persistence.PartDAO;
 import net.longfalcon.newsj.persistence.ReleaseNfoDAO;
+import net.longfalcon.newsj.service.MovieService;
 import net.longfalcon.newsj.util.ParseUtil;
 import net.longfalcon.newsj.util.StreamUtil;
 import net.longfalcon.newsj.util.ValidatorUtil;
@@ -64,6 +66,7 @@ public class Nfo {
     private GroupDAO groupDAO;
     private PartDAO partDAO;
     private ReleaseNfoDAO releaseNfoDAO;
+    private MovieService movieService;
     private NntpConnectionFactory nntpConnectionFactory;
     private FileSystemService fileSystemService;
 
@@ -72,7 +75,7 @@ public class Nfo {
      * @param release
      * @return
      */
-    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS, isolation = Isolation.READ_UNCOMMITTED)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS, isolation = Isolation.READ_COMMITTED)
     public ReleaseNfo determineReleaseNfo(Release release) {
         Pattern nfoPattern = Pattern.compile(".*\\.nfo[ \"\\)\\]\\-]?.*", Pattern.CASE_INSENSITIVE);
 
@@ -114,10 +117,14 @@ public class Nfo {
                     // check imdb/movie
                     String imdbString = ParseUtil.parseImdb(nfoText);
                     if (ValidatorUtil.isNotNull(imdbString) && ValidatorUtil.isNumeric(imdbString)) {
-                        releaseNfo.getRelease().setImdbId(Integer.parseInt(imdbString));
+                        int imdbId = Integer.parseInt(imdbString);
+                        releaseNfo.getRelease().setImdbId(imdbId);
 
                         if (lookupImdb == 1) {
-                            // update movie info TODO
+                            MovieInfo movieInfo = movieService.getMovieInfo(imdbId);
+                            if (movieInfo == null) {
+                                movieService.addMovieInfo(imdbId);
+                            }
                         }
                     }
 
@@ -154,35 +161,30 @@ public class Nfo {
         }
         String nfo;
         List<Part> partList = partDAO.findPartsByBinaryId(binary.getId());
-        if (partList.size() > 1) {
-            _log.error("NFO is more than one part, skipping " + binary.getName());
-            return null;
-        } else {
-            try {
-                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                Directory tempDir = fileSystemService.getDirectory("/temp");
-                File tempFile = tempDir.getTempFile(String.valueOf(System.currentTimeMillis()));
-                for (Part part : partList) {
-                    BufferedReader bufferedReader = newsClient.retrieveArticleBody(part.getNumber());
-                    if (bufferedReader != null) {
-                        YDecoder.decode(bufferedReader, tempFile);
-                    } else {
-                        return null;
-                    }
+        try {
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            Directory tempDir = fileSystemService.getDirectory("/temp");
+            File tempFile = tempDir.getTempFile(String.valueOf(System.currentTimeMillis()));
+            for (Part part : partList) {
+                BufferedReader bufferedReader = newsClient.retrieveArticleBody(part.getNumber());
+                if (bufferedReader != null) {
+                    YDecoder.decode(bufferedReader, tempFile);
+                } else {
+                    return null;
                 }
-
-                FileReader fileReader = new FileReader(tempFile);
-                String enc = fileReader.getEncoding();
-                InputStream inputStream = new FileInputStream(tempFile);
-                StreamUtil.transferByteArray(inputStream, byteArrayOutputStream, 1024);
-                nfo = byteArrayOutputStream.toString(enc);
-
-
-            } catch (IOException e) {
-                _log.error(e);
-                return null;
             }
+
+            FileReader fileReader = new FileReader(tempFile);
+            String enc = fileReader.getEncoding();
+            InputStream inputStream = new FileInputStream(tempFile);
+            StreamUtil.transferByteArray(inputStream, byteArrayOutputStream, 1024);
+            nfo = byteArrayOutputStream.toString(enc);
+
+        } catch (IOException e) {
+            _log.error(e);
+            return null;
         }
+
 
         return nfo;
     }
@@ -233,5 +235,13 @@ public class Nfo {
 
     public void setGroupDAO(GroupDAO groupDAO) {
         this.groupDAO = groupDAO;
+    }
+
+    public MovieService getMovieService() {
+        return movieService;
+    }
+
+    public void setMovieService(MovieService movieService) {
+        this.movieService = movieService;
     }
 }

@@ -88,6 +88,29 @@ function ajax_group_reset(id)
 }
 
 /**
+ * ajax_group_backfill()
+ *
+ * @param id        group id
+ */
+function ajax_group_backfill(id)
+{
+    // no caching of results
+    var rand_no = Math.random();
+    $.ajax({
+        url       : WWW_TOP + '/admin/ajax_group-edit?action=5&rand=' + rand_no,
+        data      : { group_id: id},
+        dataType  : "html",
+        success   : function(data)
+        {
+            $('div#message').html(data);
+            $('div#message').show('fast', function() {});
+            $('#message').fadeOut(5000);
+        },
+        error: function(xhr,err,e) { alert( "Error in ajax_group_reset: " + err ); }
+    });
+}
+
+/**
  * ajax_group_purge()
  *
  * @param id        group id

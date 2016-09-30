@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015. Sten Martinez
+ * Copyright (c) 2016. Sten Martinez
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +39,8 @@ public class MenuService {
         if (!isSabEnabled) {
             for (Iterator<MenuItem> iterator = menuItems.iterator(); iterator.hasNext(); ) {
                 MenuItem menuItem = iterator.next();
-                if (menuItem.getMenuEval().contains("sabintegrated")) {
+                String menuEval = menuItem.getMenuEval();
+                if (menuEval != null && menuEval.contains("sabintegrated")) {
                     iterator.remove();
                 }
             }

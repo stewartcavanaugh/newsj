@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015. Sten Martinez
+ * Copyright (c) 2016. Sten Martinez
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -82,6 +82,18 @@ public class ArrayUtil {
         List<Long> array = new ArrayList<>(to - from + 1);
         for (int j = from; j <= to; j++) {
             array.add((long) j);
+        }
+
+        return array;
+    }
+
+    public static List<Integer> rangeListInt(int from, int to) {
+        if ( to < from ) {
+            throw new IllegalArgumentException(String.format("to argument %s is less than from argument %s", to, from));
+        }
+        List<Integer> array = new ArrayList<>(to - from + 1);
+        for (int j = from; j <= to; j++) {
+            array.add(j);
         }
 
         return array;

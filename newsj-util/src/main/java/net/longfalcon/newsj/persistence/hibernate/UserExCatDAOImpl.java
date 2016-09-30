@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015. Sten Martinez
+ * Copyright (c) 2016. Sten Martinez
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ public class UserExCatDAOImpl extends HibernateDAOImpl implements net.longfalcon
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public List<Integer> getUserExCatIds(long userId) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserExCat.class);
         criteria.add(Restrictions.eq("userId", userId));

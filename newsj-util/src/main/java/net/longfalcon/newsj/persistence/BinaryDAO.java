@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015. Sten Martinez
+ * Copyright (c) 2016. Sten Martinez
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,4 +67,6 @@ public interface BinaryDAO {
     List<Long> findBinaryIdsByGroupId(long groupId);
 
     List<Binary> findByGroupIdProcStatsReleaseId(long groupId, List<Integer> procStats, Long releaseId);
+
+    List<Binary> searchByNameAndExcludedCats(String[] searchTokens, int limit, Collection<Integer> excludedCategoryIds);
 }

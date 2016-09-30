@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright (c) 2015. Sten Martinez
-  ~
+  ~ Copyright (c) 2016. Sten Martinez
   ~ This program is free software; you can redistribute it and/or modify
   ~ it under the terms of the GNU General Public License as published by
   ~ the Free Software Foundation; either version 2 of the License, or
@@ -30,11 +29,14 @@
         http://www.springframework.org/schema/aop
         http://www.springframework.org/schema/aop/spring-aop.xsd
         http://www.springframework.org/schema/context
-        http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/util
+        http://www.springframework.org/schema/util/spring-util.xsd">
 
     <tx:annotation-driven transaction-manager="transactionManager"/>
 
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="ignoreResourceNotFound" value="true" />
         <property name="locations" value="classpath:db.properties"/>
     </bean>
 
@@ -181,36 +183,29 @@
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
 
+    <bean id="userCartDAO" class="net.longfalcon.newsj.persistence.hibernate.UserCartDAOImpl">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+
+    <bean id="forumPostDAO" class="net.longfalcon.newsj.persistence.hibernate.ForumPostDAOImpl">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+
+    <bean id="jobConfigDAO" class="net.longfalcon.newsj.persistence.hibernate.JobConfigDAOImpl">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+
+    <bean id="jobLogDAO" class="net.longfalcon.newsj.persistence.hibernate.JobLogDAOImpl">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+
     <!-- Services -->
-
-    <bean id="config" class="net.longfalcon.newsj.Config" init-method="init">
-        <property name="propertyLocations" value="classpath:config.properties"/>
-        <property name="siteDAO" ref="siteDAO"/>
-    </bean>
-
-    <bean id="fileSystemService" class="net.longfalcon.newsj.fs.DefaultFileSystemServiceImpl" init-method="init">
-        <property name="config" ref="config"/>
-    </bean>
-
-    <bean id="installerService" class="net.longfalcon.newsj.service.InstallerService">
-        <property name="fileSystemService" ref="fileSystemService"/>
-        <property name="siteDAO" ref="siteDAO"/>
-        <property name="config" ref="config"/>
-    </bean>
-
-    <bean id="nntpConnectionFactory" class="net.longfalcon.newsj.nntp.NntpConnectionFactory">
-        <property name="config" ref="config"/>
-    </bean>
-
-    <bean id="fetchBinaries" class="net.longfalcon.newsj.FetchBinaries">
-        <property name="partDAO" ref="partDAO"/>
-        <property name="binaryDAO" ref="binaryDAO"/>
-        <property name="blacklist" ref="blacklist"/>
+    <bean id="backfill" class="net.longfalcon.newsj.Backfill">
+        <property name="fetchBinaries" ref="fetchBinaries"/>
+        <property name="groupDAO" ref="groupDAO"/>
         <property name="nntpConnectionFactory" ref="nntpConnectionFactory"/>
-        <property name="partRepairDAO" ref="partRepairDAO"/>
         <property name="transactionManager" ref="transactionManager"/>
     </bean>
-
     <bean id="binaries" class="net.longfalcon.newsj.Binaries">
         <property name="groupDAO" ref="groupDAO"/>
         <property name="siteDAO" ref="siteDAO"/>
@@ -223,7 +218,101 @@
         <property name="transactionManager" ref="transactionManager"/>
         <property name="fetchBinaries" ref="fetchBinaries"/>
     </bean>
-
+    <bean id="blacklist" class="net.longfalcon.newsj.Blacklist">
+        <property name="binaryBlacklistDAO" ref="binaryBlacklistDAO"/>
+    </bean>
+    <bean id="cartService" class="net.longfalcon.newsj.service.CartService">
+        <property name="userCartDAO" ref="userCartDAO"/>
+    </bean>
+    <bean id="categoryService" class="net.longfalcon.newsj.CategoryService">
+        <property name="groupDAO" ref="groupDAO"/>
+        <property name="userExCatDAO" ref="userExCatDAO"/>
+        <property name="categoryDAO" ref="categoryDAO"/>
+    </bean>
+    <bean id="config" class="net.longfalcon.newsj.Config" init-method="init">
+        <property name="propertyLocations">
+            <list>
+                <value>classpath:config.api.properties</value>
+                <value>classpath:config.properties</value>
+            </list>
+        </property>
+        <property name="siteDAO" ref="siteDAO"/>
+    </bean>
+    <bean id="contentService" class="net.longfalcon.newsj.service.ContentService">
+        <property name="contentDAO" ref="contentDAO"/>
+    </bean>
+    <bean id="fetchBinaries" class="net.longfalcon.newsj.FetchBinaries">
+        <property name="partDAO" ref="partDAO"/>
+        <property name="binaryDAO" ref="binaryDAO"/>
+        <property name="blacklist" ref="blacklist"/>
+        <property name="nntpConnectionFactory" ref="nntpConnectionFactory"/>
+        <property name="partRepairDAO" ref="partRepairDAO"/>
+        <property name="transactionManager" ref="transactionManager"/>
+    </bean>
+    <bean id="fileSystemService" class="net.longfalcon.newsj.fs.DefaultFileSystemServiceImpl" init-method="init">
+        <property name="config" ref="config"/>
+    </bean>
+    <bean id="games" class="net.longfalcon.newsj.service.GameService">
+        <property name="genreDAO" ref="genreDAO"/>
+        <property name="consoleInfoDAO" ref="consoleInfoDAO"/>
+        <property name="fileSystemService" ref="fileSystemService"/>
+    </bean>
+    <bean id="googleSearchService" class="net.longfalcon.newsj.service.GoogleSearchService">
+        <property name="restTemplate" ref="restTemplate"/>
+    </bean>
+    <bean id="groupService" class="net.longfalcon.newsj.service.GroupService">
+        <property name="groupDAO" ref="groupDAO"/>
+        <property name="releaseDAO" ref="releaseDAO"/>
+        <property name="binaryDAO" ref="binaryDAO"/>
+        <property name="schedulerService" ref="schedulerService"/>
+    </bean>
+    <bean id="installerService" class="net.longfalcon.newsj.service.InstallerService">
+        <property name="fileSystemService" ref="fileSystemService"/>
+        <property name="siteDAO" ref="siteDAO"/>
+        <property name="config" ref="config"/>
+    </bean>
+    <bean id="jobLogService" class="net.longfalcon.newsj.service.JobLogService">
+        <property name="jobLogDAO" ref="jobLogDAO"/>
+    </bean>
+    <bean id="menuService" class="net.longfalcon.newsj.service.MenuService">
+        <property name="menuItemDAO" ref="menuItemDAO"/>
+    </bean>
+    <bean id="movie" class="net.longfalcon.newsj.service.MovieService">
+        <property name="googleSearchService" ref="googleSearchService"/>
+        <property name="categoryDAO" ref="categoryDAO"/>
+        <property name="releaseDAO" ref="releaseDAO"/>
+        <property name="movieInfoDAO" ref="movieInfoDAO"/>
+        <property name="fileSystemService" ref="fileSystemService"/>
+        <property name="tmdbService" ref="tmdbService"/>
+    </bean>
+    <bean id="music" class="net.longfalcon.newsj.service.MusicService">
+        <property name="musicInfoDAO" ref="musicInfoDAO"/>
+        <property name="fileSystemService" ref="fileSystemService"/>
+    </bean>
+    <bean id="nfo" class="net.longfalcon.newsj.Nfo">
+        <property name="groupDAO" ref="groupDAO"/>
+        <property name="binaryDAO" ref="binaryDAO"/>
+        <property name="partDAO" ref="partDAO"/>
+        <property name="releaseNfoDAO" ref="releaseNfoDAO"/>
+        <property name="movieService" ref="movie"/>
+        <property name="fileSystemService" ref="fileSystemService"/>
+        <property name="nntpConnectionFactory" ref="nntpConnectionFactory"/>
+    </bean>
+    <bean id="nntpConnectionFactory" class="net.longfalcon.newsj.nntp.NntpConnectionFactory">
+        <property name="config" ref="config"/>
+    </bean>
+    <bean id="nzb" class="net.longfalcon.newsj.Nzb">
+        <property name="config" ref="config"/>
+        <property name="binaryDAO" ref="binaryDAO"/>
+        <property name="categoryDAO" ref="categoryDAO"/>
+        <property name="groupDAO" ref="groupDAO"/>
+        <property name="partDAO" ref="partDAO"/>
+    </bean>
+    <bean id="regexService" class="net.longfalcon.newsj.service.RegexService"/>
+    <bean id="releaseCommentService" class="net.longfalcon.newsj.service.ReleaseCommentService">
+        <property name="releaseDAO" ref="releaseDAO"/>
+        <property name="releaseCommentDAO" ref="releaseCommentDAO"/>
+    </bean>
     <bean id="releases" class="net.longfalcon.newsj.Releases">
         <property name="fileSystemService" ref="fileSystemService"/>
         <property name="binaries" ref="binaries"/>
@@ -242,68 +331,36 @@
         <property name="releaseRegexDAO" ref="releaseRegexDAO"/>
         <property name="transactionManager" ref="transactionManager"/>
     </bean>
-
-    <bean id="backfill" class="net.longfalcon.newsj.Backfill">
-        <property name="fetchBinaries" ref="fetchBinaries"/>
-        <property name="groupDAO" ref="groupDAO"/>
-        <property name="nntpConnectionFactory" ref="nntpConnectionFactory"/>
-        <property name="transactionManager" ref="transactionManager"/>
-    </bean>
-
-    <bean id="blacklist" class="net.longfalcon.newsj.Blacklist">
-        <property name="binaryBlacklistDAO" ref="binaryBlacklistDAO"/>
-    </bean>
-
-    <bean id="nfo" class="net.longfalcon.newsj.Nfo">
-        <property name="groupDAO" ref="groupDAO"/>
-        <property name="binaryDAO" ref="binaryDAO"/>
-        <property name="partDAO" ref="partDAO"/>
-        <property name="releaseNfoDAO" ref="releaseNfoDAO"/>
-        <property name="fileSystemService" ref="fileSystemService"/>
-        <property name="nntpConnectionFactory" ref="nntpConnectionFactory"/>
-    </bean>
-    <bean id="categoryService" class="net.longfalcon.newsj.CategoryService">
-        <property name="groupDAO" ref="groupDAO"/>
-        <property name="userExCatDAO" ref="userExCatDAO"/>
-        <property name="categoryDAO" ref="categoryDAO"/>
-    </bean>
-    <bean id="nzb" class="net.longfalcon.newsj.Nzb">
+    <bean id="rssService" class="net.longfalcon.newsj.service.RssService">
         <property name="config" ref="config"/>
-        <property name="binaryDAO" ref="binaryDAO"/>
-        <property name="categoryDAO" ref="categoryDAO"/>
-        <property name="groupDAO" ref="groupDAO"/>
-        <property name="partDAO" ref="partDAO"/>
     </bean>
-    <bean id="movie" class="net.longfalcon.newsj.service.MovieService">
-        <property name="googleSearchService" ref="googleSearchService"/>
-        <property name="categoryDAO" ref="categoryDAO"/>
-        <property name="releaseDAO" ref="releaseDAO"/>
-        <property name="movieInfoDAO" ref="movieInfoDAO"/>
-        <property name="fileSystemService" ref="fileSystemService"/>
-    </bean>
-    <bean id="games" class="net.longfalcon.newsj.service.GameService">
-        <property name="genreDAO" ref="genreDAO"/>
+    <bean id="searchService" class="net.longfalcon.newsj.service.SearchService">
         <property name="consoleInfoDAO" ref="consoleInfoDAO"/>
-        <property name="fileSystemService" ref="fileSystemService"/>
-    </bean>
-    <bean id="music" class="net.longfalcon.newsj.service.MusicService">
+        <property name="genreDAO" ref="genreDAO"/>
+        <property name="movieInfoDAO" ref="movieInfoDAO"/>
         <property name="musicInfoDAO" ref="musicInfoDAO"/>
-        <property name="fileSystemService" ref="fileSystemService"/>
+        <property name="tvRageDAO" ref="tvRageDAO"/>
+        <property name="releases" ref="releases"/>
+        <property name="binaryDAO" ref="binaryDAO"/>
+        <property name="siteDAO" ref="siteDAO"/>
+    </bean>
+    <bean id="siteService" class="net.longfalcon.newsj.service.SiteService">
+        <property name="siteDAO" ref="siteDAO"/>
+    </bean>
+    <bean id="tmdbService" class="net.longfalcon.newsj.service.TmdbService">
+        <property name="config" ref="config"/>
+        <property name="restTemplate" ref="restTemplate"/>
+    </bean>
+    <bean id="traktService" class="net.longfalcon.newsj.service.TraktService">
+        <property name="config" ref="config"/>
+        <property name="restTemplate" ref="restTemplate"/>
     </bean>
     <bean id="tvRage" class="net.longfalcon.newsj.TVRageService">
         <property name="categoryDAO" ref="categoryDAO"/>
         <property name="releaseDAO" ref="releaseDAO"/>
         <property name="tvRageDAO" ref="tvRageDAO"/>
-    </bean>
-    <bean id="regexService" class="net.longfalcon.newsj.service.RegexService"/>
-    <bean id="googleSearchService" class="net.longfalcon.newsj.service.GoogleSearchService">
-        <property name="restTemplate" ref="restTemplate"/>
-    </bean>
-    <bean id="menuService" class="net.longfalcon.newsj.service.MenuService">
-        <property name="menuItemDAO" ref="menuItemDAO"/>
-    </bean>
-    <bean id="contentService" class="net.longfalcon.newsj.service.ContentService">
-        <property name="contentDAO" ref="contentDAO"/>
+        <property name="traktService" ref="traktService"/>
+        <property name="fileSystemService" ref="fileSystemService"/>
     </bean>
     <bean id="userInviteService" class="net.longfalcon.newsj.service.UserInviteService">
         <property name="userInviteDAO" ref="userInviteDAO"/>
@@ -312,11 +369,35 @@
         <property name="userDAO" ref="userDAO"/>
         <property name="userInviteDAO" ref="userInviteDAO"/>
     </bean>
-    <bean id="siteService" class="net.longfalcon.newsj.service.SiteService">
-        <property name="siteDAO" ref="siteDAO"/>
+
+    <!-- SCHEDULER -->
+    <bean id="schedulerService" class="net.longfalcon.newsj.service.SchedulerService" init-method="init" destroy-method="destroy">
+        <property name="scheduler" ref="scheduler"/>
+        <property name="updateJobDetail" ref="updateJobDetail"/>
+        <property name="jobConfigDAO" ref="jobConfigDAO"/>
+        <property name="backfill" ref="backfill"/>
+        <property name="jobLogService" ref="jobLogService"/>
     </bean>
-    <bean id="groupService" class="net.longfalcon.newsj.service.GroupService">
-        <property name="groupDAO" ref="groupDAO"/>
-        <property name="releaseDAO" ref="releaseDAO"/>
+    <bean id="updateJobDetail" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+        <property name="jobClass" value="net.longfalcon.newsj.job.NewsUpdateJob"/>
+        <property name="jobDataAsMap">
+            <map>
+                <entry key="binaries" value-ref="binaries"/>
+                <entry key="releases" value-ref="releases"/>
+                <entry key="jobLogService" value-ref="jobLogService"/>
+            </map>
+        </property>
     </bean>
+    <bean id="scheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="quartzProperties">
+                <value>
+                    org.quartz.scheduler.instanceName = NewsJScheduler
+                    org.quartz.threadPool.threadCount = 2
+                    org.quartz.jobStore.class = org.quartz.simpl.RAMJobStore
+                    org.quartz.plugin.shutdownhook.class = org.quartz.plugins.management.ShutdownHookPlugin
+                    org.quartz.plugin.shutdownhook.cleanShutdown = true
+                </value>
+        </property>
+    </bean>
+
 </beans>

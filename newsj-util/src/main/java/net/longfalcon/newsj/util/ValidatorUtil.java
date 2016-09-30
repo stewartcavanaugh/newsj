@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015. Sten Martinez
+ * Copyright (c) 2016. Sten Martinez
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,8 +28,9 @@ import java.util.regex.Pattern;
  */
 public class ValidatorUtil {
     private static Pattern numericPattern = Pattern.compile("^[-]?[0-9]+$");
+    private static Pattern emailPattern = Pattern.compile("^([a-z0-9\\+_\\-]+)(\\.[a-z0-9\\+_\\-]+)*@([a-z0-9\\-]+\\.)+[a-z]{2,6}$", Pattern.CASE_INSENSITIVE);
     public static boolean isNull(String s) {
-        return s == null || s.isEmpty() || s.equals("");
+        return s == null || s.isEmpty() || s.equals("") || s.equals("null");
     }
 
     public static boolean isNotNull(String s) {
@@ -52,5 +53,10 @@ public class ValidatorUtil {
 
     public static boolean isNull(Long l) {
         return !isNotNull(l);
+    }
+
+    public static boolean isValidEmail(String email) {
+        Matcher matcher = emailPattern.matcher(email);
+        return matcher.matches();
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015. Sten Martinez
+ * Copyright (c) 2016. Sten Martinez
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,6 @@ import org.hibernate.NullPrecedence;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -51,7 +50,7 @@ public class BinaryBlacklistDAOImpl extends HibernateDAOImpl implements net.long
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public List<BinaryBlacklistEntry> findAllBinaryBlacklistEntries(boolean activeOnly) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(BinaryBlacklistEntry.class);
         if (activeOnly) {
@@ -63,7 +62,7 @@ public class BinaryBlacklistDAOImpl extends HibernateDAOImpl implements net.long
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public BinaryBlacklistEntry findByBinaryBlacklistId(long id) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(BinaryBlacklistEntry.class);
         criteria.add(Restrictions.eq("id",id));

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015. Sten Martinez
+ * Copyright (c) 2016. Sten Martinez
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +29,8 @@ import org.joda.time.Period;
 import org.joda.time.format.PeriodFormat;
 import org.joda.time.format.PeriodFormatter;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -113,6 +115,14 @@ public class CategoryService {
         return categoryDAO.getChildCategories();
     }
 
+    public List<Category> getParentCategories() {
+        return categoryDAO.getParentCategories();
+    }
+
+    public List<Integer> getCategoryChildrenIds(int categoryParentId) {
+        return categoryDAO.getCategoryChildrenIds(categoryParentId);
+    }
+
     public Category getCategory(int categoryId) {
         return categoryDAO.findByCategoryId(categoryId);
 
@@ -125,7 +135,17 @@ public class CategoryService {
         return parentCategory.getTitle() + " > " + category.getTitle();
     }
 
-    private List<Category> getSubCategories(Set<Integer> userExcludedCategoryIds, int parentId) {
+    public List<String> getCategoryDisplayNames(Collection<Integer> categoryIds) {
+        List<String> categoryNames = new ArrayList<>(categoryIds.size());
+        for (Integer categoryId : categoryIds) {
+            if (categoryId != null) {
+                categoryNames.add(getCategoryDisplayName(categoryId));
+            }
+        }
+        return categoryNames;
+    }
+
+    public List<Category> getSubCategories(Set<Integer> userExcludedCategoryIds, int parentId) {
         List<Category> categoryList = categoryDAO.getForMenu(userExcludedCategoryIds, parentId);
         for (Category category : categoryList) {
             category.setSubCategories(getSubCategories(userExcludedCategoryIds, category.getId()));

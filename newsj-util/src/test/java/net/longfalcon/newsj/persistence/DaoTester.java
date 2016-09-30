@@ -18,8 +18,6 @@
 
 package net.longfalcon.newsj.persistence;
 
-import net.longfalcon.newsj.CategoryService;
-import net.longfalcon.newsj.model.Category;
 import net.longfalcon.newsj.util.ArrayUtil;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -30,10 +28,10 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Use for testing DAOs against a real db.
  * User: Sten Martinez
  * Date: 10/9/15
  * Time: 3:15 PM
@@ -47,19 +45,13 @@ public class DaoTester {
         ApplicationContext context =
                 new ClassPathXmlApplicationContext(new String[] {"application-context.xml"});
         PlatformTransactionManager transactionManager = (PlatformTransactionManager) context.getBean("transactionManager");
-        CategoryDAO categoryDAO = (CategoryDAO) context.getBean("categoryDAO");
-        ReleaseDAO releaseDAO = (ReleaseDAO) context.getBean("releaseDAO");
+        PartDAO partDAO = (PartDAO) context.getBean("partDAO");
 
         TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition(TransactionDefinition.PROPAGATION_REQUIRED));
-        List<Category> categories = categoryDAO.findByParentId(CategoryService.CAT_PARENT_MOVIE);
-        List<Integer> ids = new ArrayList<>();
-        for (Category category : categories) {
-            ids.add(category.getId());
-        }
-        List returnList = releaseDAO.findReleasesByNoImdbIdAndCategoryId(ids);
+        List<Object[]> parts = partDAO.findDistinctMessageIdSizeAndPartNumberByBinaryId(16188027);
 
 
-        System.out.println("list: " + ArrayUtil.stringify(returnList, "\n"));
+        System.out.println("list: \n" + ArrayUtil.stringify(parts, "\n"));
         transaction.flush();
     }
 }

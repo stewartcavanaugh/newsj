@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015. Sten Martinez
+ * Copyright (c) 2016. Sten Martinez
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
+ * command line app for backfilling groups
  * User: Sten Martinez
  * Date: 10/23/15
  * Time: 9:53 PM
@@ -32,5 +33,6 @@ public class BackfillGroups {
                 new ClassPathXmlApplicationContext(new String[] {"application-context.xml"});
         Backfill backfill = (Backfill) context.getBean("backfill");
         backfill.backfillAllGroups();
+        ((ClassPathXmlApplicationContext) context).destroy();
     }
 }

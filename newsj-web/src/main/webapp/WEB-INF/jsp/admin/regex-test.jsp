@@ -55,7 +55,7 @@
         <%--START PAGE CONTENT--%>
             <h1>${title}</h1>
 
-            <c:if test="${text:isNull(error)}">
+            <c:if test="${!text:isNull(error)}">
                 <div class="error">${error}</div>
             </c:if>
 

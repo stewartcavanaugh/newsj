@@ -1,7 +1,5 @@
-<%--@elvariable id="site" type="net.longfalcon.newsj.model.Site"--%>
-<%--@elvariable id="year" type="java.lang.integer"--%>
 <%--
-  ~ Copyright (c) 2015. Sten Martinez
+  ~ Copyright (c) 2016. Sten Martinez
   ~
   ~ This program is free software; you can redistribute it and/or modify
   ~ it under the terms of the GNU General Public License as published by
@@ -18,6 +16,8 @@
   ~ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
   --%>
 
+<%--@elvariable id="site" type="net.longfalcon.newsj.model.Site"--%>
+<%--@elvariable id="year" type="java.lang.integer"--%>
 <%--
   User: Sten Martinez
   Date: 12/16/15
@@ -66,7 +66,7 @@
 
             <p>
                 Welcome to newznab. In this area you will be able to configure many aspects of your site.<br>
-                If this is your first time here, you need to start the scripts which will fill newznab.
+                If this is your first time here, you need to configure the jobs which will fill newznab.
             </p>
 
             <ol style="list-style-type:decimal; line-height: 180%;">

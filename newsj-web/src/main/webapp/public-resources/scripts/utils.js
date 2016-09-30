@@ -53,7 +53,7 @@ jQuery(function($){
 	$('.icon_cart').click(function(e){
 		if ($(this).hasClass('icon_cart_clicked')) return false;
 		var guid = $(this).parent().parent().attr('id').substring(4);
-		$.post( SERVERROOT + "cart?add=" + guid, function(resp){
+		$.post( SERVERROOT + "/cart?add=" + guid, function(resp){
 			$(e.target).addClass('icon_cart_clicked').attr('title','Added to cart');
 		});
 		return false;
@@ -62,7 +62,7 @@ jQuery(function($){
 		if ($(this).hasClass('icon_sab_clicked')) return false;
 
 		var guid = $(this).parent().parent().attr('id').substring(4);
-		var nzburl = SERVERROOT + "sendtosab/" + guid;
+		var nzburl = SERVERROOT + "/sendtosab/" + guid;
 
 		$.post(nzburl, function(resp){
 			$(e.target).addClass('icon_sab_clicked').attr('title','Added to queue');
@@ -70,12 +70,12 @@ jQuery(function($){
 		return false;
 	});
 	$("table.data a.modal_nfo").colorbox({	 // NFO modal
-		href: function(){ return $(this).attr('href') +'&modal'; },
+		href: function(){ return $(this).attr('href') +'?modal=true'; },
 		title: function(){ return $(this).parent().parent().children('a.title').text(); },
 		innerWidth:"800px", innerHeight:"90%", initialWidth:"800px", initialHeight:"90%", speed:0, opacity:0.7
 	});
 	$("table.data a.modal_imdb").colorbox({	 // IMDB modal
-		href: function(){ return SERVERROOT + "movie/"+$(this).attr('name').substring(4)+'&modal'; },
+		href: function(){ return SERVERROOT + "/movie/"+$(this).attr('name').substring(4)+'&modal'; },
 		title: function(){ return $(this).parent().parent().children('a.title').text(); },
 		innerWidth:"800px", innerHeight:"450px", initialWidth:"800px", initialHeight:"450px", speed:0, opacity:0.7
 	}).click(function(){
@@ -83,14 +83,14 @@ jQuery(function($){
 	});
 
 	$("table.data a.modal_music").colorbox({	 // Music modal
-		href: function(){ return SERVERROOT + "musicmodal/"+$(this).attr('name').substring(4)+'&modal'; },
+		href: function(){ return SERVERROOT + "/musicmodal/"+$(this).attr('name').substring(4)+'&modal'; },
 		title: function(){ return $(this).parent().parent().children('a.title').text(); },
 		innerWidth:"800px", innerHeight:"450px", initialWidth:"800px", initialHeight:"450px", speed:0, opacity:0.7
 	}).click(function(){
 		$('#colorbox').removeClass().addClass('cboxMusic');	
 	});
 	$("table.data a.modal_console").colorbox({	 // Console modal
-		href: function(){ return SERVERROOT + "consolemodal/"+$(this).attr('name').substring(4)+'&modal'; },
+		href: function(){ return SERVERROOT + "/consolemodal/"+$(this).attr('name').substring(4)+'&modal'; },
 		title: function(){ return $(this).parent().parent().children('a.title').text(); },
 		innerWidth:"800px", innerHeight:"450px", initialWidth:"800px", initialHeight:"450px", speed:0, opacity:0.7
 	}).click(function(){
@@ -107,7 +107,7 @@ jQuery(function($){
 	    });
 	    ids = ids.substring(0,ids.length-1);
 	    if (ids)
-			window.location = SERVERROOT + "getnzb?zip=1&id="+ids;
+			window.location = SERVERROOT + "/getnzb?zip=true&id="+ids;
 	});
 	$('input.nzb_multi_operations_cart').click(function(){
 		var guids = new Array();
@@ -119,14 +119,14 @@ jQuery(function($){
 				guids.push(guid);
 			}
 		});
-		$.post( SERVERROOT + "cart?add=" + guids);
+		$.post( SERVERROOT + "/cart?add=" + guids);
 
 		/*	// old way
 	    $("table.data INPUT[type='checkbox']:checked").each( function(i, row) {
 	    	var $cartIcon = $(row).parent().parent().children('td.icons').children('.icon_cart');
 	    	var guid = $(row).parent().parent().attr('id').substring(4);
 			if (guid && !$cartIcon.hasClass('icon_cart_clicked')){
-				$.post( SERVERROOT + "cart?add=" + guid, function(resp){
+				$.post( SERVERROOT + "/cart?add=" + guid, function(resp){
 					$cartIcon.addClass('icon_cart_clicked').attr('title','Added to cart');
 				});
 			}
@@ -141,7 +141,7 @@ jQuery(function($){
 	    	var guid = $(row).parent().parent().attr('id').substring(4);
 				if (guid && !$sabIcon.hasClass('icon_sab_clicked'))
 				{
-					var nzburl = SERVERROOT + "sendtosab/" + guid;
+					var nzburl = SERVERROOT + "/sendtosab/" + guid;
 					$.post( nzburl, function(resp){
 							$sabIcon.addClass('icon_sab_clicked').attr('title','Added to queue');
 				});
@@ -157,7 +157,7 @@ jQuery(function($){
 	    });
 	    if (ids)
 			$('input.nzb_multi_operations_edit').colorbox({
-				href: function(){ return SERVERROOT + "ajax_release-admin?action=edit"+ids+"&from="+encodeURIComponent(window.location); },
+				href: function(){ return SERVERROOT + "/ajax_release-admin?action=edit"+ids+"&from="+encodeURIComponent(window.location); },
 				title: 'Edit Release',
 				innerWidth:"400px", innerHeight:"250px", initialWidth:"400px", initialHeight:"250px", speed:0, opacity:0.7
 			});
@@ -170,7 +170,7 @@ jQuery(function($){
 	    });
 	    if (ids)
 			if (confirm('Are you sure you want to delete the selected releases?')) {
-				$.post(SERVERROOT + "ajax_release-admin?action=dodelete"+ids, function(resp){
+				$.post(SERVERROOT + "/ajax_release-admin?action=dodelete"+ids, function(resp){
 					window.location = window.location;
 				});
 			}
@@ -183,7 +183,7 @@ jQuery(function($){
 	    });
 	    if (ids)
 			if (confirm('Are you sure you want to rebuild the selected releases?')) {
-				$.post(SERVERROOT + "ajax_release-admin?action=dorebuild"+ids, function(resp){
+				$.post(SERVERROOT + "/ajax_release-admin?action=dorebuild"+ids, function(resp){
 					window.location = window.location;
 				});
 			}

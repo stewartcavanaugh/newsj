@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015. Sten Martinez
+ * Copyright (c) 2016. Sten Martinez
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +32,11 @@ public interface TvRageDAO {
 
     void delete(TvRage tvRage);
 
-    TvRage findByTvRageId(long id);
+    TvRage findById(long id);
+
+    TvRage findByTvRageId(long rageId);
+
+    TvRage findByTvTraktId(long traktId);
 
     TvRage findByReleaseTitle(String title);
 

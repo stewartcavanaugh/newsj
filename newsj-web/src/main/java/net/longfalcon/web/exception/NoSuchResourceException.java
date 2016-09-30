@@ -28,4 +28,10 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  */
 @ResponseStatus(value = HttpStatus.NOT_FOUND)   // TODO: enable better documentation of what was not found
 public class NoSuchResourceException extends Exception {
+    public NoSuchResourceException(String message) {
+        super(message);
+    }
+
+    public NoSuchResourceException() {
+    }
 }

@@ -119,7 +119,12 @@
                                 <td class="less">${groupService.getReleasesCount(group)}</td>
                                 <td class="less">${group.minFilesToFormRelease == null ? "n/a" : group.minFilesToFormRelease}</td>
                                 <td class="less">${group.backfillTarget}</td>
-                                <td class="less" id="groupdel-${group.id}"><a title="Reset this group" href="javascript:ajax_group_reset(${group.id})" class="group_reset">Reset</a> | <a href="javascript:ajax_group_delete(${group.id})" class="group_delete">Delete</a> | <a href="javascript:ajax_group_purge(${group.id})" class="group_purge" onclick="return confirm('Are you sure? This will delete all releases, binaries/parts in the selected group');" >Purge</a></td>
+                                <td class="less" id="groupdel-${group.id}">
+                                    <a title="Reset this group" href="javascript:ajax_group_reset(${group.id})" class="group_reset">Reset</a> |
+                                    <a href="javascript:ajax_group_backfill(${group.id})" class="group_backfill">Backfill</a> |
+                                    <a href="javascript:ajax_group_delete(${group.id})" class="group_delete">Delete</a> |
+                                    <a href="javascript:ajax_group_purge(${group.id})" class="group_purge" onclick="return confirm('Are you sure? This will delete all releases, binaries/parts in the selected group');" >Purge</a>
+                                </td>
                                 </tr>
                             </c:forEach>
                         </table>

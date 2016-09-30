@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015. Sten Martinez
+ * Copyright (c) 2016. Sten Martinez
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,6 @@ import net.longfalcon.newsj.fs.model.Directory;
 import net.longfalcon.newsj.fs.model.FsFile;
 import net.longfalcon.newsj.model.Binary;
 import net.longfalcon.newsj.model.Category;
-import net.longfalcon.newsj.model.Part;
 import net.longfalcon.newsj.model.Release;
 import net.longfalcon.newsj.persistence.BinaryDAO;
 import net.longfalcon.newsj.persistence.CategoryDAO;
@@ -49,9 +48,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.Charset;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * User: Sten Martinez
@@ -134,21 +131,15 @@ public class Nzb {
             Segments segmentsElement = new Segments();
             List<Segment> segments = segmentsElement.getSegment();
 
-            // TODO: manually pull out messageID, size and partnumber from a faster query for distinct(messageID)
-            List<Part> parts = partDAO.findPartsByBinaryId(binary.getId());
-            Set<String> messageIds = new HashSet<>();
-            for (Part part : parts) {
-                String messageId = part.getMessageId();
+            List<Object[]> messageIdSizePartNos = partDAO.findDistinctMessageIdSizeAndPartNumberByBinaryId(binary.getId());
+            for (Object[] messageIdSizePartNo : messageIdSizePartNos) {
+                // messageIdSizePartNo is {String,Long,Integer}
+                Segment segment = new Segment();
+                segment.setBytes(String.valueOf(messageIdSizePartNo[1]));
+                segment.setNumber(String.valueOf(messageIdSizePartNo[2]));
 
-                if (!messageIds.contains(messageId)) {
-                    Segment segment = new Segment();
-                    segment.setBytes(String.valueOf(part.getSize()));
-                    segment.setNumber(String.valueOf(part.getPartNumber()));
-
-                    segment.setvalue(messageId);
-                    segments.add(segment);
-                    messageIds.add(messageId);
-                }
+                segment.setvalue(String.valueOf(messageIdSizePartNo[0]));
+                segments.add(segment);
             }
             fileElement.setSegments(segmentsElement);
 
@@ -174,7 +165,7 @@ public class Nzb {
 
     public FsFile getNzbFileHandle(Release release, Directory nzbBaseDir) throws IOException {
         String releaseGuid = release.getGuid();
-        String releaseName = release.getName();
+        String releaseName = release.getName().trim();
 
         // nzbs are stored in a dir with the first char of their GUID.
         char subDirName = releaseGuid.charAt(0);

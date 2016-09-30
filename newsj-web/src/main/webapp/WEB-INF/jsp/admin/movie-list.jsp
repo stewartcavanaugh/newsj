@@ -74,7 +74,7 @@
 
                         <c:forEach items="${movieInfoList}" var="movieInfo" varStatus="rowNum">
                             <tr class="${text:cycle(rowNum, "", "alt")}">
-                                <td class="less"><a href="http://www.imdb.com/title/tt${movieInfo.imdbId}" title="View in IMDB">${movieInfo.imdbId}</a></td>
+                                <td class="less"><a href="http://www.imdb.com/title/tt${text:formatImdbId(movieInfo.imdbId)}" title="View in IMDB">${text:formatImdbId(movieInfo.imdbId)}</a></td>
                                 <td class="less"><a href="http://www.themoviedb.org/movie/${movieInfo.tmdbId}" title="View in TMDb">${movieInfo.tmdbId}</a></td>
                                 <td><a title="Edit" href="${pageContext.request.contextPath}/admin/movie-edit?id=${movieInfo.id}">${movieInfo.title} (${movieInfo.year})</a></td>
                                 <td class="less">${movieInfo.cover}</td>

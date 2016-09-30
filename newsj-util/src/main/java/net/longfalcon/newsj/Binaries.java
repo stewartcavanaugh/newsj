@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015. Sten Martinez
+ * Copyright (c) 2016. Sten Martinez
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -171,7 +171,7 @@ public class Binaries {
                     }
                 } else {
                     if (firstArticle > (lastArticle - newGroupMsgsToScan)) {
-                        firstArticle = firstArticle; //????
+                        //firstArticle = firstArticle; //????
                     } else {
                         firstArticle = lastArticle - newGroupMsgsToScan;
                     }
@@ -196,9 +196,10 @@ public class Binaries {
 
             // Deactivate empty groups
             if ((lastArticle - firstArticle) <= 5) {
-                group.setActive(false);
+                /*group.setActive(false);
                 group.setLastUpdated(new Date());
-                updateGroupModel(group);
+                updateGroupModel(group);*/
+                // todo: enable when "empty group" is more clearly understood
             }
 
             // Calculate total number of parts
@@ -253,6 +254,14 @@ public class Binaries {
                 }
 
                 DateTime lastRecordPostDate = backfill.postDate(nntpClient, lastArticle, false);
+                // DEBUG REMOVE
+                if (lastRecordPostDate == null) {
+                    _log.error("retrying backfill.postDate(nntpClient, " + lastArticle + ", true)");
+                    lastRecordPostDate = backfill.postDate(nntpClient, lastArticle, true);
+                    if (lastRecordPostDate == null) {
+                        lastRecordPostDate = new DateTime();
+                    }
+                }
                 group.setLastRecordPostdate(lastRecordPostDate.toDate());
                 group.setLastUpdated(new Date());
                 updateGroupModel(group);
@@ -316,6 +325,7 @@ public class Binaries {
 
                         //article was added, delete from partrepair
                         // May need to be stored for later to prevent modification
+                        _log.info("part " + part.getNumber() + " successfully added");
                         partRepairDAO.deletePartRepair(partRepair);
                     } else {
                         partsFailed++;
@@ -323,6 +333,7 @@ public class Binaries {
                         //article was not added, increment attempts
                         int attempts = partRepair.getAttempts();
                         partRepair.setAttempts(attempts+1);
+                        _log.info("part " + partRepair.getNumberId() + " was not added");
                         partRepairDAO.updatePartRepair(partRepair);
                     }
                 }
@@ -340,7 +351,7 @@ public class Binaries {
         }
     }
 
-    @Transactional(isolation = Isolation.REPEATABLE_READ, propagation = Propagation.NOT_SUPPORTED)
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.NOT_SUPPORTED)
     public void updateGroupModel(Group group) {
         groupDAO.update(group);
     }

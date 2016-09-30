@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015. Sten Martinez
+ * Copyright (c) 2016. Sten Martinez
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,12 +49,21 @@ public class ReleaseNfoDAOImpl extends HibernateDAOImpl implements net.longfalco
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public List<ReleaseNfo> findReleaseNfoWithNullNfoByAttempts(int attempts) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ReleaseNfo.class);
         criteria.add(Restrictions.isNull("nfo"));
         criteria.add(Restrictions.lt("attemtps", attempts));
 
         return criteria.list();
+    }
+
+    @Override
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
+    public ReleaseNfo findByReleaseId(long releaseId) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ReleaseNfo.class);
+        criteria.add(Restrictions.eq("release.id", releaseId));
+
+        return (ReleaseNfo) criteria.uniqueResult();
     }
 }

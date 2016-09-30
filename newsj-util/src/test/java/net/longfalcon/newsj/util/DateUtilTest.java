@@ -19,6 +19,7 @@
 package net.longfalcon.newsj.util;
 
 import org.joda.time.DateTime;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.Date;
@@ -33,6 +34,11 @@ public class DateUtilTest {
     @Test
     public void testParseNNTPDate() throws Exception {
         DateTime dateTime = DateUtil.parseNNTPDate("Tue, 06 Oct 2015 01:54:02 +0200 (UTC)");
+        /*DateFormat format = new SimpleDateFormat("dd MMM yy HH:mm z", Locale.ENGLISH);
+        Date date = format.parse("02 Apr 16 17:50 CEST");*/
+        DateTime dateTime1 = DateUtil.parseNNTPDate("02 Apr 16 17:50 CEST");
+        Assert.assertNotNull(dateTime);
+        Assert.assertNotNull(dateTime1);
     }
 
     @Test

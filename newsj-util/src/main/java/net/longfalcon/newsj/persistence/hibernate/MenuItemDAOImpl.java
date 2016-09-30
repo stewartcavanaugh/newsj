@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015. Sten Martinez
+ * Copyright (c) 2016. Sten Martinez
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,6 @@ import net.longfalcon.newsj.model.MenuItem;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
-import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,7 +46,7 @@ public class MenuItemDAOImpl extends HibernateDAOImpl implements net.longfalcon.
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public List<MenuItem> getMenuItemsByRole(int roleId, boolean noGuestRole) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(MenuItem.class);
         criteria.add(Restrictions.le("role", roleId));
@@ -60,7 +59,7 @@ public class MenuItemDAOImpl extends HibernateDAOImpl implements net.longfalcon.
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public List<MenuItem> getMenuItems() {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(MenuItem.class);
         criteria.addOrder(Order.asc("role"));
@@ -70,7 +69,7 @@ public class MenuItemDAOImpl extends HibernateDAOImpl implements net.longfalcon.
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public MenuItem findByMenuItemId(long id) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(MenuItem.class);
         criteria.add(Restrictions.eq("id", id));

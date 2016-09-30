@@ -1,5 +1,5 @@
 <%--
-  ~ Copyright (c) 2015. Sten Martinez
+  ~ Copyright (c) 2016. Sten Martinez
   ~
   ~ This program is free software; you can redistribute it and/or modify
   ~ it under the terms of the GNU General Public License as published by
@@ -97,5 +97,8 @@
     </li>
     <li>
         <a href="${pageContext.request.contextPath}/admin/site-stats">Site Stats</a>
+    </li>
+    <li>
+        <a href="${pageContext.request.contextPath}/admin/job-list">Scheduled Jobs</a>
     </li>
 </ul>

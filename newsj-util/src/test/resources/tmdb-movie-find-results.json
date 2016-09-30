@@ -1,0 +1,29 @@
+{
+  "movie_results": [
+    {
+      "adult": false,
+      "backdrop_path": "/n2vIGWw4ezslXjlP0VNxkp9wqwU.jpg",
+      "genre_ids": [
+        12,
+        16,
+        35,
+        10751
+      ],
+      "id": 12,
+      "original_language": "en",
+      "original_title": "Finding Nemo",
+      "overview": "A tale which follows the comedic and eventful journeys of two fish, the fretful Marlin and his young son Nemo, who are separated from each other in the Great Barrier Reef when Nemo is unexpectedly taken from his home and thrust into a fish tank in a dentist's office overlooking Sydney Harbor. Buoyed by the companionship of a friendly but forgetful fish named Dory, the overly cautious Marlin embarks on a dangerous trek and finds himself the unlikely hero of an epic journey to rescue his son.",
+      "release_date": "2003-05-30",
+      "poster_path": "/zjqInUwldOBa0q07fOyohYCWxWX.jpg",
+      "popularity": 4.255547,
+      "title": "Finding Nemo",
+      "video": false,
+      "vote_average": 7.2,
+      "vote_count": 2417
+    }
+  ],
+  "person_results": [],
+  "tv_results": [],
+  "tv_episode_results": [],
+  "tv_season_results": []
+}

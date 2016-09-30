@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015. Sten Martinez
+ * Copyright (c) 2016. Sten Martinez
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ import java.util.List;
 @Repository
 public class ReleaseRegexDAOImpl extends HibernateDAOImpl implements net.longfalcon.newsj.persistence.ReleaseRegexDAO {
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS )
+    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS )
     public List<ReleaseRegex> getRegexes(boolean activeOnly, String groupName, boolean userReleaseRegexes) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ReleaseRegex.class);
 
@@ -68,7 +68,7 @@ public class ReleaseRegexDAOImpl extends HibernateDAOImpl implements net.longfal
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS )
+    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS )
     public ReleaseRegex findById(long id) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ReleaseRegex.class);
         criteria.add(Restrictions.eq("id", id));

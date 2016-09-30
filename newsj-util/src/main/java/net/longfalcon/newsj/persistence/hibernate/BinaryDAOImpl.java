@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015. Sten Martinez
+ * Copyright (c) 2016. Sten Martinez
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,10 @@ package net.longfalcon.newsj.persistence.hibernate;
 import net.longfalcon.newsj.model.Binary;
 import net.longfalcon.newsj.model.MatchedReleaseQuery;
 import org.hibernate.Criteria;
+import org.hibernate.FetchMode;
 import org.hibernate.Query;
+import org.hibernate.criterion.Conjunction;
+import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -45,7 +48,7 @@ import java.util.List;
 public class BinaryDAOImpl extends HibernateDAOImpl implements net.longfalcon.newsj.persistence.BinaryDAO {
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public List<Binary> findByReleaseId(long releaseId) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Binary.class);
         criteria.add(Restrictions.eq("releaseId", releaseId));
@@ -54,7 +57,7 @@ public class BinaryDAOImpl extends HibernateDAOImpl implements net.longfalcon.ne
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public Binary findByBinaryHash(String binaryHash) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Binary.class);
         criteria.add(Restrictions.eq("binaryHash", binaryHash));
@@ -63,7 +66,7 @@ public class BinaryDAOImpl extends HibernateDAOImpl implements net.longfalcon.ne
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public List<Binary> findByGroupIdsAndProcStat(Collection<Long> groupIds, int procStat) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Binary.class);
         criteria.add(Restrictions.in("groupId", groupIds));
@@ -74,14 +77,14 @@ public class BinaryDAOImpl extends HibernateDAOImpl implements net.longfalcon.ne
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public List<MatchedReleaseQuery> findBinariesByProcStatAndTotalParts(int procstat) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Binary.class);
         criteria.add(Restrictions.eq("procStat", procstat));
         criteria.setProjection(Projections.projectionList()
                         .add(Projections.rowCount(), "numberOfBinaries")
-                        .add(Projections.property("groupId").as("group"))
-                        .add(Projections.property("reqId").as("reqId"))
+                        .add(Projections.groupProperty("groupId").as("group"))
+                        .add(Projections.groupProperty("reqId").as("reqId"))
                         .add(Projections.groupProperty("relName").as("releaseName"))
                         .add(Projections.groupProperty("relTotalPart").as("releaseTotalParts"))
                         .add(Projections.groupProperty("fromName").as("fromName"))
@@ -161,7 +164,7 @@ public class BinaryDAOImpl extends HibernateDAOImpl implements net.longfalcon.ne
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public List<Binary> findBinariesByReleaseNameProcStatGroupIdFromName(String relName, int procStat, long groupId, String fromName) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Binary.class);
         criteria.add(Restrictions.eq("relName", relName));
@@ -173,7 +176,7 @@ public class BinaryDAOImpl extends HibernateDAOImpl implements net.longfalcon.ne
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public Timestamp findMaxDateAddedBinaryByReleaseNameProcStatGroupIdFromName(String relName, int procStat, long groupId, String fromName) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Binary.class);
         criteria.add(Restrictions.eq("relName", relName));
@@ -222,7 +225,7 @@ public class BinaryDAOImpl extends HibernateDAOImpl implements net.longfalcon.ne
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public List<Binary> findBinariesByReleaseId(long releaseId) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Binary.class);
         criteria.add(Restrictions.eq("releaseId", releaseId));
@@ -242,7 +245,7 @@ public class BinaryDAOImpl extends HibernateDAOImpl implements net.longfalcon.ne
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public List<Long> findBinaryIdsByGroupId(long groupId) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Binary.class);
         criteria.add(Restrictions.eq("groupId", groupId));
@@ -259,7 +262,7 @@ public class BinaryDAOImpl extends HibernateDAOImpl implements net.longfalcon.ne
      * @return
      */
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public List<Binary> findByGroupIdProcStatsReleaseId(long groupId, List<Integer> procStats, Long releaseId) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Binary.class);
         criteria.add(Restrictions.eq("groupId", groupId));
@@ -272,6 +275,31 @@ public class BinaryDAOImpl extends HibernateDAOImpl implements net.longfalcon.ne
             criteria.add(Restrictions.eq("releaseId", releaseId));
         }
         criteria.addOrder(Order.asc("date"));
+
+        return criteria.list();
+    }
+
+    @Override
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
+    public List<Binary> searchByNameAndExcludedCats(String[] searchTokens, int limit, Collection<Integer> excludedCategoryIds) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Binary.class);
+
+        if (searchTokens != null && searchTokens.length > 0) {
+            Conjunction searchTokensOr = Restrictions.conjunction();
+            for (String searchToken : searchTokens) {
+                searchTokensOr.add(Restrictions.ilike("name", searchToken.trim(), MatchMode.ANYWHERE));
+            }
+            criteria.add(searchTokensOr);
+        }
+
+        if (excludedCategoryIds != null && !excludedCategoryIds.isEmpty()) {
+            criteria.add(Restrictions.not(Restrictions.in("categoryId", excludedCategoryIds)));
+        }
+
+        criteria.setMaxResults(limit);
+        criteria.setFetchMode("releaseGuid", FetchMode.EAGER);
+        criteria.setFetchMode("numberParts", FetchMode.EAGER);
+        criteria.setFetchMode("groupName", FetchMode.EAGER);
 
         return criteria.list();
     }

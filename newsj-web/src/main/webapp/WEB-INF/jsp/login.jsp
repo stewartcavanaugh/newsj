@@ -1,5 +1,5 @@
 <%--
-  ~ Copyright (c) 2015. Sten Martinez
+  ~ Copyright (c) 2016. Sten Martinez
   ~
   ~ This program is free software; you can redistribute it and/or modify
   ~ it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
   Time: 4:12 PM
 --%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="text" uri="http://java.longfalcon.net/jsp/jstl/text" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -56,8 +57,10 @@
         <%--START PAGE CONTENT--%>
             <h1>Login</h1>
 
-            <c:if test="${!(empty error)}">
-                <div class="error">${error}</div>
+            <c:if test="${param.containsKey('error')}">
+                <div class="error">
+                    ${sessionScope.SPRING_SECURITY_LAST_EXCEPTION.message}
+                </div>
             </c:if>
 
             <form:form modelAttribute="loginForm"  action="login" method="post">

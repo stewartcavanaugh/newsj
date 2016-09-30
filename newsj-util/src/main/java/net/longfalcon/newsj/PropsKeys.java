@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015. Sten Martinez
+ * Copyright (c) 2016. Sten Martinez
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,4 +29,8 @@ public class PropsKeys {
     public static final String NNTP_SERVER = "newsj.nntp.server";
     public static final String NNTP_PORT = "newsj.nntp.port";
     public static final String NNTP_SSLENABLED = "newsj.nntp.ssl.enabled";
+    public static final String TMDB_API_URL = "newsj.tmdb.url";
+    public static final String IMDB_API_URL = "newsj.imdb.url";
+    public static final String TRAKT_API_URL = "newsj.trakt.url";
+    public static final String TRAKT_API_APP_ID = "newsj.trakt.appId";
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015. Sten Martinez
+ * Copyright (c) 2016. Sten Martinez
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@ public class UserInviteDAOImpl extends HibernateDAOImpl implements net.longfalco
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public void cleanOldInvites(Date expireDate) {
         Query query = sessionFactory.getCurrentSession().createQuery("delete from UserInvite ui where createDate < :expireDate");
         query.setParameter("expireDate", expireDate);
@@ -56,7 +56,7 @@ public class UserInviteDAOImpl extends HibernateDAOImpl implements net.longfalco
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public UserInvite getInviteByGuid(String guid) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserInvite.class);
         criteria.add(Restrictions.eq("guid", guid));

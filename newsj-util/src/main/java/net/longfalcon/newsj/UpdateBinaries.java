@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015. Sten Martinez
+ * Copyright (c) 2016. Sten Martinez
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * Hello world!
+ * command line app for updating binaries
  *
  */
 public class UpdateBinaries
@@ -33,5 +33,6 @@ public class UpdateBinaries
                 new ClassPathXmlApplicationContext(new String[] {"application-context.xml"});
         Binaries binaries = (Binaries) context.getBean("binaries");
         binaries.updateAllGroups();
+        ((ClassPathXmlApplicationContext) context).destroy();
     }
 }

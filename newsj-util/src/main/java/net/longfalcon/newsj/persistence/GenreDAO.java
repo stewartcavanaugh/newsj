@@ -31,4 +31,6 @@ public interface GenreDAO {
     public void updateGenre(Genre genre);
     public void deleteGenre(Genre genre);
     public List<Genre> getGenres(int type);
+
+    Genre getGenre(long genreId);
 }

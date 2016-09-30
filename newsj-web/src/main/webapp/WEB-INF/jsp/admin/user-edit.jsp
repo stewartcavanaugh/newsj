@@ -63,7 +63,7 @@
                     <tr>
                         <td>Name:</td>
                         <td>
-                            <form:hidden path="id" name="id" value="${user.id}" />
+                            <form:hidden path="userId" name="id" value="${user.userId}" />
                             <form:input autocomplete="off" path="username" class="long" name="username" type="text" value="${user.username}" />
                         </td>
                     </tr>
@@ -79,12 +79,12 @@
                         <td>Password:</td>
                         <td>
                             <form:password path="password" autocomplete="off" class="long" name="password" value="" />
-                            <c:if test="${user.id > 0}">
+                            <c:if test="${user.userId > 0}">
                                 <div class="hint">Only enter a password if you want to change it.</div>
                             </c:if>
                         </td>
                     </tr>
-                    <c:if test="${user.id > 0}">
+                    <c:if test="${user.userId > 0}">
                         <tr>
                             <td>Grabs:</td>
                             <td>

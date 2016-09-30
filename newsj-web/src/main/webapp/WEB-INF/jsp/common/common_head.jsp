@@ -1,6 +1,5 @@
-<%--@elvariable id="site" type="net.longfalcon.newsj.model.Site"--%>
 <%--
-  ~ Copyright (c) 2015. Sten Martinez
+  ~ Copyright (c) 2016. Sten Martinez
   ~
   ~ This program is free software; you can redistribute it and/or modify
   ~ it under the terms of the GNU General Public License as published by
@@ -17,6 +16,7 @@
   ~ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
   --%>
 
+<%--@elvariable id="site" type="net.longfalcon.newsj.model.Site"--%>
 <%--
   User: Sten Martinez
   Date: 11/7/15
@@ -47,7 +47,7 @@
 
 <script type="text/javascript">
     var WWW_TOP = "${pageContext.request.contextPath}";
-    var SERVERROOT = "${pageContext.request.requestURL}";
+    var SERVERROOT = "${pageContext.request.contextPath}";
     var UID = "${userId}";
     var RSSTOKEN = "${rssToken}";
 </script>

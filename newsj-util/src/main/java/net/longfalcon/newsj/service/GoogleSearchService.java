@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015. Sten Martinez
+ * Copyright (c) 2016. Sten Martinez
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 package net.longfalcon.newsj.service;
 
 import net.longfalcon.newsj.util.ValidatorUtil;
-import net.longfalcon.newsj.ws.GoogleSearchResponse;
+import net.longfalcon.newsj.ws.google.GoogleSearchResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.http.HttpEntity;

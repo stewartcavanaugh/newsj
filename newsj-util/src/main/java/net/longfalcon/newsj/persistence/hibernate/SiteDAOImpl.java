@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015. Sten Martinez
+ * Copyright (c) 2016. Sten Martinez
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,13 +35,13 @@ import org.springframework.transaction.annotation.Transactional;
 public class SiteDAOImpl extends HibernateDAOImpl implements SiteDAO {
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.REPEATABLE_READ)
+    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
     public void update(Site site) {
         this.sessionFactory.getCurrentSession().saveOrUpdate(site);
         this.sessionFactory.getCurrentSession().flush();
     }
 
-    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public Site getDefaultSite() {
         Criteria criteria = this.sessionFactory.getCurrentSession().createCriteria(Site.class);
         criteria.setMaxResults(1);

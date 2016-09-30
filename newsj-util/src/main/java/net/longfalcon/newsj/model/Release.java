@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015. Sten Martinez
+ * Copyright (c) 2016. Sten Martinez
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,9 +53,11 @@ public class Release {
     private int grabs;
     private int comments;
     private int passwordStatus;
+    private ReleaseNfo releaseNfo;
 
     private int categoryId;
     private String groupName;
+    private String categoryDisplayName;
 
     public long getId() {
         return id;
@@ -265,6 +267,14 @@ public class Release {
         this.imdbId = imdbId;
     }
 
+    public ReleaseNfo getReleaseNfo() {
+        return releaseNfo;
+    }
+
+    public void setReleaseNfo(ReleaseNfo releaseNfo) {
+        this.releaseNfo = releaseNfo;
+    }
+
     @Transient
     public int getCategoryId() {
         return categoryId;
@@ -281,5 +291,14 @@ public class Release {
 
     public void setGroupName(String groupName) {
         this.groupName = groupName;
+    }
+
+    @Transient
+    public String getCategoryDisplayName() {
+        return categoryDisplayName;
+    }
+
+    public void setCategoryDisplayName(String categoryDisplayName) {
+        this.categoryDisplayName = categoryDisplayName;
     }
 }

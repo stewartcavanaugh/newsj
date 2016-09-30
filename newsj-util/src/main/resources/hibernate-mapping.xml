@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 <!--
-  ~ Copyright (c) 2015. Sten Martinez
-  ~
+  ~ Copyright (c) 2016. Sten Martinez
   ~ This program is free software; you can redistribute it and/or modify
   ~ it under the terms of the GNU General Public License as published by
   ~ the Free Software Foundation; either version 2 of the License, or
@@ -48,6 +47,9 @@
         <property name="importName" column="importname"/>
         <property name="releaseId" column="releaseID"/>
         <property name="dateAdded" column="dateadded" type="timestamp"/>
+        <property name="numberParts" lazy="true" formula="(SELECT COUNT(p.ID) FROM parts p where p.binaryID = ID)"/>
+        <property name="groupName" lazy="true" formula="(select g.name_ from groups g where g.ID = groupID)"/>
+        <property name="releaseGuid" lazy="true" formula="(select r.guid from releases r where r.ID = releaseID)"/>
     </class>
     <class name="BinaryBlacklistEntry" table="binaryblacklist">
         <!--<cache usage="read-only"/>-->
@@ -136,6 +138,7 @@
         <property name="forumId" column="forumID"/>
         <property name="parentId" column="parentID"/>
         <property name="userId" column="userID"/>
+        <property name="username" formula="(select u.username from users u where u.ID = userID)"/>
         <property name="subject" column="subject"/>
         <property name="message" column="message"/>
         <property name="locked" column="locked"/>
@@ -176,6 +179,35 @@
         <property name="minFilesToFormRelease" column="minfilestoformrelease" type="java.lang.Integer" />
         <property name="active" column="active" type="java.lang.Boolean"/>
         <property name="description" column="description"/>
+        <property name="releaseCount" formula="(select count(*) from releases r where r.groupID = ID)"/>
+    </class>
+    <class name="JobConfig" table="jobconfig">
+        <id name="id" column="ID">
+            <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+                <param name="sequence_name">Newsj_SEQ</param>
+                <param name="optimizer">pooled</param>
+                <param name="initial_value">1</param>
+                <param name="increment_size">100</param>
+            </generator>
+        </id>
+        <property name="jobName" column="JOB_NAME" unique="true"/>
+        <property name="jobFrequency" column="JOB_FREQ"/>
+        <property name="frequencyConfig" column="JOB_CONFIG"/>
+    </class>
+    <class name="JobLog" table="joblog">
+        <id name="id" column="ID">
+            <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+                <param name="sequence_name">Newsj_SEQ</param>
+                <param name="optimizer">pooled</param>
+                <param name="initial_value">1</param>
+                <param name="increment_size">100</param>
+            </generator>
+        </id>
+        <property name="jobName" column="JOB_NAME"/>
+        <property name="startDate" column="START_DATE"/>
+        <property name="endDate" column="END_DATE"/>
+        <property name="result" column="RESULT"/>
+        <property name="notes" column="NOTES"/>
     </class>
     <class name="MenuItem" table="menu">
         <id name="id" column="ID">
@@ -208,7 +240,7 @@
         <property name="tagline" column="tagline"/>
         <property name="rating" column="rating"/>
         <property name="plot" column="plot"/>
-        <property name="year" column="year"/>
+        <property name="year" column="year_"/>
         <property name="genre" column="genre"/>
         <property name="director" column="director"/>
         <property name="actors" column="actors"/>
@@ -235,7 +267,7 @@
         <property name="publisher" column="publisher"/>
         <property name="releaseDate" column="releasedate"/>
         <property name="review" column="review"/>
-        <property name="year" column="year"/>
+        <property name="year" column="year_"/>
         <property name="genreId" column="genreID"/>
         <property name="tracks" column="tracks"/>
         <property name="cover" column="cover"/>
@@ -340,7 +372,7 @@
         <property name="guid" column="guid" not-null="true"/>
         <property name="fromName" column="fromname"/>
         <property name="completion" column="completion"/>
-        <many-to-one name="category" class="Category" not-null="true" unique="false" column="categoryID"/>
+        <many-to-one name="category" class="Category" not-null="false" unique="false" column="categoryID"/>
         <property name="regexId" column="regexID"/>
         <property name="rageId" column="rageID"/>
         <property name="seriesFull" column="seriesfull"/>
@@ -355,6 +387,7 @@
         <property name="grabs" column="grabs"/>
         <property name="comments" column="comments"/>
         <property name="passwordStatus" column="passwordstatus"/>
+        <one-to-one name="releaseNfo" property-ref="release"/>
     </class>
     <class name="Site" table="site">
         <!--<cache usage="read-write"/>-->
@@ -421,13 +454,13 @@
         </id>
         <property name="rageId" column="rageID"/>
         <property name="tvdbId" column="tvdbID"/>
+        <property name="traktId" column="traktid"/>
         <property name="releaseTitle" column="releasetitle"/>
         <property name="description" column="description"/>
         <property name="genre" column="genre"/>
         <property name="country" column="country"/>
         <property name="createDate" column="createddate" type="date"/>
         <property name="imgData" column="imgdata" lazy="true" not-null="false" type="materialized_blob"/>
-        <property name="hasImage" formula="imgdata is not null"/>
     </class>
     <class name="UserCart" table="usercart">
         <id name="id" column="ID">

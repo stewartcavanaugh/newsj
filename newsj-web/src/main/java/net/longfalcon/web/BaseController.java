@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015. Sten Martinez
+ * Copyright (c) 2016. Sten Martinez
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +35,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.Cookie;
@@ -80,7 +79,7 @@ public class BaseController {
     private boolean isAdmin;
 
     @ModelAttribute
-    public void populateModel(Model model, HttpSession httpSession, NativeWebRequest nativeWebRequest,
+    public void populateModel(Model model, HttpSession httpSession, HttpServletRequest httpServletRequest,
                               @RequestParam(value = "t", required = false, defaultValue = "") String categoryId,
                               @RequestParam(value = "id", required = false, defaultValue = "Enter keywords") String searchStr) {
         model.addAttribute("site", config.getDefaultSite());
@@ -112,7 +111,7 @@ public class BaseController {
                     }
                     model.addAttribute("userData", _getUserData(user));
                     String sabCookieName = "sabnzbd_" + String.valueOf(userId) + "__apikey";
-                    sabEnabled = isCookieSet(sabCookieName, nativeWebRequest);
+                    sabEnabled = isCookieSet(sabCookieName, httpServletRequest);
                 } else {
                     model.addAttribute("loggedIn", false);
                 }
@@ -121,7 +120,11 @@ public class BaseController {
             _log.error(e);
         }
 
+        String error = String.valueOf(httpSession.getAttribute("errors"));
+        httpSession.setAttribute("errors", "");
+
         model.addAttribute("categories", categoryService.getCategoriesForMenu(userId));
+        model.addAttribute("error", error);
         model.addAttribute("rssToken", rssToken);
         model.addAttribute("userId", userIdString);
         model.addAttribute("loggedIn", isLoggedIn);
@@ -133,9 +136,8 @@ public class BaseController {
         model.addAttribute("articlecontentlist", contentService.getForMenuByTypeAndRole(ContentService.TYPEARTICLE, roleId));
     }
 
-    protected boolean isCookieSet(String cookieName, NativeWebRequest nativeWebRequest) {
+    protected boolean isCookieSet(String cookieName, HttpServletRequest httpServletRequest) {
         try {
-            HttpServletRequest httpServletRequest = (HttpServletRequest) nativeWebRequest.getNativeRequest();
             Cookie[] cookies = httpServletRequest.getCookies();
             for (Cookie cookie : cookies) {
                 if ( cookie.getName().equals(cookieName) && ValidatorUtil.isNotNull(cookie.getValue())) {
@@ -202,7 +204,11 @@ public class BaseController {
     }
 
     public String getPageMetaTitle() {
-        return title;
+        if (ValidatorUtil.isNull(this.pageMetaTitle)) {
+            return title;
+        } else {
+            return pageMetaTitle;
+        }
     }
 
     public void setPageMetaTitle(String pageMetaTitle) {

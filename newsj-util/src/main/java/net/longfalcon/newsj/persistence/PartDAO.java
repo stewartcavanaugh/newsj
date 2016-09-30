@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015. Sten Martinez
+ * Copyright (c) 2016. Sten Martinez
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,4 +42,6 @@ public interface PartDAO {
     Long sumPartsSizeByBinaryId(long binaryId);
 
     List<Part> findByNumberAndBinaryIds(long number, List<Long> binaryIds);
+
+    List<Object[]> findDistinctMessageIdSizeAndPartNumberByBinaryId(long binaryId);
 }

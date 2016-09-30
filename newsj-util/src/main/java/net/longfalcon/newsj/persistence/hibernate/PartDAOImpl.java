@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015. Sten Martinez
+ * Copyright (c) 2016. Sten Martinez
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@ import net.longfalcon.newsj.model.Part;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
@@ -64,7 +65,7 @@ public class PartDAOImpl extends HibernateDAOImpl implements net.longfalcon.news
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public List<Part> findPartsByBinaryId(long binaryId) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Part.class);
         criteria.add(Restrictions.eq("binaryId", binaryId));
@@ -73,7 +74,7 @@ public class PartDAOImpl extends HibernateDAOImpl implements net.longfalcon.news
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public Long countPartsByBinaryId(long binaryId) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Part.class);
         criteria.add(Restrictions.eq("binaryId", binaryId));
@@ -83,7 +84,7 @@ public class PartDAOImpl extends HibernateDAOImpl implements net.longfalcon.news
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public Long sumPartsSizeByBinaryId(long binaryId) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Part.class);
         criteria.add(Restrictions.eq("binaryId", binaryId));
@@ -93,11 +94,31 @@ public class PartDAOImpl extends HibernateDAOImpl implements net.longfalcon.news
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public List<Part> findByNumberAndBinaryIds(long number, List<Long> binaryIds) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Part.class);
         criteria.add(Restrictions.eq("number", number));
         criteria.add(Restrictions.in("binaryId", binaryIds));
+
+        return criteria.list();
+    }
+
+    /**
+     * findDistinctMessageIdSizeAndPartNumberByBinaryId
+     * @param binaryId
+     * @return list of {String,Long,Integer}
+     */
+    @Override
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
+    public List<Object[]> findDistinctMessageIdSizeAndPartNumberByBinaryId(long binaryId) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Part.class);
+        criteria.add(Restrictions.eq("binaryId", binaryId));
+        criteria.setProjection(Projections.projectionList()
+                        .add(Projections.distinct(Projections.property("messageId")))
+                        .add(Projections.property("size"))
+                        .add(Projections.property("partNumber"))
+        );
+        criteria.addOrder(Order.desc("partNumber"));
 
         return criteria.list();
     }

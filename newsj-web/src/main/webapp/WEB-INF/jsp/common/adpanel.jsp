@@ -1,5 +1,6 @@
+<%@ page import="net.longfalcon.newsj.util.ArrayUtil" %>
 <%--
-  ~ Copyright (c) 2015. Sten Martinez
+  ~ Copyright (c) 2016. Sten Martinez
   ~
   ~ This program is free software; you can redistribute it and/or modify
   ~ it under the terms of the GNU General Public License as published by
@@ -37,3 +38,10 @@
         </script>
     </c:if>
 </div>
+
+<!--
+Request URI: ${pageContext.request.requestURI}
+Request URL: ${pageContext.request.requestURL}
+<c:forEach items='${headerValues.get("referer")}' var="value">referer:     ${value}</c:forEach>
+Servlet Context Path: ${pageContext.servletContext.contextPath}
+-->

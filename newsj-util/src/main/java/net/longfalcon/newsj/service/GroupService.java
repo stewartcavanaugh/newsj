@@ -1,3 +1,21 @@
+/*
+ * Copyright (c) 2016. Sten Martinez
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
+
 package net.longfalcon.newsj.service;
 
 import net.longfalcon.newsj.model.Group;
@@ -20,11 +38,50 @@ public class GroupService {
     private GroupDAO groupDAO;
     private ReleaseDAO releaseDAO;
     private BinaryDAO binaryDAO;
+    private SchedulerService schedulerService;
 
     @Transactional
     public void delete(int groupId) {
+        releaseDAO.deleteByGroupId(groupId);
+        binaryDAO.deleteByGroupId(groupId);
         Group group = groupDAO.findGroupByGroupId(groupId);
         groupDAO.delete(group);
+    }
+
+    @Transactional
+    public void purge(int groupId) {
+        releaseDAO.deleteByGroupId(groupId);
+        binaryDAO.deleteByGroupId(groupId);
+        reset(groupId);
+    }
+
+    @Transactional
+    public void reset(int groupId) {
+        Group group = groupDAO.findGroupByGroupId(groupId);
+        group.setBackfillTarget(0);
+        group.setFirstRecord(0);
+        group.setFirstRecordPostdate(null);
+        group.setLastRecord(0);
+        group.setLastRecordPostdate(null);
+        group.setLastUpdated(null);
+        groupDAO.update(group);
+    }
+
+    public void backfill(int groupId) {
+        Group group = groupDAO.findGroupByGroupId(groupId);
+        schedulerService.scheduleBackfillJob(group.getName());
+    }
+
+    @Transactional
+    public void update(Group group) {
+        groupDAO.update(group);
+    }
+
+    @Transactional
+    public void updateGroupStatus(long groupId, boolean active) {
+        Group group = groupDAO.findGroupByGroupId(groupId);
+        group.setActive(active);
+        groupDAO.update(group);
     }
 
     public BinaryDAO getBinaryDAO() {
@@ -59,34 +116,11 @@ public class GroupService {
         return releaseDAO.countByGroupId(group.getId());
     }
 
-    @Transactional
-    public void purge(int groupId) {
-        releaseDAO.deleteByGroupId(groupId);
-        binaryDAO.deleteByGroupId(groupId);
-        reset(groupId);
+    public SchedulerService getSchedulerService() {
+        return schedulerService;
     }
 
-    @Transactional
-    public void reset(int groupId) {
-        Group group = groupDAO.findGroupByGroupId(groupId);
-        group.setBackfillTarget(0);
-        group.setFirstRecord(0);
-        group.setFirstRecordPostdate(null);
-        group.setLastRecord(0);
-        group.setLastRecordPostdate(null);
-        group.setLastUpdated(null);
-        groupDAO.update(group);
-    }
-
-    @Transactional
-    public void update(Group group) {
-        groupDAO.update(group);
-    }
-
-    @Transactional
-    public void updateGroupStatus(long groupId, boolean active) {
-        Group group = groupDAO.findGroupByGroupId(groupId);
-        group.setActive(active);
-        groupDAO.update(group);
+    public void setSchedulerService(SchedulerService schedulerService) {
+        this.schedulerService = schedulerService;
     }
 }

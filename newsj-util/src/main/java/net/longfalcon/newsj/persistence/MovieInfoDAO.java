@@ -36,4 +36,13 @@ public interface MovieInfoDAO {
     MovieInfo findByMovieInfoId(long id);
 
     MovieInfo findByImdbId(long imdbId);
+
+    List<MovieInfo> findByImdbId(List<Long> imdbIds);
+
+    Long getMovieCount(List<Long> imdbIds, String titleSearch, String genreSearch, String actorsSearch,
+                       String directorSearch, String yearSearch);
+
+    List<MovieInfo> getMovies(List<Long> imdbIds, String titleSearch, String genreSearch, String actorsSearch,
+                                  String directorSearch, String yearSearch,
+                                  int offset, int pageSize, String orderByField, boolean descending);
 }

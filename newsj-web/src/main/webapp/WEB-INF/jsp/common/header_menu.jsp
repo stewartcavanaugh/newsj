@@ -1,7 +1,5 @@
-<%--@elvariable id="categories" type="java.util.List<net.longfalcon.newsj.model.Category>"--%>
-<%--@elvariable id="userData" type="net.longfalcon.view.UserData"--%>
 <%--
-  ~ Copyright (c) 2015. Sten Martinez
+  ~ Copyright (c) 2016. Sten Martinez
   ~
   ~ This program is free software; you can redistribute it and/or modify
   ~ it under the terms of the GNU General Public License as published by
@@ -17,6 +15,10 @@
   ~ with this program; if not, write to the Free Software Foundation, Inc.,
   ~ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
   --%>
+
+<%--@elvariable id="categories" type="java.util.List<net.longfalcon.newsj.model.Category>"--%>
+<%--@elvariable id="userData" type="net.longfalcon.view.UserData"--%>
+
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 

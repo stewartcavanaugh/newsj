@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright (c) 2015. Sten Martinez
-  ~
+  ~ Copyright (c) 2016. Sten Martinez
   ~ This program is free software; you can redistribute it and/or modify
   ~ it under the terms of the GNU General Public License as published by
   ~ the Free Software Foundation; either version 2 of the License, or
@@ -40,6 +39,10 @@
         <property name="resolveLazily" value="false"/>
     </bean>
 
-    <mvc:annotation-driven/>
+    <mvc:annotation-driven>
+        <mvc:message-converters register-defaults="true">
+            <bean class="net.longfalcon.web.http.converter.CustomByteArrayHttpMessageConverter"/>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
     <mvc:resources mapping="/resources/**" location="/public-resources/"/>
 </beans>

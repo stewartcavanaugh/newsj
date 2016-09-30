@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015. Sten Martinez
+ * Copyright (c) 2016. Sten Martinez
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,6 +43,8 @@ public interface UserDAO {
     User findByUsername(String username);
 
     User findByEmail(String email);
+
+    User findByApiKey(String apiKey);
 
     long countUsers();
 }

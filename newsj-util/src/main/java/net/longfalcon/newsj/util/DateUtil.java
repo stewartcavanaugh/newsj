@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015. Sten Martinez
+ * Copyright (c) 2016. Sten Martinez
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,8 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -36,6 +38,7 @@ public class DateUtil {
 
     public static final DateTimeFormatter defaultDateFormat = DateTimeFormat.mediumDate();
     public static final DateTimeFormatter RFC_dateFormatter = DateTimeFormat.forPattern("dd MMM yyyy HH:mm:ss z");
+    public static final DateTimeFormatter RFC_822_dateFormatter = DateTimeFormat.forPattern("E, dd MMM yyyy HH:mm:ss Z");
     public static final DateTimeFormatter displayDateFormatter = DateTimeFormat.forPattern("Y-M-d H:m:s");
     public static final DateTimeFormatter airDateFormatter = DateTimeFormat.forPattern("Y-M-d");
     public static final DateTimeFormatter airDateFormatter_2 = DateTimeFormat.forPattern("Y-d-M");
@@ -47,7 +50,9 @@ public class DateUtil {
             "E, dd MMM yyyy HH:mm:ss z",
             "dd MMM yyyy HH:mm:ss Z",
             "dd MMM yyyy HH:mm:ss z",
-            "E, dd MMM yyyy HH:mm:ss Z (z)"
+            "E, dd MMM yyyy HH:mm:ss Z (z)",
+            "dd MMM yy HH:mm z",
+            "dd MMM yy HH:mm Z"
     };
 
     public static DateTime parseNNTPDate(String dateString) {
@@ -65,6 +70,18 @@ public class DateUtil {
                 DateTimeFormatter fmt = DateTimeFormat.forPattern(_dateFormats[i]);
                 dateTime = fmt.parseDateTime(dateString);
             } catch (IllegalArgumentException e) {
+                // do nothing
+            }
+            i++;
+        }
+
+        i = 0;
+        while(dateTime == null && i < _dateFormats.length) {
+            try {
+                DateFormat javaFormatter = new SimpleDateFormat(_dateFormats[i]);
+                Date date = javaFormatter.parse(dateString);
+                dateTime = new DateTime(date);
+            } catch (Exception e) {
                 // do nothing
             }
             i++;
@@ -101,5 +118,13 @@ public class DateUtil {
 
     public static String formatNNTPDate(Date date) {
         return RFC_dateFormatter.print(date.getTime());
+    }
+
+    public static String formatDate(Date date, String format) {
+        if (date == null) {
+            return "Never";
+        }
+        DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern(format);
+        return dateTimeFormatter.print(new DateTime(date));
     }
 }

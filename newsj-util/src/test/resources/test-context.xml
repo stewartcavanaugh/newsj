@@ -43,4 +43,6 @@
     <bean id="nntpConnectionFactory" class="net.longfalcon.newsj.mock.news.MockNntpConnectionFactory">
         <property name="newsServer" ref="testNewsDatabase"/>
     </bean>
+    <bean id="scheduler" class="net.longfalcon.newsj.mock.quartz.MockScheduler">
+    </bean>
 </beans>

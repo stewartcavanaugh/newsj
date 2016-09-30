@@ -75,16 +75,20 @@
                     <table style="width:100%;margin-top:10px;" class="data Sortable highlight">
 
                         <tr>
+                            <th style="width:50px;">id</th>
                             <th style="width:50px;">rageid</th>
+                            <th style="width:50px;">traktid</th>
                             <th>title</th>
                             <th style="width:80px;">date</th>
-                            <th style="width:120px;" class="right">options</th>
+                            <th <%--style="width:120px;"--%> class="right">options</th>
                         </tr>
 
                         <%--TODO: with TvRage clearly gone, this needs to move to TVDB--%>
                         <c:forEach items="${tvRageList}" var="tvRage" varStatus="rowNum">
                             <tr class="${text:cycle(rowNum, "", "alt")}">
+                                <td class="less">${tvRage.id}</td>
                                 <td class="less"><a href="http://www.tvrage.com/shows/id-${tvRage.rageId}" title="View in TvRage">${tvRage.rageId}</a></td>
+                                <td class="less">${tvRage.traktId}</td>
                                 <td><a title="Edit" href="${pageContext.request.contextPath}/admin/rage-edit?id=${tvRage.id}">${text:escapeHtml(tvRage.releaseTitle)}</a></td>
                                 <td class="less">${date:formatDate(tvRage.createDate)}</td>
                                 <td class="right">
@@ -94,6 +98,10 @@
 
                                     <form style="display: inline" action="${pageContext.request.contextPath}/admin/rage-remove?id=${tvRage.id}" method="post">
                                         <input  type="submit" value="remove"/>
+                                    </form>
+
+                                    <form style="display: inline" action="${pageContext.request.contextPath}/admin/rage-rebuild?id=${tvRage.id}" method="post">
+                                        <input  type="submit" value="rebuild"/>
                                     </form>
                                 </td>
                             </tr>    

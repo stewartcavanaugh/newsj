@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015. Sten Martinez
+ * Copyright (c) 2016. Sten Martinez
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@ import net.longfalcon.newsj.Config;
 import net.longfalcon.newsj.fs.model.Directory;
 import net.longfalcon.newsj.fs.model.DirectoryImpl;
 import net.longfalcon.newsj.util.ValidatorUtil;
+import org.apache.commons.lang3.SystemUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -44,7 +45,12 @@ public class DefaultFileSystemServiceImpl implements FileSystemService {
         baseDir = config.getNzbFileLocation();
 
         if (ValidatorUtil.isNull(baseDir)) {
-            String userHome = System.getenv("HOME");
+            String userHome;
+            if (SystemUtils.IS_OS_WINDOWS) {  // windows is a pain
+                userHome = System.getenv("USERPROFILE");
+            } else {
+                userHome = System.getenv("HOME");
+            }
             baseDir = userHome + File.separator + ".newsj";
         }
 

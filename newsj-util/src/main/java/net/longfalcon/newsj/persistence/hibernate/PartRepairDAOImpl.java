@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015. Sten Martinez
+ * Copyright (c) 2016. Sten Martinez
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,13 +53,12 @@ public class PartRepairDAOImpl extends HibernateDAOImpl implements net.longfalco
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public PartRepair findByArticleNumberAndGroupId(long articleNumber, long groupId) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(PartRepair.class)
                 .add(Restrictions.eq("numberId", articleNumber))
-                .add(Restrictions.eq("groupId", articleNumber));
-        List results = criteria.list();
-        return results.size() > 0 ? (PartRepair) results.get(0) : null;
+                .add(Restrictions.eq("groupId", groupId));
+        return (PartRepair) criteria.uniqueResult();
     }
 
     /**
@@ -70,7 +69,7 @@ public class PartRepairDAOImpl extends HibernateDAOImpl implements net.longfalco
      * @return
      */
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public List<PartRepair> findByGroupIdAndAttempts(long groupId, int attempts, boolean lessThan) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(PartRepair.class)
                 .add(Restrictions.eq("groupId", groupId))
@@ -82,7 +81,7 @@ public class PartRepairDAOImpl extends HibernateDAOImpl implements net.longfalco
     }
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public List<PartRepair> findByGroupIdAndNumbers(long groupId, Collection<Long> numbers) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(PartRepair.class)
                 .add(Restrictions.eq("groupId", groupId)).add(Restrictions.in("numberId", numbers))

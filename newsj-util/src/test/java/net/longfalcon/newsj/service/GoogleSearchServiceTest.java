@@ -19,7 +19,7 @@
 package net.longfalcon.newsj.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import net.longfalcon.newsj.ws.GoogleSearchResponse;
+import net.longfalcon.newsj.ws.google.GoogleSearchResponse;
 import org.junit.Assert;
 import org.junit.Test;
 

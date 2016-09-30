@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015. Sten Martinez
+ * Copyright (c) 2016. Sten Martinez
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -159,7 +159,12 @@ public class Backfill {
                 transactionManager.commit(transaction);
             }
             DateTime firstRecordPostDate = postDate(nntpClient, first, false);
-            group.setFirstRecordPostdate(firstRecordPostDate.toDate());
+
+            Date firstRecordPostDateDate = null;
+            if (firstRecordPostDate != null) {
+                firstRecordPostDateDate = firstRecordPostDate.toDate();
+            }
+            group.setFirstRecordPostdate( firstRecordPostDateDate);
             group.setLastUpdated(new Date());
             groupDAO.update(group);
 
@@ -251,6 +256,10 @@ public class Backfill {
                 _log.info("Set interval to " + interval + " articles.");
             }
 
+            if (interval == 1) {
+                break;
+            }
+
             dateOfNextOne = postDate(nntpClient, upperBound-1, true);
             while (dateOfNextOne == null) {
                 dateOfNextOne = postDate(nntpClient, upperBound--, true);
@@ -299,6 +308,7 @@ public class Backfill {
         } while (attempts <= 3 && !success);
 
         if (!success) {
+            _log.warn("unable to find message id " + articleNumber);
             return null;
         }
         DateTime postDate = DateUtil.parseNNTPDate(dateString);
@@ -307,7 +317,7 @@ public class Backfill {
 
     private int daysOld(DateTime then) {
         DateTime now = DateTime.now();
-        if (then.isAfter(now)) {
+        if (then == null || then.isAfter(now)) {
             return 0;
         } else {
             Period period = new Period(then, now);

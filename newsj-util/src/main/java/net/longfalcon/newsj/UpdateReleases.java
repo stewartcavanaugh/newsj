@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015. Sten Martinez
+ * Copyright (c) 2016. Sten Martinez
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
+ * command line app for updating releases
  * User: Sten Martinez
  * Date: 10/10/15
  * Time: 7:30 PM
@@ -32,5 +33,6 @@ public class UpdateReleases {
                 new ClassPathXmlApplicationContext(new String[] {"application-context.xml"});
         Releases releases = (Releases) context.getBean("releases");
         releases.processReleases();
+        ((ClassPathXmlApplicationContext) context).destroy();
     }
 }
