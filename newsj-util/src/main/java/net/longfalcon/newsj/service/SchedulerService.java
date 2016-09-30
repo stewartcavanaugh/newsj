@@ -113,12 +113,20 @@ public class SchedulerService {
         if (JobConfigKeys.UPDATE_JOB_KEY.equals(jobKey)) {
             Trigger newTrigger = getUpdateJobTrigger();
             try {
-                if (isUpdateJobScheduled()) {
-                    Date nextRun = scheduler.rescheduleJob(new TriggerKey(UPDATE_TRIGGER_NAME, TRIGGER_GROUP), newTrigger);
-                    _log.info(newTrigger.getKey().getName() + " is scheduled for " + DateUtil.formatDefaultDate(nextRun));
+                TriggerKey triggerKey = new TriggerKey(UPDATE_TRIGGER_NAME, TRIGGER_GROUP);
+                if (newTrigger != null) {
+                    if (isUpdateJobScheduled()) {
+                        Date nextRun = scheduler.rescheduleJob(triggerKey, newTrigger);
+                        _log.info(newTrigger.getKey().getName() + " is scheduled for " + DateUtil.formatDefaultDate(nextRun));
+                    } else {
+                        Date nextRun = scheduler.scheduleJob(updateJobDetail, newTrigger);
+                        _log.info(newTrigger.getKey().getName() + " is scheduled for " + DateUtil.formatDefaultDate(nextRun));
+                    }
                 } else {
-                    Date nextRun = scheduler.scheduleJob(updateJobDetail, newTrigger);
-                    _log.info(newTrigger.getKey().getName() + " is scheduled for " + DateUtil.formatDefaultDate(nextRun));
+                    if (isUpdateJobScheduled()) {
+                        scheduler.unscheduleJob(triggerKey);
+                        _log.info(triggerKey.getName() + " has been unscheduled");
+                    }
                 }
             } catch (SchedulerException e) {
                 _log.error(e.toString(), e);

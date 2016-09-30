@@ -266,7 +266,9 @@ INSERT INTO `releaseregex` (`ID`, `groupname`, `regex`, `ordinal`, `status`, `de
   (640, 'alt.binaries.hdtv', '/^(?P<name>.*ALANIS) \\[(?P<parts>\\d{2,3}\\/\\d{2,3})/i', 5, 1, '', NULL),
   (641, 'alt.binaries.multimedia', '/^(?P<name>(?!re: ).*?Asphyxiated) \\- \\[(?P<parts>\\d{2}\\/\\d{2})/i', 1, 1, '', NULL),
   (642, 'alt.binaries.(multimedia|teevee|tv|tvseries)', '/^.*\\[lift-?cup\\][\\[\\s-]+(?P<name>(?!re: ).*?)[\\]\\s-]+.*?\\[(?P<parts>\\d{2}\\/\\d{2})/i', 3, 1, '', NULL),
-  (643, 'alt.binaries.*', '/^.*\\[(?P<parts>\\d+\\/\\d+)\\].*"(?P<name>[^"]+(?:S\\d\\d?E\\d\\d?|S\\d\\d|\\d\\d?x|\\d{4}\\W+\\d\\d\\W+\\d\\d|Season\\W+\\d+\\W+|E(?:p?(?:isode)?[\\._ -]*?)\\d+)[^"]+?)(?:\\.(?:part\\d*|vol[\\d+]+))*\\.(?:nfo|nzb|sfv|par2|par|rar|avi|mkv)"\\ yEnc.*$/', 20, 0, '', NULL);
+  (643, 'alt.binaries.*', '/^.*\\[(?P<parts>\\d+\\/\\d+)\\].*"(?P<name>[^"]+(?:S\\d\\d?E\\d\\d?|S\\d\\d|\\d\\d?x|\\d{4}\\W+\\d\\d\\W+\\d\\d|Season\\W+\\d+\\W+|E(?:p?(?:isode)?[\\._ -]*?)\\d+)[^"]+?)(?:\\.(?:part\\d*|vol[\\d+]+))*\\.(?:nfo|nzb|sfv|par2|par|rar|avi|mkv)"\\ yEnc.*$/', 20, 0, '', NULL),
+  (644, 'alt.binaries.sounds.mp3.*', '/^\\[(?P<parts>\\d{1,3}\\/\\d{1,3})\\] \\- \\"(?P<name>.*?)\\.(nfo|vol|par|rar|nzb|sfv|zip)/i', 3, 1, '', 3010),
+  (645, 'alt.binaries.sounds.mp3.*', '^\\[(?P<name>.*?)\\](\\s)+\\((?P<parts>\\d{1,3}\\/\\d{1,3})\\)(\\s)+', 4, 1, '', 3010);
 
 ALTER TABLE `releaseregex`
 MODIFY `ID` int(11) unsigned NOT NULL; -- remove auto increment
@@ -276,7 +278,7 @@ CREATE TABLE IF NOT EXISTS `ReleaseRegex_SEQ` (
   `next_val` BIGINT NOT NULL DEFAULT 0
 ) ENGINE = InnoDB DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ;
 
-INSERT INTO `ReleaseRegex_SEQ` VALUES (10000);
+INSERT INTO `ReleaseRegex_SEQ` VALUES (7000);
 
 DROP TABLE IF EXISTS `Binary_SEQ`;
 CREATE TABLE IF NOT EXISTS `Binary_SEQ` (

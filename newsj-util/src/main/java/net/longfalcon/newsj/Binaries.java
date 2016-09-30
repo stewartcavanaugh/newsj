@@ -171,7 +171,7 @@ public class Binaries {
                     }
                 } else {
                     if (firstArticle > (lastArticle - newGroupMsgsToScan)) {
-                        firstArticle = firstArticle; //????
+                        //firstArticle = firstArticle; //????
                     } else {
                         firstArticle = lastArticle - newGroupMsgsToScan;
                     }
@@ -196,9 +196,10 @@ public class Binaries {
 
             // Deactivate empty groups
             if ((lastArticle - firstArticle) <= 5) {
-                group.setActive(false);
+                /*group.setActive(false);
                 group.setLastUpdated(new Date());
-                updateGroupModel(group);
+                updateGroupModel(group);*/
+                // todo: enable when "empty group" is more clearly understood
             }
 
             // Calculate total number of parts

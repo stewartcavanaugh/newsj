@@ -32,5 +32,6 @@ public class BackfillGroups {
                 new ClassPathXmlApplicationContext(new String[] {"application-context.xml"});
         Backfill backfill = (Backfill) context.getBean("backfill");
         backfill.backfillAllGroups();
+        ((ClassPathXmlApplicationContext) context).destroy();
     }
 }

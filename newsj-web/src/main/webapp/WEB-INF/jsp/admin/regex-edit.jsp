@@ -55,15 +55,15 @@
         <%--START PAGE CONTENT--%>
             <h1>${title}</h1>
 
-            <c:if test="${releaseRegex.id > 0 && releaseRegex.id < 100000}"><%-- && site.reqid != null--%>
+            <%--<c:if test="${releaseRegex.id > 0 && releaseRegex.id < 100000}">&lt;%&ndash; && site.reqid != null&ndash;%&gt;
                 <div class="error">Warning: Editing system regex, these changes will be overwritten next update releases.</div>
-            </c:if>
+            </c:if>--%>
 
-            <c:if test="${text:isNull(error)}">
+            <c:if test="${!text:isNull(error)}">
                 <div class="error">${error}</div>    
             </c:if>
 
-            <form:form action="${pageContext.request.contextPath}/admin/regex-edit" method="POST">
+            <form:form modelAttribute="releaseRegex" action="${pageContext.request.contextPath}/admin/regex-edit" method="POST">
 
                 <table class="input">
 

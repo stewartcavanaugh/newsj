@@ -32,5 +32,6 @@ public class UpdateReleases {
                 new ClassPathXmlApplicationContext(new String[] {"application-context.xml"});
         Releases releases = (Releases) context.getBean("releases");
         releases.processReleases();
+        ((ClassPathXmlApplicationContext) context).destroy();
     }
 }

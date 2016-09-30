@@ -33,5 +33,6 @@ public class UpdateBinaries
                 new ClassPathXmlApplicationContext(new String[] {"application-context.xml"});
         Binaries binaries = (Binaries) context.getBean("binaries");
         binaries.updateAllGroups();
+        ((ClassPathXmlApplicationContext) context).destroy();
     }
 }

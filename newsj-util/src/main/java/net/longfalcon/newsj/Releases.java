@@ -78,7 +78,7 @@ import java.util.stream.Collectors;
 public class Releases {
     private static final Log _log = LogFactory.getLog(Releases.class);
     private static PeriodFormatter _periodFormatter = PeriodFormat.wordBased();
-    private static Pattern _wildcardPattern = Pattern.compile("(\\D)+\\*$"); // this should match bin.name.* wildcard group names
+    private static Pattern _wildcardPattern = Pattern.compile("(.)+\\*$"); // this should match bin.name.* wildcard group names
     private Binaries binaries;
     private BinaryDAO binaryDAO;
     private CategoryService categoryService;

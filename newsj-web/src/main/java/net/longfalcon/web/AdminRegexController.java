@@ -40,6 +40,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.View;
 
@@ -94,7 +95,7 @@ public class AdminRegexController extends BaseController {
     @RequestMapping("/admin/regex-edit")
     public String editRegexView(@RequestParam(value = "id", required = false, defaultValue = "0")Long id,
                                 @RequestParam(value = "regex", required = false)String regex,
-                                @RequestParam(value = "groupId", required = false)long groupId,
+                                @RequestParam(value = "groupId", required = false)Long groupId,
                                 Model model) throws NoSuchResourceException {
         ReleaseRegex releaseRegex;
         if (id != null && id > 0) {
@@ -174,7 +175,7 @@ public class AdminRegexController extends BaseController {
         Map<String,Binary> matchesMap = new HashMap<>();
         int pagerTotalItems = 0;
 
-        if (action != null && action.equals("submit")) {
+        if (ValidatorUtil.isNotNull(regex) && ValidatorUtil.isNotNull(groupId)) {
             String realRegex = fixRegex(regex);
             List<Integer> procstats = Arrays.asList(Defaults.PROCSTAT_NEW, Defaults.PROCSTAT_READYTORELEASE, Defaults.PROCSTAT_WRONGPARTS);
             if (unreleased) {
@@ -227,7 +228,9 @@ public class AdminRegexController extends BaseController {
                     }
 
                     binary.setRelName(nameGroup);
-                    binary.setReqId(Integer.valueOf(reqIdGroup));
+                    if (ValidatorUtil.isNotNull(reqIdGroup)) {
+                        binary.setReqId(Integer.valueOf(reqIdGroup));
+                    }
                     binary.setRelPart(relTotalPart);
 
                     if (!matchesMap.containsKey(nameGroup)) {
@@ -259,13 +262,20 @@ public class AdminRegexController extends BaseController {
         model.addAttribute("pagerItemsPerPage", PAGE_SIZE);
         return "admin/regex-test";
     }
-    /*@RequestMapping("/admin/regex-test")
-    public String testRegexSubmit(Model model) {
-        title = "Release Regex List";
 
-        model.addAttribute("title", title);
-        return "admin/regex-test";
-    }*/
+    @RequestMapping("/admin/ajax_regex-list")
+    @ResponseBody
+    public String ajaxRegexEdit(@RequestParam(value = "action", required = false) String action,
+                                @RequestParam(value = "regex_id", required = true) Integer regexId) {
+        if (ValidatorUtil.isNotNull(action)) {
+            if (action.equals("2")) {
+                ReleaseRegex releaseRegex = releaseRegexDAO.findById(regexId);
+                releaseRegexDAO.deleteReleaseRegex(releaseRegex);
+                return String.format("Regex %d deleted.", regexId);
+            }
+        }
+        return "ajaxRegexEdit called incorrectly.";
+    }
 
     // See: Releases
     // convert from PHP style regexes in legacy Newznab
