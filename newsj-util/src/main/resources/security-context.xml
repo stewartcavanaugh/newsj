@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2016. Sten Martinez
+  ~
+  ~ This program is free software; you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation; either version 2 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License along
+  ~ with this program; if not, write to the Free Software Foundation, Inc.,
+  ~ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+  -->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:security="http://www.springframework.org/schema/security"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/security
+        http://www.springframework.org/schema/security/spring-security.xsd">
+    <!-- WEB SECURITY -->
+
+    <bean id="userDetailsService" class="net.longfalcon.web.auth.UserDetailsServiceImpl">
+        <property name="userDAO" ref="userDAO"/>
+    </bean>
+    <bean id="authenticationSuccessHandler" class="net.longfalcon.web.auth.DefaultAuthenticationSuccessHandler">
+        <property name="config" ref="config"/>
+        <property name="userDAO" ref="userDAO"/>
+    </bean>
+    <bean id="pbkdfPasswordEncoder" class="net.longfalcon.web.auth.PbkdfPasswordEncoder"/>
+
+    <security:authentication-manager>
+        <security:authentication-provider user-service-ref="userDetailsService">
+            <security:password-encoder ref="pbkdfPasswordEncoder"/>
+        </security:authentication-provider>
+    </security:authentication-manager>
+
+    <security:http>
+        <security:intercept-url pattern="/" access="permitAll"/>
+        <security:intercept-url pattern="/resources/**" access="permitAll"/>
+        <security:intercept-url pattern="/login*" access="permitAll"/>
+        <security:intercept-url pattern="/register*" access="permitAll"/>
+        <security:intercept-url pattern="/contact-us" access="permitAll"/>
+        <security:intercept-url pattern="/sitemap" access="permitAll"/>
+        <security:intercept-url pattern="/api/**" access="permitAll"/>
+        <security:intercept-url pattern="/content/**" access="permitAll"/>
+        <security:intercept-url pattern="/install*" access="permitAll"/>
+        <security:intercept-url pattern="/admin/**" access="hasRole('ROLE_ADMIN')" />
+        <security:intercept-url pattern="/**" access="hasRole('ROLE_USER')" />
+        <security:form-login login-page="/login" authentication-success-handler-ref="authenticationSuccessHandler" />
+        <security:logout logout-url="/logout"/>
+        <security:remember-me key="newsj" remember-me-parameter="rememberMe" authentication-success-handler-ref="authenticationSuccessHandler"/>
+    </security:http>
+</beans>

@@ -22,6 +22,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
+ * command line app for updating releases
  * User: Sten Martinez
  * Date: 10/10/15
  * Time: 7:30 PM

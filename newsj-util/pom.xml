@@ -26,8 +26,8 @@
         </dependency>
         <dependency>
             <groupId>org.apache.tomcat</groupId>
-            <artifactId>servlet-api</artifactId>
-            <version>6.0.45</version>
+            <artifactId>tomcat-servlet-api</artifactId>
+            <version>7.0.40</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

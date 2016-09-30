@@ -22,6 +22,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
+ * command line app for backfilling groups
  * User: Sten Martinez
  * Date: 10/23/15
  * Time: 9:53 PM
