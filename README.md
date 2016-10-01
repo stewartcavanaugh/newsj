@@ -7,6 +7,7 @@ DO NOT USE. NON-FUNCTIONAL
 * v0.1 - general porting of code from legacy newznab
 * v0.2 - 90% admin UI, front page, cmd line binary and release processing
 * v0.3 - full front page and search, rss, newznab api
+* v0.4 - preparing for full-time use
 * v0.8 - feature complete with original newznab
 * v1.0 - final release
 
@@ -14,7 +15,6 @@ DO NOT USE. NON-FUNCTIONAL
 * regex submission
 * ReqId
 * move to templates/Tiles?
-* Job management for update binaries / update releases
 
 ### ToDo list
 * refactor "Rage" to "TVData" or similar
