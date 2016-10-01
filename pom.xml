@@ -32,9 +32,9 @@
     </developers>
 
     <scm>
-        <url>scm:git:git@github.com:stewartcavanaugh/newsj.git</url>
-        <connection>scm:git:git@github.com:stewartcavanaugh/newsj.git</connection>
-        <developerConnection>scm:git:git@github.com:stewartcavanaugh/newsj.git</developerConnection>
+        <url>scm:git:https://github.com/stewartcavanaugh/newsj.git</url>
+        <connection>scm:git:https://github.com/stewartcavanaugh/newsj.git</connection>
+        <developerConnection>scm:git:https://github.com/stewartcavanaugh/newsj.git</developerConnection>
     </scm>
 
     <properties>
