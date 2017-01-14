@@ -18,15 +18,17 @@
 
 package net.longfalcon.newsj.persistence.hibernate;
 
+import net.longfalcon.newsj.model.Binary;
 import net.longfalcon.newsj.model.Part;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.Subqueries;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -99,6 +101,20 @@ public class PartDAOImpl extends HibernateDAOImpl implements net.longfalcon.news
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Part.class);
         criteria.add(Restrictions.eq("number", number));
         criteria.add(Restrictions.in("binaryId", binaryIds));
+
+        return criteria.list();
+    }
+
+    @Override
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
+    public List<Part> findByNumberAndGroupId(long number, long groupId) {
+        DetachedCriteria groupBinarySubQuery = DetachedCriteria.forClass(Binary.class, "bin")
+                .add(Restrictions.eq("groupId", groupId))
+                .setProjection( Projections.property("id") );
+
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Part.class);
+        criteria.add(Restrictions.eq("number", number));
+        criteria.add(Subqueries.propertyIn("binaryId", groupBinarySubQuery));
 
         return criteria.list();
     }

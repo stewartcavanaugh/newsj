@@ -43,5 +43,7 @@ public interface PartDAO {
 
     List<Part> findByNumberAndBinaryIds(long number, List<Long> binaryIds);
 
+    List<Part> findByNumberAndGroupId(long number, long groupId);
+
     List<Object[]> findDistinctMessageIdSizeAndPartNumberByBinaryId(long binaryId);
 }

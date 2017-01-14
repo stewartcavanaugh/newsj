@@ -773,10 +773,13 @@ public class Releases {
                 releaseDAO.deleteRelease(release);
             }
         }
+        transaction.flush(); // may be unneeded
         transactionManager.commit(transaction);
 
         _log.info(String.format("Processed %d releases", retcount));
-
+        if (!transaction.isCompleted()) {
+            throw new IllegalStateException("Transaction is not completed or rolled back.");
+        }
         //return retcount;
     }
 

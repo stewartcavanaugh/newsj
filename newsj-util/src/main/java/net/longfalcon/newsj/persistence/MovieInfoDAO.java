@@ -35,7 +35,7 @@ public interface MovieInfoDAO {
 
     MovieInfo findByMovieInfoId(long id);
 
-    MovieInfo findByImdbId(long imdbId);
+    MovieInfo findByImdbId(int imdbId);
 
     List<MovieInfo> findByImdbId(List<Long> imdbIds);
 

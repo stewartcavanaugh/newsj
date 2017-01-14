@@ -461,7 +461,10 @@ public class TVRageService {
         // check if we already have an entry for this show
         TvRage tvRage = tvRageDAO.findByReleaseTitle(cleanName);
         if (tvRage != null) {
-            traktId = tvRage.getTraktId();
+            if (tvRage.getTraktId() != null) {
+                traktId = tvRage.getTraktId();
+            }
+            // TODO: update trakt ID for shows we dont have an id for
         } else {
             cleanName = cleanName.replace(" and ", " & ");
             tvRage = tvRageDAO.findByReleaseTitle(cleanName);

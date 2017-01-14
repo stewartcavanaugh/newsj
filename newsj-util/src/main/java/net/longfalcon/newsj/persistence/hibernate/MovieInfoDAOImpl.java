@@ -77,7 +77,7 @@ public class MovieInfoDAOImpl extends HibernateDAOImpl implements MovieInfoDAO {
 
     @Override
     @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED, propagation = Propagation.SUPPORTS )
-    public MovieInfo findByImdbId(long imdbId) {
+    public MovieInfo findByImdbId(int imdbId) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(MovieInfo.class);
         criteria.add(Restrictions.eq("imdbId", imdbId));
 

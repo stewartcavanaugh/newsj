@@ -316,9 +316,8 @@ public class Binaries {
                 // This complete clusterf*ck is due to the Part table lacking a groupId column.
                 // TODO: add a groupId column to Part table!!!!
                 List<PartRepair> partRepairs = partRepairDAO.findByGroupIdAndNumbers(group.getId(), articlesRange);
-                List<Long> groupBinaryIds = binaryDAO.findBinaryIdsByGroupId(group.getId());
                 for (PartRepair partRepair : partRepairs) {
-                    List<Part> partList = partDAO.findByNumberAndBinaryIds(partRepair.getNumberId(), groupBinaryIds);
+                    List<Part> partList = partDAO.findByNumberAndGroupId(partRepair.getNumberId(), group.getId());
                     Part part = partList.isEmpty() ? null : partList.get(0);
                     if (part != null && partRepair.getNumberId() == part.getNumber()) {
                         partsRepaired++;

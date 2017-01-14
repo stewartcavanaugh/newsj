@@ -39,7 +39,7 @@ public class DateUtil {
     public static final DateTimeFormatter defaultDateFormat = DateTimeFormat.mediumDate();
     public static final DateTimeFormatter RFC_dateFormatter = DateTimeFormat.forPattern("dd MMM yyyy HH:mm:ss z");
     public static final DateTimeFormatter RFC_822_dateFormatter = DateTimeFormat.forPattern("E, dd MMM yyyy HH:mm:ss Z");
-    public static final DateTimeFormatter displayDateFormatter = DateTimeFormat.forPattern("Y-M-d H:m:s");
+    public static final DateTimeFormatter displayDateFormatter = DateTimeFormat.forPattern("Y-M-d HH:mm:ss");
     public static final DateTimeFormatter airDateFormatter = DateTimeFormat.forPattern("Y-M-d");
     public static final DateTimeFormatter airDateFormatter_2 = DateTimeFormat.forPattern("Y-d-M");
 
@@ -88,6 +88,7 @@ public class DateUtil {
         }
         if (dateTime == null ) {
             _log.error(String.format("Unable to parse date string \'%s\'", dateString));
+            dateTime = new DateTime();
         }
         return dateTime;
     }
