@@ -25,6 +25,7 @@ public class JobLogService {
             startDate = new Date();
         }
         jobLog.setStartDate(startDate);
+        jobLog.setResult("Running");
         jobLogDAO.update(jobLog);
 
         return jobLog;

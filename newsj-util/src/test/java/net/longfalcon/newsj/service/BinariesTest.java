@@ -27,6 +27,7 @@ import net.longfalcon.newsj.persistence.PartRepairDAO;
 import net.longfalcon.newsj.test.BaseFsTestSupport;
 import net.longfalcon.newsj.util.Defaults;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.jdbc.Sql;
@@ -54,6 +55,7 @@ public class BinariesTest extends BaseFsTestSupport {
     PartRepairDAO partRepairDAO;
 
     @Test
+    @Ignore
     public void testUpdateGroups() {
         binaries.updateAllGroups();
 

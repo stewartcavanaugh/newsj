@@ -225,7 +225,7 @@ public class Backfill {
         } else if (goalDate.isAfter(lastDate)) {
             _log.warn("ERROR: Backfill target of "+ days + " day(s) is newer than the last article stored on your news server.");
             _log.warn("To backfill this group you need to set Backfill Days to at least " + daysOld(lastDate)+1 + " days (" + _dateTimeFormatter.print(lastDate.minusDays(1)) + ")");
-            return 0;
+            //return 0;
         }
         if (debug) {
             _log.info(String.format("DEBUG: Searching for postdate \nGoaldate: %s\nFirstdate: %s\nLastdate: %s", _dateTimeFormatter.print(goalDate), _dateTimeFormatter.print(firstDate), _dateTimeFormatter.print(lastDate)));

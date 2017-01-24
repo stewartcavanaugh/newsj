@@ -40,9 +40,12 @@ import org.joda.time.format.PeriodFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -141,6 +144,7 @@ public class Binaries {
         }
     }
 
+    @Transactional
     public void updateGroup(NewsClient nntpClient, Group group) {
         /*
         * */
@@ -218,6 +222,8 @@ public class Binaries {
                 long startLoopTime = System.currentTimeMillis();
                 while (!done) {
 
+                    TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition(TransactionDefinition.PROPAGATION_REQUIRES_NEW));
+
                     if (totalParts > messageBuffer) {
                         if (firstArticle + messageBuffer > groupLastArticle) {
                             lastArticle = groupLastArticle;
@@ -251,6 +257,8 @@ public class Binaries {
                         firstArticle = lastArticle + 1;
                     }
 
+                    transaction.flush();
+                    transactionManager.commit(transaction);
                 }
 
                 DateTime lastRecordPostDate = backfill.postDate(nntpClient, lastArticle, false);
