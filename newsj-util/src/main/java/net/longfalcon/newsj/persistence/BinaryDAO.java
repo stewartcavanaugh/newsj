@@ -34,9 +34,15 @@ public interface BinaryDAO {
 
     List<Binary> findByReleaseId(long releaseId);
 
+    List<Binary> findByBinaryIds(List<Long> binaryIds);
+
     Binary findByBinaryHash(String binaryHash);
 
+    Long countByGroupIdsAndProcStat(Collection<Long> groupIds, int procStat);
+
     List<Binary> findByGroupIdsAndProcStat(Collection<Long> groupIds, int procStat);
+
+    List<Long> findBinaryIdsByGroupIdsAndProcStat(Collection<Long> groupIds, int procStat);
 
     List findBinariesByProcStatAndTotalParts(int procstat);
 

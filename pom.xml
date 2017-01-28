@@ -53,12 +53,12 @@
         <repository>
             <id>nexus</id>
             <name>Releases</name>
-            <url>http://fluffypanda:8081/repository/maven-releases</url>
+            <url>http://fluffypanda:8081/repository/maven-releases/</url>
         </repository>
         <snapshotRepository>
             <id>nexus</id>
             <name>Snapshot</name>
-            <url>http://fluffypanda:8081/repository/maven-snapshots</url>
+            <url>http://fluffypanda:8081/repository/maven-snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
 
@@ -184,4 +184,13 @@
         </dependencies>
     </dependencyManagement>
 
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>findbugs-maven-plugin</artifactId>
+                <version>3.0.4</version>
+            </plugin>
+        </plugins>
+    </reporting>
 </project>

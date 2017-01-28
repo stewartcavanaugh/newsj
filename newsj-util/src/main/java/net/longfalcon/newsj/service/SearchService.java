@@ -502,7 +502,7 @@ public class SearchService {
                 if (musicInfo.getTracks() != null) {
                     descriptionHtmlFragment.append("\t\t\t\t<li>Track Listing:\n")
                             .append("\t\t\t\t\t<ol>\n");
-                    String[] tracks = musicInfo.getTracks().split("|"); // tODO: check if this is how we want to do track listing going forward
+                    String[] tracks = musicInfo.getTracks().split("\\|"); // tODO: check if this is how we want to do track listing going forward
                     for (String track : tracks) {
                         descriptionHtmlFragment.append("\t\t\t\t\t\t<li>" + track.trim() + "</li>\n");
                     }

@@ -95,6 +95,9 @@ public class Releases {
     private SiteDAO siteDAO;
     private PlatformTransactionManager transactionManager;
     private TVRageService tvRageService;
+    long matchedBinariesCount = 0;
+    long processedBinariesCount = 0;
+
 
     public Release findByGuid(String guid) {
         Release release = releaseDAO.findByGuid(guid);
@@ -286,7 +289,8 @@ public class Releases {
         //
         List<ReleaseRegex> releaseRegexList = releaseRegexDAO.getRegexes(true,"-1", false);
         for (ReleaseRegex releaseRegex : releaseRegexList) {
-
+            matchedBinariesCount = 0;
+            processedBinariesCount = 0;
             String releaseRegexGroupName = releaseRegex.getGroupName();
             _log.info(String.format("Applying regex %d for group %s", releaseRegex.getId(), ValidatorUtil.isNull(releaseRegexGroupName) ? "all" : releaseRegexGroupName));
 
@@ -313,95 +317,31 @@ public class Releases {
                 }
             }
 
-            List<Binary> binaries = new ArrayList<>();
+            //List<Binary> binaries = new ArrayList<>();
+            int offset = 0;
+            int pageSize = 20;
+            long binaryCount = 0;
+            List<Long> binaryIds = new ArrayList<>();
             if (groupMatch.size() > 0) {
                 // Get out all binaries of STAGE0 for current group
-                binaries = binaryDAO.findByGroupIdsAndProcStat(groupMatch, Defaults.PROCSTAT_NEW);
+                binaryCount = binaryDAO.countByGroupIdsAndProcStat(groupMatch, Defaults.PROCSTAT_NEW);
+                // get binary Ids so that processing can be in batches
+                binaryIds = binaryDAO.findBinaryIdsByGroupIdsAndProcStat(groupMatch, Defaults.PROCSTAT_NEW);
             }
 
             Map<String, String> arrNoPartBinaries = new LinkedHashMap<>();
             DateTime fiveHoursAgo = DateTime.now().minusHours(5);
 
-            // this for loop should probably be a single transaction
-            for (Binary binary : binaries) {
-                String testMessage = "Test run - Binary Name " + binary.getName();
-
-                Matcher groupRegexMatcher = pattern.matcher(binary.getName());
-                if (groupRegexMatcher.find()) {
-                    String reqIdGroup = null;
-                    try {
-                        reqIdGroup = groupRegexMatcher.group("reqid");
-                    } catch (IllegalArgumentException e) {
-                        _log.debug(e.toString());
+            if (binaryCount > 0) {
+                while (offset < binaryCount) {
+                    int toIndex = offset + pageSize;
+                    if (toIndex > binaryCount) {
+                        toIndex = ((Long) binaryCount).intValue();
                     }
-                    String partsGroup = null;
-                    try {
-                        partsGroup = groupRegexMatcher.group("parts");
-                    } catch (IllegalArgumentException e) {
-                        _log.debug(e.toString());
-                    }
-                    String nameGroup = null;
-                    try {
-                        nameGroup = groupRegexMatcher.group("name");
-                    } catch (Exception e) {
-                        _log.debug(e.toString());
-                    }
-                    _log.debug(testMessage + " matches with: \n reqId = " + reqIdGroup + " parts = " + partsGroup + " and name = " + nameGroup);
-
-                    if ((ValidatorUtil.isNotNull(reqIdGroup) && ValidatorUtil.isNumeric(reqIdGroup)) && ValidatorUtil.isNull(nameGroup)) {
-                        nameGroup = reqIdGroup;
-                    }
-
-                    if (ValidatorUtil.isNull(nameGroup)) {
-                        _log.warn(String.format("regex applied which didnt return right number of capture groups - %s", regex));
-                        _log.warn(String.format("regex matched: reqId = %s parts = %s and name = %s", reqIdGroup, partsGroup, nameGroup));
-                        continue;
-                    }
-
-                    // If theres no number of files data in the subject, put it into a release if it was posted to usenet longer than five hours ago.
-                    if ( (ValidatorUtil.isNull(partsGroup) && fiveHoursAgo.isAfter(binary.getDate().getTime()))) {
-                        //
-                        // Take a copy of the name of this no-part release found. This can be used
-                        // next time round the loop to find parts of this set, but which have not yet reached 3 hours.
-                        //
-                        arrNoPartBinaries.put(nameGroup, "1");
-                        partsGroup = "01/01";
-                    }
-
-                    if (ValidatorUtil.isNotNull(nameGroup) && ValidatorUtil.isNotNull(partsGroup)) {
-
-                        if (partsGroup.indexOf('/') == -1) {
-                            partsGroup = partsGroup.replaceFirst("(-)|(~)|(\\sof\\s)", "/"); // replace weird parts delimiters
-                        }
-
-                        Integer regexCategoryId = releaseRegex.getCategoryId();
-                        Integer reqId = null;
-                        if (ValidatorUtil.isNotNull(reqIdGroup) && ValidatorUtil.isNumeric(reqIdGroup)) {
-                            reqId = Integer.parseInt(reqIdGroup);
-                        }
-
-                        //check if post is repost
-                        Pattern repostPattern = Pattern.compile("(repost\\d?|re\\-?up)", Pattern.CASE_INSENSITIVE);
-                        Matcher binaryNameRepostMatcher = repostPattern.matcher(binary.getName());
-
-                        if (binaryNameRepostMatcher.find() && !nameGroup.toLowerCase().matches("^[\\s\\S]+(repost\\d?|re\\-?up)")) {
-                            nameGroup = nameGroup + (" " + binaryNameRepostMatcher.group(1));
-                        }
-
-                        String partsStrings[] = partsGroup.split("/");
-                        int relpart = Integer.parseInt(partsStrings[0]);
-                        int relTotalPart = Integer.parseInt(partsStrings[1]);
-
-                        binary.setRelName(nameGroup.replace("_", " "));
-                        binary.setRelPart(relpart);
-                        binary.setRelTotalPart(relTotalPart);
-                        binary.setProcStat(Defaults.PROCSTAT_TITLEMATCHED);
-                        binary.setCategoryId(regexCategoryId);
-                        binary.setRegexId(releaseRegex.getId());
-                        binary.setReqId(reqId);
-                        binaryDAO.updateBinary(binary);
-
-                    }
+                    List<Long> subList = binaryIds.subList(offset, toIndex);
+                    List<Binary> binaries = binaryDAO.findByBinaryIds(subList);
+                    doBinariesStage1(releaseRegex, regex, pattern, arrNoPartBinaries, fiveHoursAgo, binaries, binaryCount);
+                    offset += pageSize;
                 }
             }
 
@@ -675,7 +615,7 @@ public class Releases {
             nzb.writeNZBforReleaseId(release, nzbBaseDir, true);
 
             if (retcount % 5 == 0) {
-                _log.info("-processed " + retcount + " releases stage three");
+                _log.info("processed " + retcount + " out of " + readyReleaseQueries.size() + " possible releases stage three");
             }
 
         }
@@ -781,6 +721,104 @@ public class Releases {
             throw new IllegalStateException("Transaction is not completed or rolled back.");
         }
         //return retcount;
+    }
+
+    private void doBinariesStage1(ReleaseRegex releaseRegex, String regex, Pattern pattern, Map<String, String> arrNoPartBinaries,
+                                  DateTime fiveHoursAgo, List<Binary> binaries, long totalBinariesCount) {
+
+        TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition(TransactionDefinition.PROPAGATION_REQUIRED));
+
+        for (Binary binary : binaries) {
+            String testMessage = "DEBUG - Binary Name " + binary.getName();
+            processedBinariesCount++;
+
+            Matcher groupRegexMatcher = pattern.matcher(binary.getName());
+            if (groupRegexMatcher.find()) {
+                String reqIdGroup = null;
+                try {
+                    reqIdGroup = groupRegexMatcher.group("reqid");
+                } catch (IllegalArgumentException e) {
+                    _log.debug(e.toString());
+                }
+                String partsGroup = null;
+                try {
+                    partsGroup = groupRegexMatcher.group("parts");
+                } catch (IllegalArgumentException e) {
+                    _log.debug(e.toString());
+                }
+                String nameGroup = null;
+                try {
+                    nameGroup = groupRegexMatcher.group("name");
+                } catch (Exception e) {
+                    _log.debug(e.toString());
+                }
+                _log.debug(testMessage + " matches with: \n reqId = " + reqIdGroup + " parts = " + partsGroup + " and name = " + nameGroup);
+
+                if ((ValidatorUtil.isNotNull(reqIdGroup) && ValidatorUtil.isNumeric(reqIdGroup)) && ValidatorUtil.isNull(nameGroup)) {
+                    nameGroup = reqIdGroup;
+                }
+
+                if (ValidatorUtil.isNull(nameGroup)) {
+                    _log.warn(String.format("regex applied which didnt return right number of capture groups - %s", regex));
+                    _log.warn(String.format("regex matched: reqId = %s parts = %s and name = %s", reqIdGroup, partsGroup, nameGroup));
+                    continue;
+                }
+
+                // If theres no number of files data in the subject, put it into a release if it was posted to usenet longer than five hours ago.
+                if ( (ValidatorUtil.isNull(partsGroup) && fiveHoursAgo.isAfter(binary.getDate().getTime()))) {
+                    //
+                    // Take a copy of the name of this no-part release found. This can be used
+                    // next time round the loop to find parts of this set, but which have not yet reached 3 hours.
+                    //
+                    arrNoPartBinaries.put(nameGroup, "1");
+                    partsGroup = "01/01";
+                }
+
+                if (ValidatorUtil.isNotNull(nameGroup) && ValidatorUtil.isNotNull(partsGroup)) {
+
+                    if (partsGroup.indexOf('/') == -1) {
+                        partsGroup = partsGroup.replaceFirst("(-)|(~)|(\\sof\\s)", "/"); // replace weird parts delimiters
+                    }
+
+                    Integer regexCategoryId = releaseRegex.getCategoryId();
+                    Integer reqId = null;
+                    if (ValidatorUtil.isNotNull(reqIdGroup) && ValidatorUtil.isNumeric(reqIdGroup)) {
+                        reqId = Integer.parseInt(reqIdGroup);
+                    }
+
+                    //check if post is repost
+                    Pattern repostPattern = Pattern.compile("(repost\\d?|re\\-?up)", Pattern.CASE_INSENSITIVE);
+                    Matcher binaryNameRepostMatcher = repostPattern.matcher(binary.getName());
+
+                    if (binaryNameRepostMatcher.find() && !nameGroup.toLowerCase().matches("^[\\s\\S]+(repost\\d?|re\\-?up)")) {
+                        nameGroup = nameGroup + (" " + binaryNameRepostMatcher.group(1));
+                    }
+
+                    String partsStrings[] = partsGroup.split("/");
+                    int relpart = Integer.parseInt(partsStrings[0]);
+                    int relTotalPart = Integer.parseInt(partsStrings[1]);
+
+                    binary.setRelName(nameGroup.replace("_", " "));
+                    binary.setRelPart(relpart);
+                    binary.setRelTotalPart(relTotalPart);
+                    binary.setProcStat(Defaults.PROCSTAT_TITLEMATCHED);
+                    binary.setCategoryId(regexCategoryId);
+                    binary.setRegexId(releaseRegex.getId());
+                    binary.setReqId(reqId);
+                    binaryDAO.updateBinary(binary);
+                    matchedBinariesCount++;
+                    if ( matchedBinariesCount % 100 == 0) {
+                        _log.info(String.format("matched %s binaries", matchedBinariesCount));
+                    }
+                }
+            }
+            if (processedBinariesCount % 500 == 0) {
+                _log.info(String.format("processed %s binaries out of %s total binaries in stage 1", processedBinariesCount, totalBinariesCount));
+            }
+        }
+
+
+        transactionManager.commit(transaction);
     }
 
     // TODO

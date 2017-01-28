@@ -30,7 +30,6 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -58,11 +57,31 @@ public class BinaryDAOImpl extends HibernateDAOImpl implements net.longfalcon.ne
 
     @Override
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
+    public List<Binary> findByBinaryIds(List<Long> binaryIds) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Binary.class);
+        criteria.add(Restrictions.in("id", binaryIds));
+
+        return criteria.list();
+    }
+
+    @Override
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public Binary findByBinaryHash(String binaryHash) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Binary.class);
         criteria.add(Restrictions.eq("binaryHash", binaryHash));
+        criteria.setMaxResults(2);
 
         return (Binary) criteria.uniqueResult();
+    }
+
+    @Override
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
+    public Long countByGroupIdsAndProcStat(Collection<Long> groupIds, int procStat) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Binary.class);
+        criteria.add(Restrictions.in("groupId", groupIds));
+        criteria.add(Restrictions.eq("procStat", procStat));
+        criteria.setProjection(Projections.rowCount());
+        return (Long) criteria.uniqueResult();
     }
 
     @Override
@@ -71,7 +90,18 @@ public class BinaryDAOImpl extends HibernateDAOImpl implements net.longfalcon.ne
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Binary.class);
         criteria.add(Restrictions.in("groupId", groupIds));
         criteria.add(Restrictions.eq("procStat", procStat));
-        criteria.addOrder(Order.asc("date"));
+        //criteria.addOrder(Order.asc("date"));
+
+        return criteria.list();
+    }
+
+    @Override
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
+    public List<Long> findBinaryIdsByGroupIdsAndProcStat(Collection<Long> groupIds, int procStat) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Binary.class);
+        criteria.add(Restrictions.in("groupId", groupIds));
+        criteria.add(Restrictions.eq("procStat", procStat));
+        criteria.setProjection(Projections.property("id"));
 
         return criteria.list();
     }
@@ -184,6 +214,7 @@ public class BinaryDAOImpl extends HibernateDAOImpl implements net.longfalcon.ne
         criteria.add(Restrictions.eq("groupId", groupId));
         criteria.add(Restrictions.eq("fromName", fromName));
         criteria.setProjection(Projections.max("dateAdded"));
+        criteria.setMaxResults(2);
 
         return (Timestamp) criteria.uniqueResult();
     }

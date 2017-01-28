@@ -66,6 +66,7 @@ public class BinariesTest extends BaseFsTestSupport {
     }
 
     @Test
+    @Ignore
     @Sql("/sql/partrepair/binaries-partrepair-test-data.sql")
     public void testPartRepair() {
         binaries.updateAllGroups();

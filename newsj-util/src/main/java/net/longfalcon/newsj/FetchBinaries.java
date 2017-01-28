@@ -67,7 +67,7 @@ import java.util.regex.Pattern;
 @Service
 public class FetchBinaries {
     private static PeriodFormatter _periodFormatter = PeriodFormat.wordBased();
-    public static int MESSAGE_BUFFER = 20000;
+    public static final int MESSAGE_BUFFER = 20000;
     private static final Log _log = LogFactory.getLog(FetchBinaries.class);
 
     private Blacklist blacklist;
@@ -78,7 +78,7 @@ public class FetchBinaries {
     private PlatformTransactionManager transactionManager;
 
     // This method should be an atomic transaction
-    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
+    @Transactional(propagation = Propagation.REQUIRED)
     public long scan(NewsClient nntpClient, Group group, long firstArticle, long lastArticle, String type, boolean compressedHeaders) throws IOException {
         // this is a hack - tx is not working ATM
         TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition(TransactionDefinition.PROPAGATION_REQUIRED));
@@ -221,6 +221,9 @@ public class FetchBinaries {
                             binaryDAO.updateBinary(binary);
                             dbUpdateTime += (System.currentTimeMillis() - startDbUpdateTime);
                             count++;
+                            if ( count % 20 == 0) {
+                                transaction.flush();
+                            }
                             if (count%500 == 0) {
                                 _log.info(String.format("%s bin adds...", count));
                             }
@@ -257,7 +260,9 @@ public class FetchBinaries {
                                 _log.error(e.toString());
                                 messagesNotInserted.add(messagePart.getArticleNumber());
                             }
-
+                            if ( partCount % 20 == 0) {
+                                transaction.flush();
+                            }
                         }
                     }
                 }

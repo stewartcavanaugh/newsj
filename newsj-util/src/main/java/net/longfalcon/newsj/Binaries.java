@@ -222,7 +222,7 @@ public class Binaries {
                 long startLoopTime = System.currentTimeMillis();
                 while (!done) {
 
-                    TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition(TransactionDefinition.PROPAGATION_REQUIRES_NEW));
+                    //
 
                     if (totalParts > messageBuffer) {
                         if (firstArticle + messageBuffer > groupLastArticle) {
@@ -235,30 +235,10 @@ public class Binaries {
                     _log.info(String.format("Getting %d parts (%d to %d) - %d in queue", lastArticle - firstArticle + 1, firstArticle, lastArticle, groupLastArticle - lastArticle));
 
                     //get headers from newsgroup
-                    long lastId = 0;
-                    try {
-                        lastId = fetchBinaries.scan(nntpClient, group, firstArticle, lastArticle, "update", compressedHeaders); // magic string
-                    } catch (Exception e) {
-                        _log.error(e.toString(), e);
-                    }
-                    if (lastId == 0) {
-                        // scan failed - skip group
-                        return;
-                    }
-
-                    group.setLastRecord(lastArticle);
-                    group.setLastUpdated(new Date());
-                    updateGroupModel(group);
-
-                    if (lastArticle == groupLastArticle) {
-                        done = true;
-                    } else {
-                        lastArticle = lastId;
-                        firstArticle = lastArticle + 1;
-                    }
-
-                    transaction.flush();
-                    transactionManager.commit(transaction);
+                    BinaryScanStatus scanStatus = doBinaryFetch(nntpClient, group, firstArticle, lastArticle, groupLastArticle);
+                    done = scanStatus.isDone();
+                    firstArticle = scanStatus.getFirstArticle();
+                    lastArticle = scanStatus.getLastArticle();
                 }
 
                 DateTime lastRecordPostDate = backfill.postDate(nntpClient, lastArticle, false);
@@ -282,8 +262,43 @@ public class Binaries {
 
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    private BinaryScanStatus doBinaryFetch(NewsClient nntpClient, Group group, long firstArticle, long lastArticle, long groupLastArticle) {
+        // use explicit transactions because method is private.
+        TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition(TransactionDefinition.PROPAGATION_REQUIRES_NEW));
+
+        BinaryScanStatus scanStatus = new BinaryScanStatus();
+        long lastId = 0;
+        try {
+            lastId = fetchBinaries.scan(nntpClient, group, firstArticle, lastArticle, "update", compressedHeaders); // magic string
+        } catch (Exception e) {
+            _log.error(e.toString(), e);
+        }
+        if (lastId != 0) {
+            group.setLastRecord(lastArticle);
+            group.setLastUpdated(new Date());
+            updateGroupModel(group);
+
+            if (lastArticle == groupLastArticle) {
+                scanStatus.setDone(true);
+            } else {
+                lastArticle = lastId;
+                firstArticle = lastArticle + 1;
+            }
+            scanStatus.setFirstArticle(firstArticle);
+            scanStatus.setLastArticle(lastArticle);
+        } else {
+            // scan failed - skip group
+            _log.error("binary fetching failed; see logs for details. skipping " + group.getName());
+            scanStatus.setDone(true);
+        }
+        transaction.flush();
+        transactionManager.commit(transaction);
+        return scanStatus;
+    }
+
     private void partRepair(NewsClient nntpClient, Group group) throws IOException {
+        // use explicit transactions because method is private.
+        TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition(TransactionDefinition.PROPAGATION_REQUIRES_NEW));
         List<PartRepair> partRepairList = partRepairDAO.findByGroupIdAndAttempts(group.getId(), 5, true);
         long partsRepaired = 0;
         long partsFailed = 0;
@@ -356,6 +371,8 @@ public class Binaries {
         for (PartRepair partRepair : partRepairsToDelete) {
             partRepairDAO.deletePartRepair(partRepair);
         }
+        transaction.flush();
+        transactionManager.commit(transaction);
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.NOT_SUPPORTED)
@@ -441,5 +458,35 @@ public class Binaries {
 
     public void setFetchBinaries(FetchBinaries fetchBinaries) {
         this.fetchBinaries = fetchBinaries;
+    }
+
+    private class BinaryScanStatus {
+        long firstArticle;
+        long lastArticle;
+        boolean done;
+
+        public long getFirstArticle() {
+            return firstArticle;
+        }
+
+        public void setFirstArticle(long firstArticle) {
+            this.firstArticle = firstArticle;
+        }
+
+        public long getLastArticle() {
+            return lastArticle;
+        }
+
+        public void setLastArticle(long lastArticle) {
+            this.lastArticle = lastArticle;
+        }
+
+        public boolean isDone() {
+            return done;
+        }
+
+        public void setDone(boolean done) {
+            this.done = done;
+        }
     }
 }

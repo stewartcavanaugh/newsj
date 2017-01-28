@@ -161,6 +161,8 @@ public class Nfo {
         }
         String nfo;
         List<Part> partList = partDAO.findPartsByBinaryId(binary.getId());
+
+        FileReader fileReader = null;
         try {
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             Directory tempDir = fileSystemService.getDirectory("/temp");
@@ -174,7 +176,7 @@ public class Nfo {
                 }
             }
 
-            FileReader fileReader = new FileReader(tempFile);
+            fileReader = new FileReader(tempFile);
             String enc = fileReader.getEncoding();
             InputStream inputStream = new FileInputStream(tempFile);
             StreamUtil.transferByteArray(inputStream, byteArrayOutputStream, 1024);
@@ -183,6 +185,14 @@ public class Nfo {
         } catch (IOException e) {
             _log.error(e);
             return null;
+        } finally {
+            if (fileReader != null) {
+                try {
+                    fileReader.close();
+                } catch (IOException e) {
+                    _log.error(e.toString(), e);
+                }
+            }
         }
 
 
