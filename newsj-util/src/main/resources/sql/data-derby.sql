@@ -1,5 +1,5 @@
 --------------------------------------------------------
---  Postgres Data
+--  Derby Data
 --------------------------------------------------------
 
 Insert into BINARYBLACKLIST (ID,GROUPNAME,REGEX,MSGCOL,OPTYPE,STATUS,DESCRIPTION)

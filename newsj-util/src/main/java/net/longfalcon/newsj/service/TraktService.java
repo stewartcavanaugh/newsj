@@ -31,6 +31,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -151,13 +152,12 @@ public class TraktService {
 
             UriComponents uriComponents = UriComponentsBuilder.fromUriString(traktApiUrl + "/shows/" + traktId + "/seasons/" + season + "/episodes/" + episode)
                     .queryParam("extended", "full").build();
-            ResponseEntity<TraktEpisodeResult> responseEntity = restTemplate.exchange(uriComponents.toUri(), HttpMethod.GET, requestEntity, TraktEpisodeResult.class);
-            HttpStatus statusCode = responseEntity.getStatusCode();
-            if (statusCode.is2xxSuccessful() || statusCode.is3xxRedirection()) {
+            ResponseEntity<TraktEpisodeResult> responseEntity = null;
+            try {
+                responseEntity = restTemplate.exchange(uriComponents.toUri(), HttpMethod.GET, requestEntity, TraktEpisodeResult.class);
                 return responseEntity.getBody();
-            } else {
-                _log.error(String.format("Trakt Search request: \n%s\n failed with HTTP code %s : %s", uriComponents.toString(), statusCode.toString(), statusCode.getReasonPhrase()));
-                return null;
+            } catch (RestClientException e) {
+                _log.error(String.format("Trakt Search request: \n%s\n failed with error %s", uriComponents.toString(), e.toString()), e);
             }
 
         } catch (Exception e) {

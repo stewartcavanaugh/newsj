@@ -32,6 +32,7 @@ import net.longfalcon.newsj.util.ParseUtil;
 import net.longfalcon.newsj.util.StreamUtil;
 import net.longfalcon.newsj.util.ValidatorUtil;
 import net.longfalcon.newsj.ws.google.GoogleSearchResponse;
+import net.longfalcon.newsj.ws.google.GoogleSearchResponseData;
 import net.longfalcon.newsj.ws.google.GoogleSearchResult;
 import net.longfalcon.newsj.ws.tmdb.TmdbFindResults;
 import net.longfalcon.newsj.ws.tmdb.TmdbMovieResults;
@@ -238,13 +239,16 @@ public class MovieService {
     }
 
     private int getImdbId(GoogleSearchResponse googleSearchResponse) {
-        List<GoogleSearchResult> results = googleSearchResponse.getResponseData().getResults();
-        if (results != null) {
-            for (GoogleSearchResult result : results) {
-                if (result.getVisibleUrl().equals("www.imdb.com")) {
-                    String imdbIdString = ParseUtil.parseImdb(result.getUnescapedUrl());
-                    if (ValidatorUtil.isNotNull(imdbIdString)) {
-                        return Integer.parseInt(imdbIdString);
+        GoogleSearchResponseData responseData = googleSearchResponse.getResponseData();
+        if (responseData != null) {
+            List<GoogleSearchResult> results = responseData.getResults();
+            if (results != null) {
+                for (GoogleSearchResult result : results) {
+                    if (result.getVisibleUrl().equals("www.imdb.com")) {
+                        String imdbIdString = ParseUtil.parseImdb(result.getUnescapedUrl());
+                        if (ValidatorUtil.isNotNull(imdbIdString)) {
+                            return Integer.parseInt(imdbIdString);
+                        }
                     }
                 }
             }
