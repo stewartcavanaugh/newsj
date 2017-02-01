@@ -23,6 +23,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.SQLQuery;
 import org.hibernate.dialect.Dialect;
+import org.hibernate.dialect.MySQL5Dialect;
 import org.hibernate.dialect.Oracle10gDialect;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.springframework.stereotype.Repository;
@@ -70,6 +71,18 @@ public class BulkInserter extends HibernateDAOImpl {
                         messagesBatched.add(part.getNumber());
                     }
                     sql += "SELECT 1 FROM DUAL";
+                } else if (dialect instanceof MySQL5Dialect )  {
+                    sql = "INSERT INTO `parts` (ID, BINARYID, MESSAGEID, NUMBER_, PARTNUMBER, SIZE_, DATEADDED) VALUES";
+                    for (int i = 0; i < partList.size(); i++) {
+                        Part part = partList.get(i);
+                        Timestamp dateAdded = new Timestamp(part.getDateAdded().getTime());
+                        sql += String.format(" ( %s, %s, '%s', %s, %s, %s, '%s')",
+                                part.getId(), part.getBinaryId(), part.getMessageId(), part.getNumber(), part.getPartNumber(), part.getSize(), dateAdded);
+                        if (i < partList.size() - 1) {
+                            sql += ",";
+                        }
+                        messagesBatched.add(part.getNumber());
+                    }
                 } else {
                     sql = "INSERT INTO PARTS (ID, BINARYID, MESSAGEID, NUMBER_, PARTNUMBER, SIZE_, DATEADDED) VALUES";
                     for (int i = 0; i < partList.size(); i++) {
