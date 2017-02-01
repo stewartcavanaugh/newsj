@@ -56,9 +56,9 @@
         <property name="mappingLocations" value="classpath:hibernate-mapping.xml"/>
         <property name="hibernateProperties">
             <props>
-                <!--<prop key="hibernate.show_sql">true</prop>
+               <!-- <prop key="hibernate.show_sql">true</prop>
                 <prop key="hibernate.format_sql">true</prop>-->
-                <prop key="hibernate.jdbc.batch_size">5</prop>
+                <prop key="hibernate.jdbc.batch_size">50</prop>
                 <!--<prop key="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.EhCacheRegionFactory</prop>-->
             </props>
         </property>
@@ -99,6 +99,12 @@
     </bean>
 
     <!-- DAOs -->
+    <bean id="idGeneratorService" class="net.longfalcon.newsj.service.IdGeneratorService" init-method="init">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+    <bean id="bulkInserter" class="net.longfalcon.newsj.persistence.hibernate.BulkInserter">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
     <bean id="groupDAO" class="net.longfalcon.newsj.persistence.hibernate.GroupDAOImpl">
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
@@ -248,6 +254,8 @@
         <property name="nntpConnectionFactory" ref="nntpConnectionFactory"/>
         <property name="partRepairDAO" ref="partRepairDAO"/>
         <property name="transactionManager" ref="transactionManager"/>
+        <property name="idGeneratorService" ref="idGeneratorService"/>
+        <property name="bulkInserter" ref="bulkInserter"/>
     </bean>
     <bean id="fileSystemService" class="net.longfalcon.newsj.fs.DefaultFileSystemServiceImpl" init-method="init">
         <property name="config" ref="config"/>

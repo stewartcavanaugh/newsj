@@ -7,6 +7,7 @@ DROP TABLE "CATEGORY" cascade;
 DROP TABLE "CONSOLEINFO" cascade;
 DROP TABLE "CONTENT" cascade ;
 DROP TABLE "FORUMPOST" cascade ;
+DROP TABLE "GENERATOR_IDS" CASCADE ;
 DROP TABLE "GENRES" cascade ;
 DROP TABLE "GROUPS" cascade ;
 DROP TABLE "JOBCONFIG" CASCADE ;
@@ -82,12 +83,12 @@ CREATE SEQUENCE  "PARTREPAIR_SEQ"
 MINVALUE 1 MAXVALUE 9999999999999999999999999999
 INCREMENT BY 100 START WITH 1 CACHE 20;
 --------------------------------------------------------
---  DDL for Sequence PART_SEQ
+--  DDL for Table GENERATOR_IDS
 --------------------------------------------------------
 
-CREATE SEQUENCE  "PART_SEQ"
-MINVALUE 1 MAXVALUE 9999999999999999999999999999
-INCREMENT BY 1000 START WITH 1 CACHE 20;
+CREATE TABLE "GENERATOR_IDS"
+(NAME_ VARCHAR(255) NOT NULL PRIMARY KEY ,
+ VALUE BIGINT DEFAULT 0 NOT NULL);
 --------------------------------------------------------
 --  DDL for Sequence RELEASECOMMENT_SEQ
 --------------------------------------------------------

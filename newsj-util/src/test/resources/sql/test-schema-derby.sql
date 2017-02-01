@@ -46,12 +46,12 @@ CREATE SEQUENCE  "PARTREPAIR_SEQ" AS BIGINT
   MINVALUE 1
   INCREMENT BY 100 START WITH 1  ;
 --------------------------------------------------------
---  DDL for Sequence PART_SEQ
+--  DDL for Table GENERATOR_IDS
 --------------------------------------------------------
 
-CREATE SEQUENCE  "PART_SEQ" AS BIGINT
-  MINVALUE 1
-  INCREMENT BY 1000 START WITH 1 ;
+CREATE TABLE "GENERATOR_IDS"
+("NAME_" VARCHAR(255) NOT NULL PRIMARY KEY ,
+ "VALUE" BIGINT NOT NULL DEFAULT 0);
 --------------------------------------------------------
 --  DDL for Sequence RELEASECOMMENT_SEQ
 --------------------------------------------------------

@@ -30,6 +30,9 @@ import net.longfalcon.newsj.nntp.client.NewsClient;
 import net.longfalcon.newsj.persistence.BinaryDAO;
 import net.longfalcon.newsj.persistence.PartDAO;
 import net.longfalcon.newsj.persistence.PartRepairDAO;
+import net.longfalcon.newsj.persistence.hibernate.BulkInsertException;
+import net.longfalcon.newsj.persistence.hibernate.BulkInserter;
+import net.longfalcon.newsj.service.IdGeneratorService;
 import net.longfalcon.newsj.util.ArrayUtil;
 import net.longfalcon.newsj.util.Defaults;
 import net.longfalcon.newsj.util.EncodingUtil;
@@ -70,6 +73,8 @@ public class FetchBinaries {
     public static final int MESSAGE_BUFFER = 20000;
     private static final Log _log = LogFactory.getLog(FetchBinaries.class);
 
+    private IdGeneratorService idGeneratorService;
+    private BulkInserter bulkInserter;
     private Blacklist blacklist;
     private BinaryDAO binaryDAO;
     private PartDAO partDAO;
@@ -245,6 +250,7 @@ public class FetchBinaries {
                             partCount++;
                             // create part - its possible some bugs are happening here.
                             Part part = new Part();
+                            part.setId(idGeneratorService.increment());
                             part.setBinaryId(binaryId);
                             part.setMessageId(messagePart.getMessageId());
                             part.setNumber(messagePart.getArticleNumber());
@@ -253,16 +259,21 @@ public class FetchBinaries {
                             part.setDateAdded(new Date());
                             try {
                                 long startDbUpdateTime = System.currentTimeMillis();
-                                partDAO.updatePart(part);
+                                bulkInserter.addPart(part);
                                 dbUpdateTime += (System.currentTimeMillis() - startDbUpdateTime);
                                 messagesInserted.add(messagePart.getArticleNumber());
-                            } catch (Exception e) {
-                                _log.error(e.toString());
-                                messagesNotInserted.add(messagePart.getArticleNumber());
+                            } catch (BulkInsertException ble) {
+                                _log.error(ble.toString());
+                                messagesNotInserted.addAll(ble.getFailedIds());
                             }
-                            if ( partCount % 20 == 0) {
-                                transaction.flush();
-                            }
+                        }
+                        try {
+                            long startDbUpdateTime = System.currentTimeMillis();
+                            bulkInserter.runBatch();
+                            dbUpdateTime += (System.currentTimeMillis() - startDbUpdateTime);
+                        } catch (BulkInsertException ble) {
+                            _log.error(ble.toString());
+                            messagesNotInserted.addAll(ble.getFailedIds());
                         }
                     }
                 }
@@ -368,5 +379,21 @@ public class FetchBinaries {
 
     public void setTransactionManager(PlatformTransactionManager transactionManager) {
         this.transactionManager = transactionManager;
+    }
+
+    public IdGeneratorService getIdGeneratorService() {
+        return idGeneratorService;
+    }
+
+    public void setIdGeneratorService(IdGeneratorService idGeneratorService) {
+        this.idGeneratorService = idGeneratorService;
+    }
+
+    public BulkInserter getBulkInserter() {
+        return bulkInserter;
+    }
+
+    public void setBulkInserter(BulkInserter bulkInserter) {
+        this.bulkInserter = bulkInserter;
     }
 }

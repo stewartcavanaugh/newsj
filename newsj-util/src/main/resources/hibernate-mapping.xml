@@ -147,6 +147,12 @@
         <property name="createDate" column="createddate"/>
         <property name="updateDate" column="updateddate"/>
     </class>
+    <class name="GeneratedId" table="GENERATOR_IDS">
+        <id name="name" column="NAME_">
+            <generator class="assigned"/>
+        </id>
+        <property name="value" column="VALUE"/>
+    </class>
     <class name="Genre" table="genres">
         <id name="id" column="ID">
             <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
@@ -292,12 +298,7 @@
     <class name="Part" table="parts">
         <!--<cache usage="read-write"/>-->
         <id name="id" column="ID">
-            <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
-                <param name="prefer_sequence_per_entity">true</param>
-                <param name="optimizer">pooled</param>
-                <param name="initial_value">1</param>
-                <param name="increment_size">1000</param>
-            </generator>
+            <generator class="assigned"/>
         </id>
         <property name="binaryId" column="binaryID"/>
         <property name="messageId" column="messageID"/>
