@@ -49,6 +49,8 @@
         <security:intercept-url pattern="/contact-us" access="permitAll"/>
         <security:intercept-url pattern="/sitemap" access="permitAll"/>
         <security:intercept-url pattern="/api/**" access="permitAll"/>
+        <security:intercept-url pattern="/getnzb/**" access="permitAll"/>
+        <security:intercept-url pattern="/getnzb" access="permitAll"/>
         <security:intercept-url pattern="/content/**" access="permitAll"/>
         <security:intercept-url pattern="/install*" access="permitAll"/>
         <security:intercept-url pattern="/admin/**" access="hasRole('ROLE_ADMIN')" />
