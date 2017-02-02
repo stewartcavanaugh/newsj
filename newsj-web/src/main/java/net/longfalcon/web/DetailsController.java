@@ -97,6 +97,12 @@ public class DetailsController extends BaseController {
     public String detailsView(@PathVariable("guid") String guid,
                               @PathVariable("releaseName") String releaseName,
                               Model model) throws NoSuchResourceException {
+        return detailsView(guid, model);
+    }
+
+    @RequestMapping("/details/{guid}")
+    public String detailsView(@PathVariable("guid") String guid,
+                              Model model) throws NoSuchResourceException {
         title = "View NZB";
         setPageMetaKeywords("view,nzb,description,details");
 
@@ -107,7 +113,7 @@ public class DetailsController extends BaseController {
         }
 
         long releaseId = release.getId();
-        releaseName = release.getSearchName();
+        String releaseName = release.getSearchName();
         Long rageId = release.getRageId();
         Integer imdbId = release.getImdbId();
         Integer musicInfoId = release.getMusicInfoId();
@@ -162,6 +168,14 @@ public class DetailsController extends BaseController {
                             @RequestParam("txtAddComment") String commentText,
                             HttpSession httpSession,
                             HttpServletRequest httpServletRequest) throws PermissionDeniedException, NoSuchResourceException {
+        return detailsPost(guid, commentText, httpSession, httpServletRequest);
+    }
+
+    @RequestMapping(value = "/details/{guid}", method = RequestMethod.POST)
+    public View detailsPost(@PathVariable("guid") String guid,
+                            @RequestParam("txtAddComment") String commentText,
+                            HttpSession httpSession,
+                            HttpServletRequest httpServletRequest) throws PermissionDeniedException, NoSuchResourceException {
 
         Release release = releases.findByGuid(guid);
         if (release == null) {
@@ -189,6 +203,6 @@ public class DetailsController extends BaseController {
             }
         }
 
-        return safeRedirect("/details/" + guid + "/" + releaseName);
+        return safeRedirect("/details/" + guid);
     }
 }
