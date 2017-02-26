@@ -23,6 +23,8 @@ import net.longfalcon.newsj.Config;
 import net.longfalcon.newsj.model.User;
 import net.longfalcon.newsj.persistence.UserDAO;
 import net.longfalcon.newsj.util.ValidatorUtil;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 
@@ -39,7 +41,7 @@ import java.util.Date;
  * Time: 4:07 PM
  */
 public class DefaultAuthenticationSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
-
+    private static final Log _log = LogFactory.getLog(DefaultAuthenticationSuccessHandler.class);
     private Config config;
     private UserDAO userDAO;
 
@@ -63,7 +65,7 @@ public class DefaultAuthenticationSuccessHandler extends SavedRequestAwareAuthen
         }
 
         updateSiteAccessed(user, host);
-
+        _log.info("User " + user.getUsername() + " is logging in");
     }
 
     protected void updateSiteAccessed(User user, String host) {

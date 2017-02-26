@@ -301,4 +301,40 @@ public class Release {
     public void setCategoryDisplayName(String categoryDisplayName) {
         this.categoryDisplayName = categoryDisplayName;
     }
+
+    @Override
+    public String toString() {
+        return "Release{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", searchName='" + searchName + '\'' +
+                ", totalpart=" + totalpart +
+                ", groupId=" + groupId +
+                ", size=" + size +
+                ", postDate=" + postDate +
+                ", addDate=" + addDate +
+                ", guid='" + guid + '\'' +
+                ", fromName='" + fromName + '\'' +
+                ", completion=" + completion +
+                ", category=" + category +
+                ", regexId=" + regexId +
+                ", rageId=" + rageId +
+                ", seriesFull='" + seriesFull + '\'' +
+                ", season='" + season + '\'' +
+                ", episode='" + episode + '\'' +
+                ", tvTitle='" + tvTitle + '\'' +
+                ", tvAirDate=" + tvAirDate +
+                ", imdbId=" + imdbId +
+                ", musicInfoId=" + musicInfoId +
+                ", consoleInfoId=" + consoleInfoId +
+                ", reqId=" + reqId +
+                ", grabs=" + grabs +
+                ", comments=" + comments +
+                ", passwordStatus=" + passwordStatus +
+                ", releaseNfo=" + releaseNfo +
+                ", categoryId=" + categoryId +
+                ", groupName='" + groupName + '\'' +
+                ", categoryDisplayName='" + categoryDisplayName + '\'' +
+                '}';
+    }
 }
