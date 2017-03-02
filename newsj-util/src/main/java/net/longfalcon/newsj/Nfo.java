@@ -106,8 +106,13 @@ public class Nfo {
             _log.info("Processing " + releaseNfos.size() + " nfos");
             NewsClient newsClient = nntpConnectionFactory.getNntpClient();
             for (ReleaseNfo releaseNfo : releaseNfos) {
-                String nfoText = getSmallBinaryNfo(newsClient, releaseNfo);
-
+                String nfoText = null;
+                try {
+                    nfoText = getSmallBinaryNfo(newsClient, releaseNfo);
+                } catch (Exception e) {
+                    _log.error(e.toString());
+                    _log.debug(e);
+                }
 
                 if (ValidatorUtil.isNotNull(nfoText)) {
                     releaseNfo.setNfo(nfoText.getBytes());
