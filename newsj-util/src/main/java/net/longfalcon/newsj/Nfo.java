@@ -95,6 +95,8 @@ public class Nfo {
     }
 
     public void addReleaseNfo(ReleaseNfo releaseNfo) {
+        // TODO: make this log debug
+        _log.info("Added NFO for release " + releaseNfo.getRelease().getId() + " : binary " + releaseNfo.getBinary().getId());
         releaseNfoDAO.updateReleaseNfo(releaseNfo);
     }
 
@@ -140,8 +142,8 @@ public class Nfo {
                     }
                     releaseNfoDAO.updateReleaseNfo(releaseNfo);
                 } else {
-                    int attempts = releaseNfo.getAttemtps() + 1;
-                    releaseNfo.setAttemtps(attempts);
+                    int attempts = releaseNfo.getAttempts() + 1;
+                    releaseNfo.setAttempts(attempts);
                     _log.warn(String.format("NFO download failed - release %s on attempt %s", releaseNfo.getRelease().getId(), attempts));
                     releaseNfoDAO.updateReleaseNfo(releaseNfo);
                 }

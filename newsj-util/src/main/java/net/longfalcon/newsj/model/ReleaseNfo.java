@@ -27,7 +27,7 @@ public class ReleaseNfo {
     private long id;
     private Release release;
     private Binary binary;
-    private int attemtps;
+    private int attempts;
     private byte[] nfo = null;
 
     public long getId() {
@@ -38,12 +38,12 @@ public class ReleaseNfo {
         this.id = id;
     }
 
-    public int getAttemtps() {
-        return attemtps;
+    public int getAttempts() {
+        return attempts;
     }
 
-    public void setAttemtps(int attemtps) {
-        this.attemtps = attemtps;
+    public void setAttempts(int attemtps) {
+        this.attempts = attemtps;
     }
 
     public byte[] getNfo() {

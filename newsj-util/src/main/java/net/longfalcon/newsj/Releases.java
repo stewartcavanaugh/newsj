@@ -280,448 +280,464 @@ public class Releases {
 
         // Stage 0
 
-        // this is a hack - tx is not working ATM
+        // TODO: replace with txn annotated public methods
         TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition(TransactionDefinition.PROPAGATION_REQUIRED));
 
-        //
-        // Get all regexes for all groups which are to be applied to new binaries
-        // in order of how they should be applied
-        //
-        List<ReleaseRegex> releaseRegexList = releaseRegexDAO.getRegexes(true,"-1", false);
-        for (ReleaseRegex releaseRegex : releaseRegexList) {
-            matchedBinariesCount = 0;
-            processedBinariesCount = 0;
-            String releaseRegexGroupName = releaseRegex.getGroupName();
-            _log.info(String.format("Applying regex %d for group %s", releaseRegex.getId(), ValidatorUtil.isNull(releaseRegexGroupName) ? "all" : releaseRegexGroupName));
-
-            // compile the regex early, to test them
-            String regex = releaseRegex.getRegex();
-            Pattern pattern = Pattern.compile(fixRegex(regex), Pattern.CASE_INSENSITIVE); // remove '/' and '/i'
-
-            HashSet<Long> groupMatch = new LinkedHashSet<>();
-
+        try {
             //
-            // Groups ending in * need to be like matched when getting out binaries for groups and children
+            // Get all regexes for all groups which are to be applied to new binaries
+            // in order of how they should be applied
             //
-            Matcher matcher = _wildcardPattern.matcher(releaseRegexGroupName);
-            if (matcher.matches()) {
-                releaseRegexGroupName = releaseRegexGroupName.substring(0,releaseRegexGroupName.length()-1);
-                List<Group> groups = groupDAO.findGroupsByName(releaseRegexGroupName);
-                for (Group group : groups) {
-                    groupMatch.add(group.getId());
-                }
-            } else if ( !ValidatorUtil.isNull(releaseRegexGroupName) ) {
-                Group group = groupDAO.getGroupByName(releaseRegexGroupName);
-                if (group != null) {
-                    groupMatch.add(group.getId());
-                }
-            }
-
-            //List<Binary> binaries = new ArrayList<>();
-            int offset = 0;
-            int pageSize = 20;
-            long binaryCount = 0;
-            List<Long> binaryIds = new ArrayList<>();
-            if (groupMatch.size() > 0) {
-                // Get out all binaries of STAGE0 for current group
-                binaryCount = binaryDAO.countByGroupIdsAndProcStat(groupMatch, Defaults.PROCSTAT_NEW);
-                // get binary Ids so that processing can be in batches
-                binaryIds = binaryDAO.findBinaryIdsByGroupIdsAndProcStat(groupMatch, Defaults.PROCSTAT_NEW);
-            }
-
-            Map<String, String> arrNoPartBinaries = new LinkedHashMap<>();
-            DateTime fiveHoursAgo = DateTime.now().minusHours(5);
-
-            if (binaryCount > 0) {
-                while (offset < binaryCount) {
-                    int toIndex = offset + pageSize;
-                    if (toIndex > binaryCount) {
-                        toIndex = ((Long) binaryCount).intValue();
+            List<ReleaseRegex> releaseRegexList = releaseRegexDAO.getRegexes(true,"-1", false);
+            for (ReleaseRegex releaseRegex : releaseRegexList) {
+                matchedBinariesCount = 0;
+                processedBinariesCount = 0;
+                String releaseRegexGroupName = releaseRegex.getGroupName();
+                _log.info(String.format("Applying regex %d for group %s", releaseRegex.getId(), ValidatorUtil.isNull(releaseRegexGroupName) ? "all" : releaseRegexGroupName));
+    
+                // compile the regex early, to test them
+                String regex = releaseRegex.getRegex();
+                Pattern pattern = Pattern.compile(fixRegex(regex), Pattern.CASE_INSENSITIVE); // remove '/' and '/i'
+    
+                HashSet<Long> groupMatch = new LinkedHashSet<>();
+    
+                //
+                // Groups ending in * need to be like matched when getting out binaries for groups and children
+                //
+                Matcher matcher = _wildcardPattern.matcher(releaseRegexGroupName);
+                if (matcher.matches()) {
+                    releaseRegexGroupName = releaseRegexGroupName.substring(0,releaseRegexGroupName.length()-1);
+                    List<Group> groups = groupDAO.findGroupsByName(releaseRegexGroupName);
+                    for (Group group : groups) {
+                        groupMatch.add(group.getId());
                     }
-                    List<Long> subList = binaryIds.subList(offset, toIndex);
-                    List<Binary> binaries = binaryDAO.findByBinaryIds(subList);
-                    doBinariesStage1(releaseRegex, regex, pattern, arrNoPartBinaries, fiveHoursAgo, binaries, binaryCount);
-                    offset += pageSize;
+                } else if ( !ValidatorUtil.isNull(releaseRegexGroupName) ) {
+                    Group group = groupDAO.getGroupByName(releaseRegexGroupName);
+                    if (group != null) {
+                        groupMatch.add(group.getId());
+                    }
                 }
+    
+                //List<Binary> binaries = new ArrayList<>();
+                int offset = 0;
+                int pageSize = 20;
+                long binaryCount = 0;
+                List<Long> binaryIds = new ArrayList<>();
+                if (groupMatch.size() > 0) {
+                    // Get out all binaries of STAGE0 for current group
+                    binaryCount = binaryDAO.countByGroupIdsAndProcStat(groupMatch, Defaults.PROCSTAT_NEW);
+                    // get binary Ids so that processing can be in batches
+                    binaryIds = binaryDAO.findBinaryIdsByGroupIdsAndProcStat(groupMatch, Defaults.PROCSTAT_NEW);
+                }
+    
+                Map<String, String> arrNoPartBinaries = new LinkedHashMap<>();
+                DateTime fiveHoursAgo = DateTime.now().minusHours(5);
+    
+                if (binaryCount > 0) {
+                    while (offset < binaryCount) {
+                        int toIndex = offset + pageSize;
+                        if (toIndex > binaryCount) {
+                            toIndex = ((Long) binaryCount).intValue();
+                        }
+                        List<Long> subList = binaryIds.subList(offset, toIndex);
+                        List<Binary> binaries = binaryDAO.findByBinaryIds(subList);
+                        doBinariesStage1(releaseRegex, regex, pattern, arrNoPartBinaries, fiveHoursAgo, binaries, binaryCount);
+                        offset += pageSize;
+                    }
+                }
+    
             }
-
+        } catch (Exception e) {
+            _log.error(e.toString());
+            transactionManager.rollback(transaction);
         }
 
         transactionManager.commit(transaction);
 
-        // this is a hack - tx is not working ATM
+        // TODO: replace with txn annotated public methods
         transaction = transactionManager.getTransaction(new DefaultTransactionDefinition(TransactionDefinition.PROPAGATION_REQUIRED));
-        //
-        // Move all binaries from releases which have the correct number of files on to the next stage.
-        //
-        _log.info("Stage 2");
-        List<MatchedReleaseQuery> matchedReleaseQueries = binaryDAO.findBinariesByProcStatAndTotalParts(Defaults.PROCSTAT_TITLEMATCHED);
-        matchedReleaseQueries = combineMatchedQueries(matchedReleaseQueries);
-
-        int siteMinFilestoFormRelease = site.getMinFilesToFormRelease();
-
-        for (MatchedReleaseQuery matchedReleaseQuery : matchedReleaseQueries) {
-            retcount++;
-
+        try {
             //
-            // Less than the site permitted number of files in a release. Dont discard it, as it may
-            // be part of a set being uploaded.
+            // Move all binaries from releases which have the correct number of files on to the next stage.
             //
-            int minFiles = siteMinFilestoFormRelease;
-            String releaseName = matchedReleaseQuery.getReleaseName();
-            long matchedReleaseQueryGroup = matchedReleaseQuery.getGroup();
-            Long matchedReleaseQueryNumberOfBinaries = matchedReleaseQuery.getNumberOfBinaries();
-            int matchecReleaseTotalParts = matchedReleaseQuery.getReleaseTotalParts();
-            String fromName = matchedReleaseQuery.getFromName();
-            Integer reqId = matchedReleaseQuery.getReqId();
+            _log.info("Stage 2");
+            List<MatchedReleaseQuery> matchedReleaseQueries = binaryDAO.findBinariesByProcStatAndTotalParts(Defaults.PROCSTAT_TITLEMATCHED);
+            matchedReleaseQueries = combineMatchedQueries(matchedReleaseQueries);
 
-            Group group = groupDAO.findGroupByGroupId(matchedReleaseQueryGroup);
-            if (group != null && group.getMinFilesToFormRelease() != null) {
-                minFiles = group.getMinFilesToFormRelease();
-            }
+            int siteMinFilestoFormRelease = site.getMinFilesToFormRelease();
 
-            if (matchedReleaseQueryNumberOfBinaries < minFiles) {
-
-                _log.warn(String.format("Number of files in release %s less than site/group setting (%s/%s)", releaseName, matchedReleaseQueryNumberOfBinaries, minFiles));
-
-                binaryDAO.updateBinaryIncrementProcAttempts(releaseName, Defaults.PROCSTAT_TITLEMATCHED, matchedReleaseQueryGroup, fromName);
-            } else if (matchedReleaseQueryNumberOfBinaries >= matchecReleaseTotalParts) {
-                // Check that the binary is complete
-                List<Binary> releaseBinaryList = binaryDAO.findBinariesByReleaseNameProcStatGroupIdFromName(releaseName, Defaults.PROCSTAT_TITLEMATCHED, matchedReleaseQueryGroup, fromName);
-
-                boolean incomplete = false;
-                for (Binary binary : releaseBinaryList) {
-                    long partsCount = partDAO.countPartsByBinaryId(binary.getId());
-                    if (partsCount < binary.getTotalParts()) {
-                        float percentComplete = ((float) partsCount / (float) binary.getTotalParts()) * 100;
-                        _log.warn(String.format("binary %s from %s has missing parts = %s/%s (%s%% complete)", binary.getId(), releaseName, partsCount, binary.getTotalParts(), percentComplete));
-
-                        // Allow to binary to release if posted to usenet longer than four hours ago and we still don't have all the parts
-                        DateTime fourHoursAgo = DateTime.now().minusHours(4);
-                        if (fourHoursAgo.isAfter(new DateTime(binary.getDate()))) {
-                            _log.info("allowing incomplete binary " + binary.getId());
-                        } else {
-                            incomplete = true;
-                        }
-                    }
-                }
-
-                if (incomplete) {
-                    _log.warn(String.format("Incorrect number of parts %s-%s-%s", releaseName, matchedReleaseQueryNumberOfBinaries, matchecReleaseTotalParts));
-                    binaryDAO.updateBinaryIncrementProcAttempts(releaseName, Defaults.PROCSTAT_TITLEMATCHED, matchedReleaseQueryGroup, fromName);
-                }
-
+            for (MatchedReleaseQuery matchedReleaseQuery : matchedReleaseQueries) {
+                retcount++;
+    
                 //
-                // Right number of files, but see if the binary is a allfilled/reqid post, in which case it needs its name looked up
-                // TODO: Does this even work anymore?
-                else if ( ValidatorUtil.isNotNull(site.getReqIdUrl()) && ValidatorUtil.isNotNull(reqId) ) {
-
-                        //
-                        // Try and get the name using the group
-                        //
-                        _log.info("Looking up "+ reqId + " in " + group.getName() + "...");
-                        String newTitle = getReleaseNameForReqId(site.getReqIdUrl(), group, reqId, true);
-
-                        //
-                        // if the feed/group wasnt supported by the scraper, then just use the release name as the title.
-                        //
-                        if (ValidatorUtil.isNull(newTitle) || newTitle.equals("no feed"))
-                        {
-                            newTitle = releaseName;
-                            _log.warn( "Group not supported");
-                        }
-
-                        //
-                        // Valid release with right number of files and title now, so move it on
-                        //
-                        if (ValidatorUtil.isNotNull(newTitle)) {
-                            binaryDAO.updateBinaryNameAndStatus(newTitle, Defaults.PROCSTAT_READYTORELEASE, releaseName, Defaults.PROCSTAT_TITLEMATCHED, matchedReleaseQueryGroup, fromName);
-                        } else {
-                            //
-                            // Item not found, if the binary was added to the index yages ago, then give up.
-                            //
-                            Timestamp timestamp = binaryDAO.findMaxDateAddedBinaryByReleaseNameProcStatGroupIdFromName(releaseName, Defaults.PROCSTAT_TITLEMATCHED, matchedReleaseQueryGroup, fromName);
-                            DateTime maxAddedDate = new DateTime(timestamp);
-                            DateTime twoDaysAgo = DateTime.now().minusDays(2);
-
-                            if (maxAddedDate.isBefore(twoDaysAgo)) {
-                                binaryDAO.updateBinaryNameAndStatus(releaseName, Defaults.PROCSTAT_NOREQIDNAMELOOKUPFOUND, releaseName, Defaults.PROCSTAT_TITLEMATCHED, matchedReleaseQueryGroup, fromName);
-                                _log.warn("Not found in 48 hours");
+                // Less than the site permitted number of files in a release. Dont discard it, as it may
+                // be part of a set being uploaded.
+                //
+                int minFiles = siteMinFilestoFormRelease;
+                String releaseName = matchedReleaseQuery.getReleaseName();
+                long matchedReleaseQueryGroup = matchedReleaseQuery.getGroup();
+                Long matchedReleaseQueryNumberOfBinaries = matchedReleaseQuery.getNumberOfBinaries();
+                int matchecReleaseTotalParts = matchedReleaseQuery.getReleaseTotalParts();
+                String fromName = matchedReleaseQuery.getFromName();
+                Integer reqId = matchedReleaseQuery.getReqId();
+    
+                Group group = groupDAO.findGroupByGroupId(matchedReleaseQueryGroup);
+                if (group != null && group.getMinFilesToFormRelease() != null) {
+                    minFiles = group.getMinFilesToFormRelease();
+                }
+    
+                if (matchedReleaseQueryNumberOfBinaries < minFiles) {
+    
+                    _log.warn(String.format("Number of files in release %s less than site/group setting (%s/%s)", releaseName, matchedReleaseQueryNumberOfBinaries, minFiles));
+    
+                    binaryDAO.updateBinaryIncrementProcAttempts(releaseName, Defaults.PROCSTAT_TITLEMATCHED, matchedReleaseQueryGroup, fromName);
+                } else if (matchedReleaseQueryNumberOfBinaries >= matchecReleaseTotalParts) {
+                    // Check that the binary is complete
+                    List<Binary> releaseBinaryList = binaryDAO.findBinariesByReleaseNameProcStatGroupIdFromName(releaseName, Defaults.PROCSTAT_TITLEMATCHED, matchedReleaseQueryGroup, fromName);
+    
+                    boolean incomplete = false;
+                    for (Binary binary : releaseBinaryList) {
+                        long partsCount = partDAO.countPartsByBinaryId(binary.getId());
+                        if (partsCount < binary.getTotalParts()) {
+                            float percentComplete = ((float) partsCount / (float) binary.getTotalParts()) * 100;
+                            _log.warn(String.format("binary %s from %s has missing parts = %s/%s (%s%% complete)", binary.getId(), releaseName, partsCount, binary.getTotalParts(), percentComplete));
+    
+                            // Allow to binary to release if posted to usenet longer than four hours ago and we still don't have all the parts
+                            DateTime fourHoursAgo = DateTime.now().minusHours(4);
+                            if (fourHoursAgo.isAfter(new DateTime(binary.getDate()))) {
+                                _log.info("allowing incomplete binary " + binary.getId());
+                            } else {
+                                incomplete = true;
                             }
                         }
+                    }
+    
+                    if (incomplete) {
+                        _log.warn(String.format("Incorrect number of parts %s-%s-%s", releaseName, matchedReleaseQueryNumberOfBinaries, matchecReleaseTotalParts));
+                        binaryDAO.updateBinaryIncrementProcAttempts(releaseName, Defaults.PROCSTAT_TITLEMATCHED, matchedReleaseQueryGroup, fromName);
+                    }
+    
+                    //
+                    // Right number of files, but see if the binary is a allfilled/reqid post, in which case it needs its name looked up
+                    // TODO: Does this even work anymore?
+                    else if ( ValidatorUtil.isNotNull(site.getReqIdUrl()) && ValidatorUtil.isNotNull(reqId) ) {
+    
+                            //
+                            // Try and get the name using the group
+                            //
+                            _log.info("Looking up "+ reqId + " in " + group.getName() + "...");
+                            String newTitle = getReleaseNameForReqId(site.getReqIdUrl(), group, reqId, true);
+    
+                            //
+                            // if the feed/group wasnt supported by the scraper, then just use the release name as the title.
+                            //
+                            if (ValidatorUtil.isNull(newTitle) || newTitle.equals("no feed"))
+                            {
+                                newTitle = releaseName;
+                                _log.warn( "Group not supported");
+                            }
+    
+                            //
+                            // Valid release with right number of files and title now, so move it on
+                            //
+                            if (ValidatorUtil.isNotNull(newTitle)) {
+                                binaryDAO.updateBinaryNameAndStatus(newTitle, Defaults.PROCSTAT_READYTORELEASE, releaseName, Defaults.PROCSTAT_TITLEMATCHED, matchedReleaseQueryGroup, fromName);
+                            } else {
+                                //
+                                // Item not found, if the binary was added to the index yages ago, then give up.
+                                //
+                                Timestamp timestamp = binaryDAO.findMaxDateAddedBinaryByReleaseNameProcStatGroupIdFromName(releaseName, Defaults.PROCSTAT_TITLEMATCHED, matchedReleaseQueryGroup, fromName);
+                                DateTime maxAddedDate = new DateTime(timestamp);
+                                DateTime twoDaysAgo = DateTime.now().minusDays(2);
+    
+                                if (maxAddedDate.isBefore(twoDaysAgo)) {
+                                    binaryDAO.updateBinaryNameAndStatus(releaseName, Defaults.PROCSTAT_NOREQIDNAMELOOKUPFOUND, releaseName, Defaults.PROCSTAT_TITLEMATCHED, matchedReleaseQueryGroup, fromName);
+                                    _log.warn("Not found in 48 hours");
+                                }
+                            }
+                    } else {
+                        binaryDAO.updateBinaryNameAndStatus(releaseName, Defaults.PROCSTAT_READYTORELEASE, releaseName, Defaults.PROCSTAT_TITLEMATCHED, matchedReleaseQueryGroup, fromName);
+    
+                    }
                 } else {
-                    binaryDAO.updateBinaryNameAndStatus(releaseName, Defaults.PROCSTAT_READYTORELEASE, releaseName, Defaults.PROCSTAT_TITLEMATCHED, matchedReleaseQueryGroup, fromName);
-
+                    //
+                    // Theres less than the expected number of files, so update the attempts and move on.
+                    //
+    
+                    _log.info(String.format("Incorrect number of files for %s (%d/%d)", releaseName, matchedReleaseQueryNumberOfBinaries, matchecReleaseTotalParts));
+                    binaryDAO.updateBinaryIncrementProcAttempts(releaseName, Defaults.PROCSTAT_TITLEMATCHED, matchedReleaseQueryGroup, fromName);
                 }
-            } else {
-                //
-                // Theres less than the expected number of files, so update the attempts and move on.
-                //
-
-                _log.info(String.format("Incorrect number of files for %s (%d/%d)", releaseName, matchedReleaseQueryNumberOfBinaries, matchecReleaseTotalParts));
-                binaryDAO.updateBinaryIncrementProcAttempts(releaseName, Defaults.PROCSTAT_TITLEMATCHED, matchedReleaseQueryGroup, fromName);
+    
+                if (retcount % 10 == 0) {
+                    _log.info(String.format("-processed %d binaries stage two", retcount));
+                }
+    
             }
-
-            if (retcount % 10 == 0) {
-                _log.info(String.format("-processed %d binaries stage two", retcount));
-            }
-
+        } catch (Exception e) {
+            _log.error(e.toString());
+            transactionManager.rollback(transaction);
         }
         transactionManager.commit(transaction);
 
         retcount = 0;
         int nfoCount = 0;
 
-        // this is a hack - tx is not working ATM
+        // TODO: replace with txn annotated public methods
         transaction = transactionManager.getTransaction(new DefaultTransactionDefinition(TransactionDefinition.PROPAGATION_REQUIRED));
-        //
-        // Get out all distinct relname, group from binaries of STAGE2
-        //
-        _log.info("Stage 3");
-        List<MatchedReleaseQuery> readyReleaseQueries = binaryDAO.findBinariesByProcStatAndTotalParts(Defaults.PROCSTAT_READYTORELEASE);
-        readyReleaseQueries = combineMatchedQueries(readyReleaseQueries);
-        for (MatchedReleaseQuery readyReleaseQuery : readyReleaseQueries) {
-            try {
-                retcount++;
 
-                String releaseName = readyReleaseQuery.getReleaseName();
-                int numParts = readyReleaseQuery.getReleaseTotalParts();
-                long binaryCount = readyReleaseQuery.getNumberOfBinaries();
-                long groupId = readyReleaseQuery.getGroup();
-                //
-                // Get the last post date and the poster name from the binary
-                //
-                String fromName = readyReleaseQuery.getFromName();
-                Timestamp timestamp = binaryDAO.findMaxDateAddedBinaryByReleaseNameProcStatGroupIdFromName(releaseName, Defaults.PROCSTAT_READYTORELEASE, groupId, fromName);
-                DateTime addedDate = new DateTime(timestamp);
-
-                //
-                // Get all releases with the same name with a usenet posted date in a +1-1 date range.
-                //
-                Date oneDayBefore = addedDate.minusDays(1).toDate();
-                Date oneDayAfter = addedDate.plusDays(1).toDate();
-                List<Release> relDupes = releaseDAO.findReleasesByNameAndDateRange(releaseName, oneDayBefore, oneDayAfter );
-
-                if (!relDupes.isEmpty()) {
-                    binaryDAO.updateBinaryNameAndStatus(releaseName, Defaults.PROCSTAT_DUPLICATE, releaseName, Defaults.PROCSTAT_READYTORELEASE, groupId, fromName);
-                    continue;
-                }
-
-                //
-                // Get total size of this release
-                // Done in a big OR statement, not an IN as the mysql binaryID index on parts table
-                // was not being used.
-                //
-
-                // SM: TODO this should be revisited, using hb mappings
-
-                long totalSize = 0;
-                int regexAppliedCategoryId = 0;
-                long regexIdUsed = 0;
-                int reqIdUsed = 0;
-                int relTotalParts = 0;
-                float relCompletion;
-                List<Binary> binariesForSize = binaryDAO.findBinariesByReleaseNameProcStatGroupIdFromName(releaseName, Defaults.PROCSTAT_READYTORELEASE, groupId, fromName);
-
-                long relParts = 0;
-                for (Binary binary : binariesForSize) {
-                    if (ValidatorUtil.isNotNull(binary.getCategoryId()) && regexAppliedCategoryId == 0) {
-                        regexAppliedCategoryId = binary.getCategoryId();
+        try {
+            //
+            // Get out all distinct relname, group from binaries of STAGE2
+            //
+            _log.info("Stage 3");
+            List<MatchedReleaseQuery> readyReleaseQueries = binaryDAO.findBinariesByProcStatAndTotalParts(Defaults.PROCSTAT_READYTORELEASE);
+            readyReleaseQueries = combineMatchedQueries(readyReleaseQueries);
+            for (MatchedReleaseQuery readyReleaseQuery : readyReleaseQueries) {
+                try {
+                    retcount++;
+    
+                    String releaseName = readyReleaseQuery.getReleaseName();
+                    int numParts = readyReleaseQuery.getReleaseTotalParts();
+                    long binaryCount = readyReleaseQuery.getNumberOfBinaries();
+                    long groupId = readyReleaseQuery.getGroup();
+                    //
+                    // Get the last post date and the poster name from the binary
+                    //
+                    String fromName = readyReleaseQuery.getFromName();
+                    Timestamp timestamp = binaryDAO.findMaxDateAddedBinaryByReleaseNameProcStatGroupIdFromName(releaseName, Defaults.PROCSTAT_READYTORELEASE, groupId, fromName);
+                    DateTime addedDate = new DateTime(timestamp);
+    
+                    //
+                    // Get all releases with the same name with a usenet posted date in a +1-1 date range.
+                    //
+                    Date oneDayBefore = addedDate.minusDays(1).toDate();
+                    Date oneDayAfter = addedDate.plusDays(1).toDate();
+                    List<Release> relDupes = releaseDAO.findReleasesByNameAndDateRange(releaseName, oneDayBefore, oneDayAfter );
+    
+                    if (!relDupes.isEmpty()) {
+                        binaryDAO.updateBinaryNameAndStatus(releaseName, Defaults.PROCSTAT_DUPLICATE, releaseName, Defaults.PROCSTAT_READYTORELEASE, groupId, fromName);
+                        continue;
                     }
-
-                    if (ValidatorUtil.isNotNull(binary.getRegexId()) && regexIdUsed == 0) {
-                        regexIdUsed = binary.getRegexId();
+    
+                    //
+                    // Get total size of this release
+                    // Done in a big OR statement, not an IN as the mysql binaryID index on parts table
+                    // was not being used.
+                    //
+    
+                    // SM: TODO this should be revisited, using hb mappings
+    
+                    long totalSize = 0;
+                    int regexAppliedCategoryId = 0;
+                    long regexIdUsed = 0;
+                    int reqIdUsed = 0;
+                    int relTotalParts = 0;
+                    float relCompletion;
+                    List<Binary> binariesForSize = binaryDAO.findBinariesByReleaseNameProcStatGroupIdFromName(releaseName, Defaults.PROCSTAT_READYTORELEASE, groupId, fromName);
+    
+                    long relParts = 0;
+                    for (Binary binary : binariesForSize) {
+                        if (ValidatorUtil.isNotNull(binary.getCategoryId()) && regexAppliedCategoryId == 0) {
+                            regexAppliedCategoryId = binary.getCategoryId();
+                        }
+    
+                        if (ValidatorUtil.isNotNull(binary.getRegexId()) && regexIdUsed == 0) {
+                            regexIdUsed = binary.getRegexId();
+                        }
+    
+                        if (ValidatorUtil.isNotNull(binary.getReqId()) && reqIdUsed == 0) {
+                            reqIdUsed = binary.getReqId();
+                        }
+    
+                        relTotalParts += binary.getTotalParts();
+                        relParts += partDAO.countPartsByBinaryId(binary.getId());
+                        totalSize += partDAO.sumPartsSizeByBinaryId(binary.getId());
                     }
-
-                    if (ValidatorUtil.isNotNull(binary.getReqId()) && reqIdUsed == 0) {
-                        reqIdUsed = binary.getReqId();
+                    relCompletion = ((float) relParts / (float) relTotalParts) * 100f;
+    
+                    //
+                    // Insert the release
+                    //
+    
+                    String releaseGuid = UUID.randomUUID().toString();
+                    int categoryId;
+                    Category category = null;
+                    Long regexId;
+                    Integer reqId;
+                    if (regexAppliedCategoryId == 0) {
+                        categoryId = categoryService.determineCategory(groupId, releaseName);
+                    } else {
+                        categoryId = regexAppliedCategoryId;
                     }
-
-                    relTotalParts += binary.getTotalParts();
-                    relParts += partDAO.countPartsByBinaryId(binary.getId());
-                    totalSize += partDAO.sumPartsSizeByBinaryId(binary.getId());
-                }
-                relCompletion = ((float) relParts / (float) relTotalParts) * 100f;
-
-                //
-                // Insert the release
-                //
-
-                String releaseGuid = UUID.randomUUID().toString();
-                int categoryId;
-                Category category = null;
-                Long regexId;
-                Integer reqId;
-                if (regexAppliedCategoryId == 0) {
-                    categoryId = categoryService.determineCategory(groupId, releaseName);
-                } else {
-                    categoryId = regexAppliedCategoryId;
-                }
-                if (categoryId > 0) {
-                    category = categoryService.getCategory(categoryId);
-                }
-
-                if (regexIdUsed == 0) {
-                    regexId = null;
-                } else {
-                    regexId = regexIdUsed;
-                }
-
-                if (reqIdUsed == 0) {
-                    reqId = null;
-                } else {
-                    reqId = reqIdUsed;
-                }
-
-                //Clean release name of '#', '@', '$', '%', '^', '§', '¨', '©', 'Ö'
-                String cleanReleaseName = releaseName.replaceAll("[^A-Za-z0-9-_\\ \\.]+", "");
-                Release release = new Release();
-                release.setName(cleanReleaseName);
-                release.setSearchName(cleanReleaseName);
-                release.setTotalpart(numParts);
-                release.setGroupId(groupId);
-                release.setAddDate(new Date());
-                release.setGuid(releaseGuid);
-                release.setCategory(category);
-                release.setRegexId(regexId);
-                release.setRageId((long) -1);
-                release.setPostDate(addedDate.toDate());
-                release.setFromName(fromName);
-                release.setSize(totalSize);
-                release.setReqId(reqId);
-                release.setPasswordStatus(site.getCheckPasswordedRar() == 1 ? -1 : 0); // magic constants
-                release.setCompletion(relCompletion);
-                if (ValidatorUtil.isNotNull(cleanReleaseName)) {
-                    releaseDAO.updateRelease(release);
-                    long releaseId = release.getId();
-                    _log.info("Added release " + cleanReleaseName);
-
-                    //
-                    // Tag every binary for this release with its parent release id
-                    // remove the release name from the binary as its no longer required
-                    //
-                    binaryDAO.updateBinaryNameStatusReleaseID("",Defaults.PROCSTAT_RELEASED, releaseId, releaseName, Defaults.PROCSTAT_READYTORELEASE, groupId, fromName);
-
-                    //
-                    // Find an .nfo in the release
-                    //
-                    ReleaseNfo releaseNfo = nfo.determineReleaseNfo(release);
-                    if ( releaseNfo != null) {
-                        nfo.addReleaseNfo(releaseNfo);
-                        nfoCount++;
+                    if (categoryId > 0) {
+                        category = categoryService.getCategory(categoryId);
                     }
-
-                    //
-                    // Write the nzb to disk
-                    //
-                    nzb.writeNZBforReleaseId(release, nzbBaseDir, true);
-
-                    if (retcount % 5 == 0) {
-                        _log.info("processed " + retcount + " out of " + readyReleaseQueries.size() + " possible releases stage three");
+    
+                    if (regexIdUsed == 0) {
+                        regexId = null;
+                    } else {
+                        regexId = regexIdUsed;
                     }
-                } else {
-                    _log.info("Skipping null release : " + release.toString());
+    
+                    if (reqIdUsed == 0) {
+                        reqId = null;
+                    } else {
+                        reqId = reqIdUsed;
+                    }
+    
+                    //Clean release name of '#', '@', '$', '%', '^', '§', '¨', '©', 'Ö'
+                    String cleanReleaseName = releaseName.replaceAll("[^A-Za-z0-9-_\\ \\.]+", "");
+                    Release release = new Release();
+                    release.setName(cleanReleaseName);
+                    release.setSearchName(cleanReleaseName);
+                    release.setTotalpart(numParts);
+                    release.setGroupId(groupId);
+                    release.setAddDate(new Date());
+                    release.setGuid(releaseGuid);
+                    release.setCategory(category);
+                    release.setRegexId(regexId);
+                    release.setRageId((long) -1);
+                    release.setPostDate(addedDate.toDate());
+                    release.setFromName(fromName);
+                    release.setSize(totalSize);
+                    release.setReqId(reqId);
+                    release.setPasswordStatus(site.getCheckPasswordedRar() == 1 ? -1 : 0); // magic constants
+                    release.setCompletion(relCompletion);
+                    if (ValidatorUtil.isNotNull(cleanReleaseName)) {
+                        releaseDAO.updateRelease(release);
+                        long releaseId = release.getId();
+                        _log.info("Added release " + cleanReleaseName);
+    
+                        //
+                        // Tag every binary for this release with its parent release id
+                        // remove the release name from the binary as its no longer required
+                        //
+                        binaryDAO.updateBinaryNameStatusReleaseID("",Defaults.PROCSTAT_RELEASED, releaseId, releaseName, Defaults.PROCSTAT_READYTORELEASE, groupId, fromName);
+    
+                        //
+                        // Find an .nfo in the release
+                        //
+                        ReleaseNfo releaseNfo = nfo.determineReleaseNfo(release);
+                        if ( releaseNfo != null) {
+                            nfo.addReleaseNfo(releaseNfo);
+                            nfoCount++;
+                        }
+    
+                        //
+                        // Write the nzb to disk
+                        //
+                        nzb.writeNZBforReleaseId(release, nzbBaseDir, true);
+    
+                        if (retcount % 5 == 0) {
+                            _log.info("processed " + retcount + " out of " + readyReleaseQueries.size() + " possible releases stage three");
+                        }
+                    } else {
+                        _log.info("Skipping null release : " + release.toString());
+                    }
+                } catch (Exception e) {
+                    _log.error("Error processing release " + readyReleaseQuery.getReleaseName() + " :" + e.toString(), e);
                 }
-            } catch (Exception e) {
-                _log.error("Error processing release " + readyReleaseQuery.getReleaseName() + " :" + e.toString(), e);
+    
             }
 
-        }
+            _log.info("Found " + nfoCount + " nfos in " + retcount + " releases");
 
-        _log.info("Found " + nfoCount + " nfos in " + retcount + " releases");
-
-        //
-        // Process nfo files
-        //
-        if (site.getLookupNfo() != 1) {
-            _log.info("Site config (site.lookupnfo) prevented retrieving nfos");
-        } else {
-            nfo.processNfoFiles(site.getLookupImdb(), site.getLookupTvRage());
-        }
-
-        //
-        // Lookup imdb if enabled
-        //
-        if (site.getLookupImdb() == 1)
-        {
-            movieService.processMovieReleases();
-        }
-
-        //
-        // Lookup music if enabled
-        //
-        if (site.getLookupMusic() == 1)
-        {
-            musicService.processMusicReleases();
-        }
-
-        //
-        // Lookup games if enabled
-        //
-        if (site.getLookupGames() == 1)
-        {
-            gameService.processConsoleReleases();
-        }
-
-        //
-        // Check for passworded releases
-        //
-        if (site.getCheckPasswordedRar() != 1)
-        {
-            _log.info("Site config (site.checkpasswordedrar) prevented checking releases are passworded");
-        }
-        else
-        {
-            processPasswordedReleases(true);
-        }
-
-        //
-        // Process all TV related releases which will assign their series/episode/rage data
-        //
-        tvRageService.processTvReleases(site.getLookupTvRage() == 1);
-
-        //
-        // Get the current datetime again, as using now() in the housekeeping queries prevents the index being used.
-        //
-        DateTime now = new DateTime();
-
-        //
-        // Tidy away any binaries which have been attempted to be grouped into
-        // a release more than x times (SM: or is it days?)
-        //
-        int attemtpGroupBinDays = site.getAttemtpGroupBinDays();
-        _log.info(String.format("Tidying away binaries which cant be grouped after %s days", attemtpGroupBinDays));
-
-        DateTime maxGroupBinDays = now.minusDays(attemtpGroupBinDays);
-        binaryDAO.updateProcStatByProcStatAndDate(Defaults.PROCSTAT_WRONGPARTS, Defaults.PROCSTAT_NEW, maxGroupBinDays.toDate());
-
-        //
-        // Delete any parts and binaries which are older than the site's retention days
-        //
-        int maxRetentionDays = site.getRawRetentionDays();
-        DateTime maxRetentionDate = now.minusDays(maxRetentionDays);
-        _log.info(String.format("Deleting parts which are older than %d days", maxRetentionDays));
-        partDAO.deletePartByDate(maxRetentionDate.toDate());
-
-        _log.info(String.format("Deleting binaries which are older than %d days", maxRetentionDays));
-        binaryDAO.deleteBinaryByDate(maxRetentionDate.toDate());
-
-        //
-        // Delete any releases which are older than site's release retention days
-        //
-        int releaseretentiondays = site.getReleaseRetentionDays();
-        if(releaseretentiondays != 0)
-        {
-            _log.info("Determining any releases past retention to be deleted.");
-
-            DateTime maxReleaseRetentionDate = DateTime.now().minusDays(releaseretentiondays);
-            List<Release> releasesToDelete = releaseDAO.findReleasesBeforeDate(maxReleaseRetentionDate.toDate());
-            for (Iterator<Release> iterator = releasesToDelete.iterator(); iterator.hasNext(); ) {
-                Release release = iterator.next();
-                releaseDAO.deleteRelease(release);
+            //
+            // Process nfo files
+            //
+            if (site.getLookupNfo() != 1) {
+                _log.info("Site config (site.lookupnfo) prevented retrieving nfos");
+            } else {
+                nfo.processNfoFiles(site.getLookupImdb(), site.getLookupTvRage());
             }
+
+            //
+            // Lookup imdb if enabled
+            //
+            if (site.getLookupImdb() == 1)
+            {
+                movieService.processMovieReleases();
+            }
+
+            //
+            // Lookup music if enabled
+            //
+            if (site.getLookupMusic() == 1)
+            {
+                musicService.processMusicReleases();
+            }
+
+            //
+            // Lookup games if enabled
+            //
+            if (site.getLookupGames() == 1)
+            {
+                gameService.processConsoleReleases();
+            }
+
+            //
+            // Check for passworded releases
+            //
+            if (site.getCheckPasswordedRar() != 1)
+            {
+                _log.info("Site config (site.checkpasswordedrar) prevented checking releases are passworded");
+            }
+            else
+            {
+                processPasswordedReleases(true);
+            }
+
+            //
+            // Process all TV related releases which will assign their series/episode/rage data
+            //
+            tvRageService.processTvReleases(site.getLookupTvRage() == 1);
+
+            //
+            // Get the current datetime again, as using now() in the housekeeping queries prevents the index being used.
+            //
+            DateTime now = new DateTime();
+
+            //
+            // Tidy away any binaries which have been attempted to be grouped into
+            // a release more than x times (SM: or is it days?)
+            //
+            int attemtpGroupBinDays = site.getAttemtpGroupBinDays();
+            _log.info(String.format("Tidying away binaries which cant be grouped after %s days", attemtpGroupBinDays));
+
+            DateTime maxGroupBinDays = now.minusDays(attemtpGroupBinDays);
+            binaryDAO.updateProcStatByProcStatAndDate(Defaults.PROCSTAT_WRONGPARTS, Defaults.PROCSTAT_NEW, maxGroupBinDays.toDate());
+
+            //
+            // Delete any parts and binaries which are older than the site's retention days
+            //
+            int maxRetentionDays = site.getRawRetentionDays();
+            DateTime maxRetentionDate = now.minusDays(maxRetentionDays);
+            _log.info(String.format("Deleting parts which are older than %d days", maxRetentionDays));
+            partDAO.deletePartByDate(maxRetentionDate.toDate());
+
+            _log.info(String.format("Deleting binaries which are older than %d days", maxRetentionDays));
+            binaryDAO.deleteBinaryByDate(maxRetentionDate.toDate());
+
+            //
+            // Delete any releases which are older than site's release retention days
+            //
+            int releaseretentiondays = site.getReleaseRetentionDays();
+            if(releaseretentiondays != 0)
+            {
+                _log.info("Determining any releases past retention to be deleted.");
+    
+                DateTime maxReleaseRetentionDate = DateTime.now().minusDays(releaseretentiondays);
+                List<Release> releasesToDelete = releaseDAO.findReleasesBeforeDate(maxReleaseRetentionDate.toDate());
+                for (Iterator<Release> iterator = releasesToDelete.iterator(); iterator.hasNext(); ) {
+                    Release release = iterator.next();
+                    releaseDAO.deleteRelease(release);
+                }
+            }
+            transaction.flush(); // may be unneeded
+        } catch (Exception e) {
+            _log.error(e.toString());
+            transactionManager.rollback(transaction);
         }
-        transaction.flush(); // may be unneeded
         transactionManager.commit(transaction);
 
         _log.info(String.format("Processed %d releases", retcount));

@@ -333,7 +333,7 @@
         </id>
         <many-to-one name="release" class="Release" not-null="true" unique="true" column="releaseID" cascade="save-update"/>
         <many-to-one name="binary" class="Binary" not-null="true" unique="true" column="binaryID" cascade="save-update"/>
-        <property name="attemtps" column="attempts"/>
+        <property name="attempts" column="attempts"/>
         <property name="nfo" column="nfo" lazy="true" not-null="false" type="materialized_blob"/>
     </class>
     <class name="ReleaseRegex" table="releaseregex">

@@ -434,6 +434,8 @@ CREATE TABLE RELEASENFO
    NFO BLOB
 );
 CREATE INDEX IX_RELEASENFO_RELEASEID ON RELEASENFO (RELEASEID);
+alter table "NEWSJ"."RELEASENFO" add constraint FK_RELEASENFO_RELEASEID foreign key("RELEASEID") references "RELEASES"("ID");
+alter table "NEWSJ"."RELEASENFO" add constraint FK_RELEASENFO_BINARYID foreign key("BINARYID") references "BINARIES"("ID")
 
 --------------------------------------------------------
 --  DDL for Table RELEASEREGEX

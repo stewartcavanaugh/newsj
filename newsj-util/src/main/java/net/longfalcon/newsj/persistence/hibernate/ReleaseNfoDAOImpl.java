@@ -22,7 +22,6 @@ import net.longfalcon.newsj.model.ReleaseNfo;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -53,7 +52,7 @@ public class ReleaseNfoDAOImpl extends HibernateDAOImpl implements net.longfalco
     public List<ReleaseNfo> findReleaseNfoWithNullNfoByAttempts(int attempts) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ReleaseNfo.class);
         criteria.add(Restrictions.isNull("nfo"));
-        criteria.add(Restrictions.lt("attemtps", attempts));
+        criteria.add(Restrictions.lt("attempts", attempts));
 
         return criteria.list();
     }
