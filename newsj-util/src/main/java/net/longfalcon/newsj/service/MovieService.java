@@ -263,12 +263,14 @@ public class MovieService {
         if (coverStream != null) {
             FsFile fsFile = movieCoverDirectory.getFile(movieInfo.getId() + "-cover.jpg");
             StreamUtil.transferByteArray(coverStream, fsFile.getOutputStream(), 1024);
+            fsFile.close();
             movieInfo.setCover(true);
         }
 
         if (backdropStream != null) {
             FsFile fsFile = movieCoverDirectory.getFile(movieInfo.getId() + "-backdrop.jpg");
             StreamUtil.transferByteArray(backdropStream, fsFile.getOutputStream(), 1024);
+            fsFile.close();
             movieInfo.setBackdrop(true);
         }
 

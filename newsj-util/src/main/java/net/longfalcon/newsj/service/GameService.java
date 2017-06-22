@@ -57,6 +57,7 @@ public class GameService {
             StreamUtil.transferByteArray(coverStream, fsFile.getOutputStream(), 1024);
             consoleInfo.setCover(true);
             consoleInfoDAO.updateConsoleInfo(consoleInfo);
+            fsFile.close();
         }
     }
 

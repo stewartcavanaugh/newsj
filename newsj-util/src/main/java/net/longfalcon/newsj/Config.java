@@ -111,6 +111,10 @@ public class Config {
         return properties.getProperty(PropsKeys.TRAKT_API_APP_ID);
     }
 
+    public String getAwsBucketName() {
+        return properties.getProperty(PropsKeys.AWS_S3_BUCKET_NAME);
+    }
+
     public int getYear() {
         DateTime dateTime = DateTime.now();
         return dateTime.getYear();

@@ -32,6 +32,8 @@ public interface FsFile {
 
     OutputStream getOutputStream() throws FileNotFoundException;
 
+    void close();
+
     String getName();
 
     void setName(String name);

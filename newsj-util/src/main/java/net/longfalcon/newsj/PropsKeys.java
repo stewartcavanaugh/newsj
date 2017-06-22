@@ -33,4 +33,5 @@ public class PropsKeys {
     public static final String IMDB_API_URL = "newsj.imdb.url";
     public static final String TRAKT_API_URL = "newsj.trakt.url";
     public static final String TRAKT_API_APP_ID = "newsj.trakt.appId";
+    public static final String AWS_S3_BUCKET_NAME = "news.fs.aws.bucket.name";
 }

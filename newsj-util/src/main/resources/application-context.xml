@@ -37,7 +37,12 @@
 
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="ignoreResourceNotFound" value="true" />
-        <property name="locations" value="classpath:db.properties"/>
+        <property name="locations">
+            <list>
+                <value>classpath:db.properties</value>
+                <value>file://${user.home}/.newsj/config.properties</value>
+            </list>
+        </property>
     </bean>
 
     <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
@@ -234,6 +239,7 @@
             <list>
                 <value>classpath:config.api.properties</value>
                 <value>classpath:config.properties</value>
+                <value>file://${user.home}/.newsj/config.properties</value>
             </list>
         </property>
         <property name="siteDAO" ref="siteDAO"/>

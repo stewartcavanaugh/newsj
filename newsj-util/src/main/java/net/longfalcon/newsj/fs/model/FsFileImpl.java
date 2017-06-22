@@ -55,6 +55,11 @@ public class FsFileImpl implements FsFile {
     }
 
     @Override
+    public void close() {
+        // do nothing
+    }
+
+    @Override
     public String getName() {
         return name;
     }

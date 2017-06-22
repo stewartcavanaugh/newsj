@@ -122,6 +122,7 @@
                 <version>2.3</version>
                 <configuration>
                     <webXml>src/main/webapp/WEB-INF/web.xml</webXml>
+                    <warName>newsj</warName>
                 </configuration>
             </plugin>
             <plugin>

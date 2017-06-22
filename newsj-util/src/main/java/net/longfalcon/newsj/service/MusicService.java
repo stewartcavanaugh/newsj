@@ -51,6 +51,7 @@ public class MusicService {
             Directory directory = fileSystemService.getDirectory("/images/covers/console");
             FsFile fsFile = directory.getFile(musicInfo.getId() + ".jpg");
             StreamUtil.transferByteArray(coverInputStream, fsFile.getOutputStream(), 1024);
+            fsFile.close();
             musicInfo.setCover(true);
             musicInfoDAO.update(musicInfo);
         }
